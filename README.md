@@ -4,6 +4,8 @@ A local studio for narrated explainer videos, made by coding agents. [Remotion](
 
 It is built to be used as an **external tool**: your other projects keep only the idea for a video, and the studio holds every video and all the setup. Point an agent at a project, and it reads that project and makes the video here.
 
+**Your videos stay private.** This repository holds only the studio. Each video lives in its own folder under `videos/`, and its renders under `out/`, and git ignores both, so a video about a private project never reaches a commit.
+
 ## How it works
 
 Narration is the clock. Each video has a `voiceover.json` that lists its scenes and their narration. `npm run voice` turns each line into a WAV with Kokoro, measures it, and writes the real length back. Every scene then lasts as long as its line plus a short pause, so editing a sentence re-times the video by itself.
@@ -12,12 +14,12 @@ Narration is the clock. Each video has a `voiceover.json` that lists its scenes 
 voiceover.json   text, voice, speed per scene
    │  npm run voice   (only changed scenes are regenerated, by hash)
    ▼
-public/audio/<video>/<scene>.wav  ──measured──▶  durationSeconds written back
+videos/<video>/audio/<scene>.wav  ──measured──▶  durationSeconds written back
    │
    ▼
 src/lib/timing.ts   frames = ceil((durationSeconds + paddingSeconds) × fps)
    ├─▶ Video.tsx   each <Series.Sequence>
-   └─▶ Root.tsx    the whole <Composition>
+   └─▶ Root.tsx    the whole <Composition>, found in videos/ by itself
 ```
 
 No scene length is ever typed by hand.
@@ -26,15 +28,18 @@ No scene length is ever typed by hand.
 
 ```text
 src/
-├── Root.tsx               one <Composition> per video
+├── Root.tsx               finds every video in videos/ and registers it
 ├── lib/timing.ts          the only place scene lengths are computed
-├── components/            pieces shared by videos
-└── videos/<video>/
-    ├── brief.md           goal, audience, format, voice, scene list
-    ├── voiceover.json     the scenes and their narration
-    ├── config.ts          fps, size, colours
-    ├── Video.tsx          the scenes in order
-    └── scenes/            one file per scene
+└── components/            pieces shared by videos
+videos/<video>/            ignored by git: everything one video needs
+├── brief.md               goal, audience, format, voice, scene list
+├── voiceover.json         the scenes and their narration
+├── config.ts              fps, size, colours
+├── Video.tsx              the scenes in order
+├── scenes/                one file per scene
+├── assets/                its images and sound effects
+└── audio/                 the generated voice
+out/<video>/               ignored by git: renders and stills
 scripts/
 ├── tts.py                 npm run voice
 └── new-video.mjs          npm run new-video
@@ -43,7 +48,7 @@ AGENTS.md                  the rules agents follow here
 PRONUNCIATION.md           fixing words Kokoro says wrong
 ```
 
-Generated files stay out of git: `public/audio/`, `out/`, the `tts/` venv and the agent skills.
+Git ignores `videos/`, `out/`, the `tts/` venv and the agent skills.
 
 ## Setup
 
@@ -60,9 +65,10 @@ npx playwright install chromium   # optional: capture real UI for demos
 
 Kokoro downloads its model, about 330 MB, from Hugging Face on the first `npm run voice`. Keep the clone at a path of normal length: espeak-ng can't read its data from a venv path of 160 characters or more, and `npm run voice` says so when that happens.
 
-Check it works:
+Check it works with a throwaway video from the template:
 
 ```sh
+npm run new-video -- smoke-test
 npm run voice -- smoke-test
 npx remotion render SmokeTest out/smoke-test/smoke-test.mp4
 ```
@@ -70,8 +76,7 @@ npx remotion render SmokeTest out/smoke-test/smoke-test.mp4
 ## Making a video
 
 ```sh
-npm run new-video -- my-project-overview   # scaffold src/videos/my-project-overview
-# register the printed <Composition> in src/Root.tsx
+npm run new-video -- my-project-overview   # scaffold videos/my-project-overview
 npm run voice -- my-project-overview       # narration and timing
 npm run dev                                # Remotion Studio preview
 npx remotion still MyProjectOverview out/my-project-overview/frame.png --frame=60
@@ -87,12 +92,12 @@ Your project doesn't install anything. In an agent session (Claude Code, Codex, 
 [AGENTS.md](AGENTS.md) takes it from there. The agent:
 
 1. reads your project's code, docs and pull requests, and never writes to it;
-2. scaffolds `src/videos/<project>-<topic>/` here and fills in `brief.md`;
+2. scaffolds `videos/<project>-<topic>/` here and fills in `brief.md`;
 3. drafts the script and scene plan, and **waits for your approval** before any animation;
 4. generates the voice, builds one scene per file, and looks at rendered stills itself;
 5. renders the MP4 to `out/<video>/` and checks its length and audio with ffprobe.
 
-The video and its sources stay in the studio. Copy the MP4 wherever you need it.
+The video and its sources stay in the studio, on your machine only. Copy the MP4 wherever you need it.
 
 ## Writing narration
 

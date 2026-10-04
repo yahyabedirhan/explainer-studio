@@ -1,5 +1,5 @@
 import { Series, useVideoConfig } from "remotion";
-import { sceneFrames } from "../../lib/timing";
+import { sceneFrames } from "../../src/lib/timing";
 import { Hook } from "./scenes/Hook";
 import voiceover from "./voiceover.json";
 
@@ -18,3 +18,5 @@ export const __COMPONENT__: React.FC = () => {
     </Series>
   );
 };
+
+export default __COMPONENT__;

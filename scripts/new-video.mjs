@@ -7,7 +7,7 @@ if (!slug || !/^[a-z0-9]+(-[a-z0-9]+)*$/.test(slug)) {
   console.error("Usage: npm run new-video -- <kebab-case-slug>");
   process.exit(1);
 }
-const dest = join("src/videos", slug);
+const dest = join("videos", slug);
 if (existsSync(dest)) {
   console.error(`${dest} already exists`);
   process.exit(1);
@@ -30,21 +30,7 @@ const fill = (dir) => {
 };
 fill(dest);
 
-console.log(`Created ${dest}. Register it in src/Root.tsx:
+console.log(`Created ${dest}. Git ignores it, so the video stays on this machine.
+Studio and renders find it as ${component} once it has a voice:
 
-import * as ${component}Config from "./videos/${slug}/config";
-import ${component}Voiceover from "./videos/${slug}/voiceover.json";
-import { ${component} } from "./videos/${slug}/Video";
-
-      <Folder name="${slug}">
-        <Composition
-          id="${component}"
-          component={${component}}
-          durationInFrames={totalFrames(${component}Voiceover, ${component}Config.FPS)}
-          fps={${component}Config.FPS}
-          width={${component}Config.WIDTH}
-          height={${component}Config.HEIGHT}
-        />
-      </Folder>
-
-Then: npm run voice -- ${slug}`);
+npm run voice -- ${slug}`);
