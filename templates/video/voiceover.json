@@ -1,0 +1,13 @@
+{
+  "scenes": [
+    {
+      "id": "hook",
+      "text": "Replace this line with the first line of the approved script.",
+      "voice": "af_heart",
+      "speed": 1.0,
+      "audioFile": "",
+      "durationSeconds": 0,
+      "paddingSeconds": 0.4
+    }
+  ]
+}

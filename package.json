@@ -1,16 +1,18 @@
 {
   "name": "explainer-studio",
   "version": "1.0.0",
-  "description": "My Remotion video",
+  "description": "Local explainer videos with Remotion and Kokoro, made by coding agents",
   "repository": {},
   "license": "UNLICENSED",
   "private": true,
   "dependencies": {
     "@remotion/cli": "4.0.532",
+    "@remotion/google-fonts": "4.0.532",
+    "@remotion/media": "4.0.532",
+    "@remotion/tailwind-v4": "4.0.532",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "remotion": "4.0.532",
-    "@remotion/tailwind-v4": "4.0.532",
     "tailwindcss": "4.0.0"
   },
   "devDependencies": {
@@ -18,6 +20,7 @@
     "@types/react": "19.2.7",
     "@types/web": "0.0.166",
     "eslint": "9.39.5",
+    "playwright": "^1.63.0",
     "prettier": "3.8.1",
     "typescript": "5.9.3"
   },
@@ -25,7 +28,11 @@
     "dev": "remotion studio",
     "build": "remotion bundle",
     "upgrade": "remotion upgrade",
-    "lint": "eslint src && tsc"
+    "lint": "eslint src && tsc",
+    "voice": "tts/bin/python scripts/tts.py",
+    "new-video": "node scripts/new-video.mjs",
+    "setup:voice": "uv venv --allow-existing --python 3.12 tts && VIRTUAL_ENV=\"$PWD/tts\" uv pip install -r tts-requirements.txt",
+    "setup:skills": "npx -y skills add remotion-dev/skills --skill \"*\" --agent claude-code -y"
   },
   "sideEffects": [
     "*.css"

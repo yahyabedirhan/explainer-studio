@@ -5,3 +5,13 @@ dist
 
 # Ignore the output video from Git but not videos you import into src/.
 out
+
+# Kokoro venv, generated audio (rebuilt by npm run voice) and scratch files
+tts/
+public/audio/
+.scratch/
+.claude/worktrees/
+
+# Remotion agent skills, restored from skills-lock.json (npx skills experimental_install)
+.claude/skills/
+.agents/

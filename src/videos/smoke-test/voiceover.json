@@ -1,0 +1,24 @@
+{
+  "scenes": [
+    {
+      "id": "intro",
+      "text": "This is the explainer studio. Every scene is timed from its own voiceover.",
+      "voice": "af_heart",
+      "speed": 1.0,
+      "audioFile": "audio/smoke-test/intro.wav",
+      "durationSeconds": 5.075,
+      "paddingSeconds": 0.4,
+      "hash": "738c8dbe51b8a033"
+    },
+    {
+      "id": "how-it-works",
+      "text": "Change a line of narration, run the voice script, and the video re-times itself.",
+      "voice": "am_michael",
+      "speed": 1.0,
+      "audioFile": "audio/smoke-test/how-it-works.wav",
+      "durationSeconds": 5.9,
+      "paddingSeconds": 0.4,
+      "hash": "282c24defc2a8b94"
+    }
+  ]
+}
