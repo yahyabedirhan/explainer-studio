@@ -1,0 +1,169 @@
+{
+  "scenes": [
+    {
+      "id": "hook",
+      "text": "You run coding agents on your Mac, and on a few servers. You keep notes in Notion. And a little menu bar app called Shipyard is meant to tie it all together. So how does it actually connect?",
+      "caption": "You run coding agents on your Mac, and on a few servers. You keep notes in Notion. And a little menu bar app called Shipyard is meant to tie it all together. So how does it actually connect?",
+      "voice": "af_heart",
+      "speed": 1.0,
+      "audioFile": "audio/shipyard-architecture/hook.wav",
+      "durationSeconds": 11.6,
+      "paddingSeconds": 0.6,
+      "hash": "6773c2e5613ca39a"
+    },
+    {
+      "id": "the-mac",
+      "text": "Start with the Mac. Shipyard lives in the menu bar and lists your pull requests, issues and runs. Inside the app sits a command line tool, also called shipyard. An agent on the Mac runs that command, and it talks to the app over a private socket on the same machine.",
+      "caption": "Start with the Mac. Shipyard lives in the menu bar and lists your pull requests, issues and runs. Inside the app sits a command line tool, also called shipyard. An agent on the Mac runs that command, and it talks to the app over a private socket on the same machine.",
+      "voice": "af_heart",
+      "speed": 1.0,
+      "audioFile": "audio/shipyard-architecture/the-mac.wav",
+      "durationSeconds": 17.0,
+      "paddingSeconds": 0.6,
+      "hash": "d490024a0f8a18c4"
+    },
+    {
+      "id": "the-machines",
+      "text": "Now the servers. Your agents there run inside herder, a terminal manager for agents. On each server you install one herder plugin, herder shipyard. It downloads the Linux build of the same shipyard command, checks it, and puts it on the path. So an agent on a server types exactly what it would type on the Mac.",
+      "caption": "Now the servers. Your agents there run inside Herdr, a terminal manager for agents. On each server you install one Herdr plugin, herdr-shipyard. It downloads the Linux build of the same shipyard command, checks it, and puts it on the path. So an agent on a server types exactly what it would type on the Mac.",
+      "voice": "af_heart",
+      "speed": 1.0,
+      "audioFile": "audio/shipyard-architecture/the-machines.wav",
+      "durationSeconds": 19.55,
+      "paddingSeconds": 0.6,
+      "hash": "e001126c437f6853"
+    },
+    {
+      "id": "the-rule",
+      "text": "How do they talk? Through herder too. The herder on your Mac already keeps a connection to each saved server. Shipyard rides on it, with one rule. The Mac reaches out. A server never reaches in. Every thirty seconds the Mac asks each server's plugin, what do you have for me?",
+      "caption": "How do they talk? Through Herdr too. The Herdr on your Mac already keeps a connection to each saved server. Shipyard rides on it, with one rule. The Mac reaches out. A server never reaches in. Every 30 seconds the Mac asks each server's plugin, what do you have for me?",
+      "voice": "af_heart",
+      "speed": 1.0,
+      "audioFile": "audio/shipyard-architecture/the-rule.wav",
+      "durationSeconds": 17.05,
+      "paddingSeconds": 0.6,
+      "hash": "20857432a123d9b0"
+    },
+    {
+      "id": "two-files",
+      "text": "Settings follow the same split. The app reads config dot toml, and it lives only on the Mac. The command reads its own file, C L I dot toml, on every machine. No setting appears in both, so it's always clear which side acts on it.",
+      "caption": "Settings follow the same split. The app reads config.toml, and it lives only on the Mac. The command reads its own file, cli.toml, on every machine. No setting appears in both, so it's always clear which side acts on it.",
+      "voice": "af_heart",
+      "speed": 1.0,
+      "audioFile": "audio/shipyard-architecture/two-files.wav",
+      "durationSeconds": 15.625,
+      "paddingSeconds": 0.6,
+      "hash": "7496274060585912"
+    },
+    {
+      "id": "ping-or-notice",
+      "text": "Agents talk to you in two ways. A ping is something you must act on. It stays in the menu until you've seen it. A notice is a status you glance at. Tests running. Done. It shows once, as a banner, and is never kept. Let's follow one notice down each road it can take.",
+      "caption": "Agents talk to you in two ways. A ping is something you must act on. It stays in the menu until you've seen it. A notice is a status you glance at. Tests running. Done. It shows once, as a banner, and is never kept. Let's follow one notice down each road it can take.",
+      "voice": "af_heart",
+      "speed": 1.0,
+      "audioFile": "audio/shipyard-architecture/ping-or-notice.wav",
+      "durationSeconds": 17.55,
+      "paddingSeconds": 0.6,
+      "hash": "9ab43c343538b819"
+    },
+    {
+      "id": "notice-on-mac",
+      "text": "Road one, on the Mac. The agent runs shipyard notify. The command hands the notice to the app over the socket. The app files it under a project, checks that project's rules allow notices, and shows the banner. Then it answers, shown.",
+      "caption": "Road one, on the Mac. The agent runs shipyard notify. The command hands the notice to the app over the socket. The app files it under a project, checks that project's rules allow notices, and shows the banner. Then it answers, shown.",
+      "voice": "af_heart",
+      "speed": 1.0,
+      "audioFile": "audio/shipyard-architecture/notice-on-mac.wav",
+      "durationSeconds": 15.55,
+      "paddingSeconds": 0.6,
+      "hash": "13e29163946adf23"
+    },
+    {
+      "id": "notice-poll",
+      "text": "Road two, from a server, the slow way. The command can't reach the Mac, so it leaves the notice with the plugin, and prints queued. On the Mac's next poll, it collects waiting notices, drops any older than ten minutes, tells the plugin they're read, and shows the rest. Up to thirty seconds late, and no images. But nothing on the server ever reaches the Mac.",
+      "caption": "Road two, from a server, the slow way. The command can't reach the Mac, so it leaves the notice with the plugin, and prints queued. On the Mac's next poll, it collects waiting notices, drops any older than 10 minutes, tells the plugin they're read, and shows the rest. Up to 30 seconds late, and no images. But nothing on the server ever reaches the Mac.",
+      "voice": "af_heart",
+      "speed": 1.0,
+      "audioFile": "audio/shipyard-architecture/notice-poll.wav",
+      "durationSeconds": 21.5,
+      "paddingSeconds": 0.6,
+      "hash": "817071ba198c343e"
+    },
+    {
+      "id": "tailscale",
+      "text": "Thirty seconds is too slow for, this just happened. So notices get one narrow exception: the tailnet. Tailscale already links your machines as you. On the Mac, the app listens only on its own loopback address, and only when you turn it on. Tailscale serve opens that port to your tailnet alone, and stamps every request with who sent it. The app accepts a notice only when that login is your own.",
+      "caption": "30 seconds is too slow for “this just happened”. So notices get one narrow exception: the tailnet. Tailscale already links your machines as you. On the Mac, the app listens only on its own loopback address, and only when you turn it on. tailscale serve opens that port to your tailnet alone, and stamps every request with who sent it. The app accepts a notice only when that login is your own.",
+      "voice": "af_heart",
+      "speed": 1.0,
+      "audioFile": "audio/shipyard-architecture/tailscale.wav",
+      "durationSeconds": 24.1,
+      "paddingSeconds": 0.6,
+      "hash": "3701041aaa648dba"
+    },
+    {
+      "id": "notice-tailnet",
+      "text": "Road three. A server whose C L I dot toml names your Mac sends the notice straight across the tailnet. Serve stamps it, the app checks the login, applies the same rules, and shows it, in about a second. The server even hears back, shown. One catch: a button that jumps to a herder pane is refused here, because the Mac couldn't tell which server's herder you meant.",
+      "caption": "Road three. A server whose cli.toml names your Mac sends the notice straight across the tailnet. Serve stamps it, the app checks the login, applies the same rules, and shows it, in about a second. The server even hears back, shown. One catch: a button that jumps to a Herdr pane is refused here, because the Mac couldn't tell which server's Herdr you meant.",
+      "voice": "af_heart",
+      "speed": 1.0,
+      "audioFile": "audio/shipyard-architecture/notice-tailnet.wav",
+      "durationSeconds": 22.075,
+      "paddingSeconds": 0.6,
+      "hash": "a43ebc4e0c660f1c"
+    },
+    {
+      "id": "notes-in-notion",
+      "text": "Now notes. Notes are yours, not your agents'. They live in Notion. One page called Shipyard Notes, and under it, one database per project, named exactly like the project. Each note gets a number that only grows, like ship seven.",
+      "caption": "Now notes. Notes are yours, not your agents'. They live in Notion. One page called Shipyard Notes, and under it, one database per project, named exactly like the project. Each note gets a number that only grows, like SHIP-7.",
+      "voice": "af_heart",
+      "speed": 1.0,
+      "audioFile": "audio/shipyard-architecture/notes-in-notion.wav",
+      "durationSeconds": 15.075,
+      "paddingSeconds": 0.6,
+      "hash": "ebc130942348dcd9"
+    },
+    {
+      "id": "note-written",
+      "text": "You dictate a thought to any agent. Claude on your phone, an agent on the Mac, or one on a server. It writes the note straight into Notion with its own Notion tools. Shipyard isn't in this path at all, and there's no shipyard command for notes.",
+      "caption": "You dictate a thought to any agent. Claude on your phone, an agent on the Mac, or one on a server. It writes the note straight into Notion with its own Notion tools. Shipyard isn't in this path at all, and there's no shipyard command for notes.",
+      "voice": "af_heart",
+      "speed": 1.0,
+      "audioFile": "audio/shipyard-architecture/note-written.wav",
+      "durationSeconds": 14.725,
+      "paddingSeconds": 0.6,
+      "hash": "c11d0e5035413d6e"
+    },
+    {
+      "id": "note-read",
+      "text": "The app reads notes itself. You give it a Notion token once, and it stays in the Mac's keychain. Agents never see it. Every minute, and whenever you open the menu, the app asks Notion for each project's open notes, and lists them. The pencil on a project starts a new, empty note and opens it in Notion.",
+      "caption": "The app reads notes itself. You give it a Notion token once, and it stays in the Mac's keychain. Agents never see it. Every minute, and whenever you open the menu, the app asks Notion for each project's open notes, and lists them. The pencil on a project starts a new, empty note and opens it in Notion.",
+      "voice": "af_heart",
+      "speed": 1.0,
+      "audioFile": "audio/shipyard-architecture/note-read.wav",
+      "durationSeconds": 18.95,
+      "paddingSeconds": 0.6,
+      "hash": "51c5dcf47c692e6c"
+    },
+    {
+      "id": "the-map",
+      "text": "So here is the whole map. Herder carries pings, and slow notices, with the Mac always asking. Tailscale carries fast notices, straight in, from you to you. And Notion holds your notes, read by the app with a key that never leaves the Mac.",
+      "caption": "So here is the whole map. Herdr carries pings, and slow notices, with the Mac always asking. Tailscale carries fast notices, straight in, from you to you. And Notion holds your notes, read by the app with a key that never leaves the Mac.",
+      "voice": "af_heart",
+      "speed": 1.0,
+      "audioFile": "audio/shipyard-architecture/the-map.wav",
+      "durationSeconds": 14.975,
+      "paddingSeconds": 0.6,
+      "hash": "86490ebb9fcb28ab"
+    },
+    {
+      "id": "outro",
+      "text": "Three roads, one menu. That's Shipyard.",
+      "caption": "Three roads, one menu. That's Shipyard.",
+      "voice": "af_heart",
+      "speed": 1.0,
+      "audioFile": "audio/shipyard-architecture/outro.wav",
+      "durationSeconds": 2.95,
+      "paddingSeconds": 1.0,
+      "hash": "b67e201e94a9e41d"
+    }
+  ]
+}
