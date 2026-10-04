@@ -12,14 +12,14 @@ Make and keep videos in the studio's main checkout, on `main`. A worktree's igno
 
 1. Treat the source project as read-only. Read its code, README, docs and PRs for understanding, and never write into it.
 2. Scaffold: `npm run new-video -- <project>-<topic>`, for example `shipyard-architecture`. It creates `videos/<slug>/`, and `src/Root.tsx` finds it by itself.
-3. Fill `videos/<slug>/brief.md` from what you learned and from the user's request. Ask the user for anything the brief still needs.
-4. Draft the script and scene plan and get the user's approval before writing animation code.
-5. Put the approved narration in `voiceover.json`, run `npm run voice -- <slug>`, then build the scenes.
+3. Ask the user once, in a single round, what they want to learn from the video and anything else the brief can't settle from the project. Fill `videos/<slug>/brief.md` around that question. Keep the rest of the run free of check-ins: the user wants a video, not a discussion.
+4. Draft the script and scene plan in `brief.md`, aimed at what the user wants to learn.
+5. Put the narration in `voiceover.json`, run `npm run voice -- <slug>`, then build the scenes.
 6. Check stills, then render to `out/<slug>/<slug>.mp4`.
 
 ## Layout
 
-- `videos/<slug>/`: everything one video needs, ignored by git. `brief.md` holds the brief and approved script, `voiceover.json` its scenes, `config.ts` its fps and size, `Video.tsx` the sequence (its default export), `scenes/` one file per scene, `assets/` its images and sound effects, and `audio/` the generated voice. `videos/` is Remotion's public folder, so `staticFile("<slug>/assets/logo.png")` reaches a video's own file.
+- `videos/<slug>/`: everything one video needs, ignored by git. `brief.md` holds the brief and script, `voiceover.json` its scenes, `config.ts` its fps and size, `Video.tsx` the sequence (its default export), `scenes/` one file per scene, `assets/` its images and sound effects, and `audio/` the generated voice. `videos/` is Remotion's public folder, so `staticFile("<slug>/assets/logo.png")` reaches a video's own file.
 - `src/lib/timing.ts`: the only place scene lengths are computed, as `ceil((durationSeconds + paddingSeconds) x fps)`.
 - `src/Root.tsx`: registers each folder in `videos/` that has a `Video.tsx`, `config.ts` and `voiceover.json`, as a composition named after its slug (`shipyard-architecture` is `ShipyardArchitecture`).
 - `src/components/`: building blocks shared by videos.

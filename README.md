@@ -93,7 +93,7 @@ Your project doesn't install anything. In an agent session (Claude Code, Codex, 
 
 1. reads your project's code, docs and pull requests, and never writes to it;
 2. scaffolds `videos/<project>-<topic>/` here and fills in `brief.md`;
-3. drafts the script and scene plan, and **waits for your approval** before any animation;
+3. asks you once what you want to learn from the video, then drafts the script and scene plan around that, with no further check-ins;
 4. generates the voice, builds one scene per file, and looks at rendered stills itself;
 5. renders the MP4 to `out/<video>/` and checks its length and audio with ffprobe.
 
