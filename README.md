@@ -58,7 +58,7 @@ npm run setup:skills     # Remotion's agent skills into .claude/skills
 npx playwright install chromium   # optional: capture real UI for demos
 ```
 
-Kokoro downloads its model, about 330 MB, from Hugging Face on the first `npm run voice`.
+Kokoro downloads its model, about 330 MB, from Hugging Face on the first `npm run voice`. Keep the clone at a path of normal length: espeak-ng can't read its data from a venv path of 160 characters or more, and `npm run voice` says so when that happens.
 
 Check it works:
 

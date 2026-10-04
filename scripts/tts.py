@@ -87,7 +87,21 @@ def process(video_dir):
     print(f"  {'total with padding':<38}{total:>8.2f}")
 
 
+def check_espeak_path():
+    # espeak-ng keeps its data path in a 160-byte buffer and fails with a confusing
+    # "phontab: No such file" error when the venv sits under a longer path.
+    import espeakng_loader
+
+    data_path = espeakng_loader.get_data_path()
+    if len(data_path) >= 160:
+        sys.exit(
+            f"espeak-ng can't use data paths of 160 characters or more, and this one is {len(data_path)}:\n"
+            f"  {data_path}\nMove the studio to a shorter path and run npm run setup:voice again."
+        )
+
+
 def main():
+    check_espeak_path()
     names = sys.argv[1:]
     dirs = (
         [VIDEOS / n for n in names]
