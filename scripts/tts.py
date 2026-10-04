@@ -1,10 +1,10 @@
 """Generate Kokoro voiceover for one video, or every video.
 
 Usage:
-    npm run voice                 # every video in src/videos
+    npm run voice                 # every video in videos/
     npm run voice -- <video>      # one video, e.g. smoke-test
 
-Reads src/videos/<video>/voiceover.json, writes public/audio/<video>/<scene-id>.wav
+Reads videos/<video>/voiceover.json, writes videos/<video>/audio/<scene-id>.wav
 at 24 kHz, and writes each file's measured length back into durationSeconds.
 A scene is regenerated only when its text, voice or speed changed, or its WAV is missing.
 """
@@ -18,8 +18,7 @@ from pathlib import Path
 warnings.filterwarnings("ignore")
 
 ROOT = Path(__file__).resolve().parent.parent
-VIDEOS = ROOT / "src" / "videos"
-PUBLIC = ROOT / "public"
+VIDEOS = ROOT / "videos"
 SAMPLE_RATE = 24000
 DEFAULTS = {"voice": "af_heart", "speed": 1.0, "paddingSeconds": 0.4}
 
@@ -66,8 +65,9 @@ def process(video_dir):
     for scene in config["scenes"]:
         for field, value in DEFAULTS.items():
             scene.setdefault(field, value)
-        scene["audioFile"] = f"audio/{video_dir.name}/{scene['id']}.wav"
-        wav = PUBLIC / scene["audioFile"]
+        # Relative to videos/, the public folder, so staticFile(scene.audioFile) finds it.
+        scene["audioFile"] = f"{video_dir.name}/audio/{scene['id']}.wav"
+        wav = VIDEOS / scene["audioFile"]
         digest = scene_hash(scene)
         status = "cached"
         if scene.get("hash") != digest or not wav.exists():
