@@ -9,6 +9,8 @@ import { Config } from "@remotion/cli/config";
 import { enableTailwind } from '@remotion/tailwind-v4';
 
 Config.setRspack(true);
+// Each video keeps its assets and voice in its own folder: staticFile("<slug>/assets/logo.png").
+Config.setPublicDir("videos");
 Config.setVideoImageFormat("jpeg");
 Config.setOverwriteOutput(true);
 Config.overrideBundlerConfig(enableTailwind);

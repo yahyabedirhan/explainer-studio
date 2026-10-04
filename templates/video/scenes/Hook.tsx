@@ -1,7 +1,7 @@
 import { Audio } from "@remotion/media";
 import { staticFile } from "remotion";
-import { KineticTitle } from "../../../components/KineticTitle";
-import { getScene } from "../../../lib/timing";
+import { KineticTitle } from "../../../src/components/KineticTitle";
+import { getScene } from "../../../src/lib/timing";
 import { ACCENT } from "../config";
 import voiceover from "../voiceover.json";
 
