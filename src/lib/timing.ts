@@ -4,6 +4,8 @@
 export type VoiceoverScene = {
   id: string;
   text: string;
+  // On-screen wording when `text` respells words for Kokoro (PRONUNCIATION.md).
+  caption?: string;
   voice: string;
   speed: number;
   audioFile: string;
