@@ -29,7 +29,18 @@ A local explainer-video studio: Remotion for picture, Kokoro for voice. No paid 
 - Check final renders with `ffprobe`: length matches the summed scenes and there is an audio track.
 - Avoid the generic AI look of a centred headline fading in over a gradient. Prefer bold typography, hard cuts, real UI captures (Playwright with Chromium is installed) and clear diagrams.
 - Make small, targeted edits for feedback instead of rewriting.
-- Read `.claude/skills/remotion-best-practices/SKILL.md` and the references it routes to before writing Remotion code. Where it says to write scene lengths inline as literal numbers, the timing rule above wins.
+
+## The Remotion skill
+
+Read `.claude/skills/remotion-best-practices/SKILL.md` and the references it routes to before writing Remotion code. It's written for any Remotion project, so some of its defaults don't fit this studio. Where the skill and this file disagree, this file wins. When you find a disagreement the table doesn't list, follow this file and add a row in the same change.
+
+| Where the skill says | Do this instead |
+|---|---|
+| `SKILL.md`, "Open the preview" and "Render the video": start Studio before building, and render only when the user explicitly asks | Finish with step 6: stills you've looked at, then the MP4, checked with `ffprobe`. Start Studio (`npm run dev`) when the user asks to watch. |
+| Write scene lengths inline as literal numbers | Lengths come from `voiceover.json` through `src/lib/timing.ts`. |
+| `remotion-markup/voiceover.md`: ElevenLabs, ask the user for an API key, size the composition with `calculateMetadata` | Kokoro through `npm run voice`, which needs no key. Lengths as above. |
+| `remotion-markup/sfx.md`: `remotion.media` URLs, search the internet | Sound effects are local files under `public/`: made locally (the `./tts` venv has numpy and soundfile), or a freely licensed file committed with its source and licence noted beside it. |
+| `remotion-captions/`: transcribe the voiceover with Whisper, then show a copied Basic Captions element fed an inline caption array | Captions are the script. Show each scene's `text` from `voiceover.json`, or its `caption` field when `text` respells a word for Kokoro, timed within the scene's measured length. |
 
 ## Setting up again
 
