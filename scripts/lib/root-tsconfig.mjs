@@ -6,12 +6,10 @@
 // The file carries a "//" marker with its version. A file with the marker is rewritten when
 // its version is older, when the checkout it names is gone, or when it names another
 // checkout than a usable main worktree. A file without the marker, or one that isn't JSON,
-// is the user's and is never touched. The first version had no marker: its file is
-// recognised by its exact content.
+// is the user's and is never touched.
 import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync, realpathSync, writeFileSync } from "node:fs";
 import { basename, dirname, join, resolve } from "node:path";
-import { isDeepStrictEqual } from "node:util";
 
 export const VERSION = 2;
 const MARKER = `explainer-studio root tsconfig v${VERSION}. Delete this line to keep your edits: the studio rewrites a file that has it.`;
@@ -146,14 +144,6 @@ export const rootTsconfig = (studio) => ({
   ...shape(studio, dependencyPaths(studio)),
 });
 
-// The version of a file this module wrote, or NaN for the user's own file.
-const versionOf = (config) => {
-  if ("//" in config) return markerVersion(config["//"]);
-  return isDeepStrictEqual(config, shape(dirname(config.extends), {}))
-    ? 1
-    : NaN;
-};
-
 // True when the root's tsconfig.json stays as it is, for a write from `checkout`.
 export const rootTsconfigIsKept = (root, checkout) => {
   const file = join(root, "tsconfig.json");
@@ -170,7 +160,8 @@ export const rootTsconfigIsKept = (root, checkout) => {
     typeof config.extends !== "string"
   )
     return true;
-  const version = versionOf(config);
+  // NaN for the user's own file, which has no marker.
+  const version = "//" in config ? markerVersion(config["//"]) : NaN;
   if (!Number.isInteger(version)) return true;
   if (version < VERSION || !existsSync(config.extends)) return false;
   // A file that names another checkout is kept, unless the main worktree can replace it.
