@@ -5,7 +5,7 @@ description: Make a narrated video with FFrames (Rust, SVG, GPU shaders) inside 
 
 # FFrames video in the studio
 
-FFrames draws the picture. The studio supplies the rest: Kokoro voice with word timings, synthesized sound, private video folders and the final checks. [docs/fframes.md](../../docs/styles/fframes.md) says why, and holds the install record and the gotchas.
+FFrames draws the picture. The studio supplies the rest: Kokoro voice with word timings, synthesized sound, private video folders and the final checks. [docs/styles/fframes.md](../../docs/styles/fframes.md) says why, and holds the install record and the gotchas.
 
 First load the `fframes-video` skill (installed in `~/.agents/skills/fframes-video/`). It is the reference for the FFrames API, design, sound placement and the project CLI. Read its `references/design.md` before you design and its `references/api.md` while you write code. This file adds only what the studio changes. Where the two disagree, this file wins.
 
@@ -86,4 +86,4 @@ Report the MP4 path, its length, the strip path, the LUFS figure and the command
 
 ## Style: pixel and thermal ad
 
-When asked for "the FFrames ad look", or for pixel or thermal style, follow the style section of [docs/fframes.md](../../docs/styles/fframes.md#style-the-pixel-and-thermal-ad). The studio has no image generator. Draw the pixel icons as character grids turned into SVG `rect`s with an extruded darker copy, and the thermal figures as SVG paths filled with a radial heat ramp, softened with `feTurbulence`, `feDisplacementMap` and `feGaussianBlur`. Draw the four-point star and the bokeh as SkSL shaders. A working example of every piece is the spike project in `videos/fframes-spike/fframes/` on the machine that made it, if it is still there.
+When asked for "the FFrames ad look", or for pixel or thermal style, follow the style section of [docs/styles/fframes.md](../../docs/styles/fframes.md#style-the-pixel-and-thermal-ad). The studio has no image generator. Draw the pixel icons as character grids turned into SVG `rect`s with an extruded darker copy, and the thermal figures as SVG paths filled with a radial heat ramp, softened with `feTurbulence`, `feDisplacementMap` and `feGaussianBlur`. Draw the four-point star and the bokeh as SkSL shaders. A working example of every piece is the spike project in `videos/fframes-spike/fframes/` on the machine that made it, if it is still there.
