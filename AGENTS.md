@@ -84,7 +84,6 @@ When the chosen style has a skill, read it first and follow it in place of steps
 - `scripts/render.mjs`: `npm run render -- <slug>` renders `<root>/<slug>/out/<slug>.mp4`, and `npm run still -- <slug> <name> [--sheet] [--frame=<n>]` a still to `<root>/<slug>/out/<name>.png`. Other flags go on to Remotion.
 - `scripts/lib/videos-root.mjs`: resolves the videos root (`npm run root` prints it); `scripts/videos_root.py` mirrors it for the Python scripts.
 - `scripts/lib/root-tsconfig.mjs`: writes `<root>/tsconfig.json`, so `npx tsc -p <root>` and editors type-check video code.
-- `scripts/migrate.mjs`, `scripts/lib/migrate.mjs`: `npm run migrate` moves a checkout's `videos/` and `out/` into the root.
 - `scripts/shader-catalogue.mjs`: `npm run shader-catalogue` regenerates `skills/shader-video/effects.md` after a `shaders` upgrade.
 - `scripts/fframes_sync.py`: `npm run fframes-sync -- <slug> --fps <N>` writes an FFrames project's `src/timing.rs` from `voiceover.json` and links the video's WAVs into its `assets/`.
 - `skills/`: the studio's own skills, tracked (`.claude/skills/` holds installed ones and is ignored).

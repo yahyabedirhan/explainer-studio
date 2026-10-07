@@ -41,7 +41,6 @@
     "fframes-sync": "tts/bin/python scripts/fframes_sync.py",
     "new-video": "node scripts/new-video.mjs",
     "root": "node --input-type=module -e \"import { videosRoot } from './scripts/lib/videos-root.mjs'; console.log(videosRoot())\"",
-    "migrate": "node scripts/migrate.mjs",
     "render": "node scripts/render.mjs render",
     "still": "node scripts/render.mjs still",
     "refs": "node scripts/refs.mjs",

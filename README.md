@@ -57,20 +57,18 @@ scripts/
 ├── sound.py               npm run sound: music bed, sting, effects
 ├── new-video.mjs          npm run new-video
 ├── render.mjs             npm run render and npm run still
-├── migrate.mjs            npm run migrate: a checkout's videos/ and out/ into the root
 ├── acceptance.sh          npm run acceptance: the whole flow in a scratch root
 ├── videos_root.py         the root for the Python scripts
 └── lib/
     ├── videos-root.mjs    resolves the videos root (npm run root)
     ├── root-tsconfig.mjs  <root>/tsconfig.json, for npx tsc -p <root>
-    ├── migrate.mjs        the migration's plan and moves
     └── *.test.mjs         npm test, with scripts/*_test.py
 templates/video/           what new-video copies
 AGENTS.md                  the rules agents follow here
 PRONUNCIATION.md           fixing words Kokoro says wrong
 docs/pipeline.md           the twelve layers from idea to MP4
 docs/styles/               one page per style
-docs/videos-root.md        the videos root: resolver, outputs, migration, limits
+docs/videos-root.md        the videos root: resolver, outputs, limits
 docs/renderers.md          renderer benchmarks: Remotion default, FFrames, HyperFrames dropped
 ```
 
