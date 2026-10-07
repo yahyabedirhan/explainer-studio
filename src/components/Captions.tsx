@@ -29,7 +29,7 @@ const sentenceStarts = (scene: VoiceoverScene, shown: string[]) => {
   });
 };
 
-// The scene's current caption sentence, small, bottom-left on a dark plate.
+// The scene's current caption sentence, small, centred at the bottom on a dark plate.
 export const Captions: React.FC<Props> = ({ scene, style }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -41,9 +41,13 @@ export const Captions: React.FC<Props> = ({ scene, style }) => {
     <div
       style={{
         position: "absolute",
-        left: 64,
+        left: "50%",
         bottom: 56,
-        maxWidth: "60%",
+        translate: "-50% 0",
+        width: "max-content",
+        maxWidth: 1500,
+        boxSizing: "border-box",
+        textAlign: "center",
         padding: "12px 20px",
         borderRadius: 10,
         backgroundColor: "rgba(10, 10, 12, 0.72)",
