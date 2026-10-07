@@ -22,6 +22,7 @@ Make and keep videos in the studio's main checkout, on `main`. A worktree's igno
 When a video uses a named style, read its skill first and follow it in place of steps 2 to 6 above:
 
 - sketchbook (paper and blueprint shots drawn in code, hard cuts): `skills/sketchbook-video/SKILL.md`
+- FFrames (Rust, SVG, GPU shaders), for shader-heavy pieces and the pixel and thermal ad look: `skills/fframes-studio-video/SKILL.md`
 
 Shaders are an optional, experimental add-on, not a style of their own. Offer them only when one or a few effects clearly suit what the user asks for, or when the user asks. The user picks the effects from a prototype sheet before any scene is built: `skills/shader-video/SKILL.md`.
 
@@ -42,12 +43,16 @@ Shaders are an optional, experimental add-on, not a style of their own. Offer th
   - `Shader.tsx`: effects from the `shaders` package, drawn at the frame's time. See `docs/shaders.md`.
   - `Grain.tsx`: film-grain overlay.
   - `CanvasScene.tsx`: a full-frame `<canvas>` that a scene repaints from scratch each frame with `draw(ctx, { frame, ... })`, after its fonts load. Use it for hand-drawn or diagram-heavy shots where the code draws every frame.
+  - `ShaderLayer.tsx`: a GLSL fragment shader on a WebGL canvas, drawn each frame with Shadertoy-style uniforms. Render and take stills with `--gl=angle`.
+  - `PixelSprite.tsx`: pixel art from a character grid, as crisp SVG, with an optional extruded depth.
 - `scripts/tts.py`: Kokoro voice generation (`npm run voice`). It also writes each scene's `words` (`text`, `start`, `end`, seconds from the scene WAV's start) into `voiceover.json`. The venv is `./tts`, Python 3.12, pinned in `tts-requirements.txt`.
 - `scripts/sound.py`: `npm run sound -- <slug> --seconds <N> [--bpm 96] [--seed 1]` synthesizes a music bed, an end sting and click, tick, whoosh and pop effects into `videos/<slug>/assets/sound/`, with a `SOURCES.md`.
 - `scripts/refs.mjs`, `scripts/sheet.mjs`, `scripts/process-page.mjs`: `npm run refs -- <slug> <url>` pulls a reference's cuts and key poses, `npm run sheet -- <slug>` makes a contact sheet of a render, `npm run process -- <slug>` builds a making-of page from `out/<slug>/process/`.
 - `scripts/shader-catalogue.mjs`: `npm run shader-catalogue` regenerates `skills/shader-video/effects.md` after a `shaders` upgrade.
+- `scripts/fframes_sync.py`: `npm run fframes-sync -- <slug> --fps <N>` writes an FFrames project's `src/timing.rs` from `voiceover.json` and links the video's WAVs into its `assets/`.
 - `skills/`: the studio's own skills, tracked (`.claude/skills/` holds installed ones and is ignored).
 - `docs/shaders.md`: how the studio draws WebGPU shaders deterministically, and what doesn't work.
+- `docs/fframes.md`: what FFrames is, the pixel and thermal ad style, its install and gotchas.
 - `docs/renderers.md`: why the studio keeps Remotion over HyperFrames.
 - `templates/video/`: what `npm run new-video` copies.
 - `out/<slug>/`: renders and stills, ignored by git.

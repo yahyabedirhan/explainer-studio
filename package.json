@@ -32,6 +32,7 @@
     "lint": "eslint src && tsc",
     "voice": "tts/bin/python scripts/tts.py",
     "sound": "tts/bin/python scripts/sound.py",
+    "fframes-sync": "tts/bin/python scripts/fframes_sync.py",
     "new-video": "node scripts/new-video.mjs",
     "refs": "node scripts/refs.mjs",
     "sheet": "node scripts/sheet.mjs",
