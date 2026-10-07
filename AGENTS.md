@@ -17,20 +17,32 @@ Make and keep videos in the studio's main checkout, on `main`. A worktree's igno
 5. Put the narration in `voiceover.json`, run `npm run voice -- <slug>`, then build the scenes. For music and sound effects, run `npm run sound -- <slug> --seconds <N>` with the final length.
 6. Check stills, then render to `out/<slug>/<slug>.mp4`.
 
+## Video styles
+
+When a video uses a named style, read its skill first and follow it in place of steps 2 to 6 above:
+
+- sketchbook (paper and blueprint shots drawn in code, hard cuts): `skills/sketchbook-video/SKILL.md`
+
 ## Layout
 
 - `videos/<slug>/`: everything one video needs, ignored by git. `brief.md` holds the brief and script, `voiceover.json` its scenes, `config.ts` its fps and size, `Video.tsx` the sequence (its default export), `scenes/` one file per scene, `assets/` its images and sound effects, and `audio/` the generated voice. `videos/` is Remotion's public folder, so `staticFile("<slug>/assets/logo.png")` reaches a video's own file.
 - `src/lib/timing.ts`: the only place scene lengths are computed, as `ceil((durationSeconds + paddingSeconds) x fps)`.
 - `src/lib/words.ts`: `useWord(voiceover, sceneId, phrase, occurrence?)`, plus `wordFrame` and `wordEndFrame`, give the frame where a narration word starts or ends. A phrase the scene never says throws.
+- `src/lib/sketch.ts`: pure, seeded drawing helpers for canvas scenes: easing, value noise, point-list shapes, `partial` for draw-on strokes, `wobble` and `ink` for a boiling pen line, `hatch` for shading.
 - `src/Root.tsx`: registers each folder in `videos/` that has a `Video.tsx`, `config.ts` and `voiceover.json`, as a composition named after its slug (`shipyard-architecture` is `ShipyardArchitecture`).
+- `src/styles/<style>/`: drawing code for a named video style (see Video styles).
+- `docs/styles/<style>.md`: where a style comes from and what was learned making it.
 - `src/components/`: building blocks shared by videos.
   - `Captions.tsx`: word-timed captions from a scene's `caption ?? text`.
   - `Cursor.tsx`: a pointer on an eased path; `cursorAt` gives its position and press state, for drags.
   - `Travel.tsx`: moves a child along a Bézier path.
   - `Typewriter.tsx`: types text out over frames.
   - `Grain.tsx`: film-grain overlay.
+  - `CanvasScene.tsx`: a full-frame `<canvas>` that a scene repaints from scratch each frame with `draw(ctx, { frame, ... })`, after its fonts load. Use it for hand-drawn or diagram-heavy shots where the code draws every frame.
 - `scripts/tts.py`: Kokoro voice generation (`npm run voice`). It also writes each scene's `words` (`text`, `start`, `end`, seconds from the scene WAV's start) into `voiceover.json`. The venv is `./tts`, Python 3.12, pinned in `tts-requirements.txt`.
 - `scripts/sound.py`: `npm run sound -- <slug> --seconds <N> [--bpm 96] [--seed 1]` synthesizes a music bed, an end sting and click, tick, whoosh and pop effects into `videos/<slug>/assets/sound/`, with a `SOURCES.md`.
+- `scripts/refs.mjs`, `scripts/sheet.mjs`, `scripts/process-page.mjs`: `npm run refs -- <slug> <url>` pulls a reference's cuts and key poses, `npm run sheet -- <slug>` makes a contact sheet of a render, `npm run process -- <slug>` builds a making-of page from `out/<slug>/process/`.
+- `skills/`: the studio's own skills, tracked (`.claude/skills/` holds installed ones and is ignored).
 - `docs/renderers.md`: why the studio keeps Remotion over HyperFrames.
 - `templates/video/`: what `npm run new-video` copies.
 - `out/<slug>/`: renders and stills, ignored by git.

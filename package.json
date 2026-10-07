@@ -32,6 +32,9 @@
     "voice": "tts/bin/python scripts/tts.py",
     "sound": "tts/bin/python scripts/sound.py",
     "new-video": "node scripts/new-video.mjs",
+    "refs": "node scripts/refs.mjs",
+    "sheet": "node scripts/sheet.mjs",
+    "process": "node scripts/process-page.mjs",
     "setup:voice": "uv venv --allow-existing --python 3.12 tts && VIRTUAL_ENV=\"$PWD/tts\" uv pip install -r tts-requirements.txt",
     "setup:skills": "npx -y skills add remotion-dev/skills --skill \"*\" --agent claude-code -y"
   },
