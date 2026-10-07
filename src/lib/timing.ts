@@ -1,6 +1,9 @@
 // The only place scene lengths are computed. Every length comes from a video's
 // voiceover.json, after `npm run voice` has measured the audio.
 
+// One spoken word, in seconds from the start of its scene's WAV, punctuation left out.
+export type Word = { text: string; start: number; end: number };
+
 export type VoiceoverScene = {
   id: string;
   text: string;
@@ -12,6 +15,8 @@ export type VoiceoverScene = {
   durationSeconds: number;
   paddingSeconds: number;
   hash?: string;
+  // Written by `npm run voice`; missing in videos voiced before word timings existed.
+  words?: Word[];
 };
 
 export type Voiceover = {
