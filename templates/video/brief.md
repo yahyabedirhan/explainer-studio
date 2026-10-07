@@ -18,6 +18,11 @@
 
 ## Fonts
 
+## Look
+<!-- A named style from docs/styles/ (e.g. sketchbook), or "plain studio".
+For a named style, list per shot which of its looks it uses (sketchbook: paper or blueprint)
+and the one visual metaphor for each concept. -->
+
 ## Tone
 
 ## Scene list
