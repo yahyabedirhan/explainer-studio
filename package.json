@@ -40,6 +40,8 @@
     "sound": "tts/bin/python scripts/sound.py",
     "fframes-sync": "tts/bin/python scripts/fframes_sync.py",
     "new-video": "node scripts/new-video.mjs",
+    "render": "node scripts/render.mjs render",
+    "still": "node scripts/render.mjs still",
     "refs": "node scripts/refs.mjs",
     "sheet": "node scripts/sheet.mjs",
     "process": "node scripts/process-page.mjs",

@@ -4,7 +4,7 @@ import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
 import { homedir, tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { test } from "node:test";
-import { configFile, DEFAULT_ROOT, videosRoot } from "./videos-root.mjs";
+import { compositionId, configFile, DEFAULT_ROOT, outputDir, videoDir, videosRoot } from "./videos-root.mjs";
 
 const scratch = () => mkdtempSync(join(tmpdir(), "videos-root-"));
 const withConfig = (content) => {
@@ -48,4 +48,15 @@ test("a config file that is not JSON stops with its path", () => {
 
 test("without XDG_CONFIG_HOME the config file is under ~/.config", () => {
   assert.equal(configFile({}), join(homedir(), ".config/explainer-studio/config.json"));
+});
+
+test("a video's folder and its outputs folder are under the root", () => {
+  const env = { STUDIO_VIDEOS_DIR: "/scratch/root" };
+  assert.equal(videoDir("fixture-one", env), "/scratch/root/fixture-one");
+  assert.equal(outputDir("fixture-one", env), "/scratch/root/fixture-one/out");
+});
+
+test("a slug becomes its composition id", () => {
+  assert.equal(compositionId("shipyard-architecture"), "ShipyardArchitecture");
+  assert.equal(compositionId("fixture-2"), "Fixture2");
 });
