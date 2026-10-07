@@ -2,6 +2,8 @@
 
 Can the studio use GPU shader effects in its videos, with every frame a pure function of the Remotion frame? Spike of 2026-10-07. Yes, through `src/components/Shader.tsx`, with the conditions below. The step-by-step workflow is the [`shader-video` skill](../skills/shader-video/SKILL.md); this page holds the why.
 
+**Status: optional and experimental.** Shaders are an add-on to a studio or sketchbook video, used only when an effect carries the idea the narration explains, or when the user asks. The user picks every effect from a prototype sheet before scenes are built, because which effect looks right is a matter of taste. More trial is needed before shaders join the studio's defaults.
+
 ## What was tried
 
 - **The `shaders` package**: [shader-effects-inc/shaders](https://github.com/shader-effects-inc/shaders) at `935f71a7789f0e07811dfe6fd0d8f707e9848238`, installed from npm as `shaders@4.0.0`, whose `gitHead` is that same commit. It brings `typegpu@0.12.3`. Together they add 39 MB to `node_modules`.
