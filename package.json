@@ -13,6 +13,7 @@
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "remotion": "4.0.532",
+    "shaders": "4.0.0",
     "tailwindcss": "4.0.0"
   },
   "devDependencies": {
@@ -33,8 +34,12 @@
     "sound": "tts/bin/python scripts/sound.py",
     "fframes-sync": "tts/bin/python scripts/fframes_sync.py",
     "new-video": "node scripts/new-video.mjs",
+    "refs": "node scripts/refs.mjs",
+    "sheet": "node scripts/sheet.mjs",
+    "process": "node scripts/process-page.mjs",
     "setup:voice": "uv venv --allow-existing --python 3.12 tts && VIRTUAL_ENV=\"$PWD/tts\" uv pip install -r tts-requirements.txt",
-    "setup:skills": "npx -y skills add remotion-dev/skills --skill \"*\" --agent claude-code -y"
+    "setup:skills": "npx -y skills add remotion-dev/skills --skill \"*\" --agent claude-code -y",
+    "shader-catalogue": "node scripts/shader-catalogue.mjs"
   },
   "sideEffects": [
     "*.css"
