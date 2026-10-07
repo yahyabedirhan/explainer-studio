@@ -24,4 +24,4 @@ The studio's baseline look, and the default style for a new video: Remotion scen
 
 ## Asset sheet and storyboard in this style
 
-The asset sheet (`videos/<slug>/Sheet.tsx`, registered as the still `<Id>Sheet`) shows the palette, the type and every UI mock, icon and diagram element the scenes use. The storyboard is each scene built at its end pose before any motion: render a still of each scene's last frame, fix the layout, then add the motion on word cues.
+The asset sheet (`<root>/<slug>/Sheet.tsx`, registered as the still `<Id>Sheet` and rendered with `npm run still -- <slug> sheet-assets --sheet`) shows the palette, the type and every UI mock, icon and diagram element the scenes use. The storyboard is each scene built at its end pose before any motion: render a still of each scene's last frame, fix the layout, then add the motion on word cues.

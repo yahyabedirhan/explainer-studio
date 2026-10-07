@@ -58,12 +58,12 @@ Didn't:
 - Trails left on screen after a flight. Fade them once the object lands.
 - First frames after each cut as references: the heading is still typing and the shot is empty. The last frame of each shot is its key pose, so `npm run refs` saves both and tiles the key poses into `shots.png`.
 - `@remotion/noise`: installing it was blocked in the first spike, and `sketch.ts`'s own seeded value noise covers the need.
-- Copying video code (`.ts`) into `out/` for the process page broke the type check; `out/` is now excluded from it.
+- Copying video code (`.ts`) into the checkout's old `out/` for the process page broke the type check, so `out/` was excluded from it. Outputs now go in `<root>/<slug>/out/`, outside the repository.
 
 ## The videos so far
 
 1. **browsers-spike** (18 s): the reference's "dns lookup" (blueprint) and "tcp + tls handshake" (paper) shots, rebuilt from the frames. The style code started here.
-2. **sketchbook-demo** (26 s): how a git commit works, in three shots (git add on paper, the commit snapshot on blueprint, a branch as a moving label on paper), made by following the written recipe from the brief to the MP4, with every stage kept in `out/sketchbook-demo/process/process.html`.
+2. **sketchbook-demo** (26 s): how a git commit works, in three shots (git add on paper, the commit snapshot on blueprint, a branch as a moving label on paper), made by following the written recipe from the brief to the MP4, with every stage kept in its process page, now `<root>/sketchbook-demo/out/process/process.html`.
 
 3. **sketchbook-hashtable** (9 s): how a hash table finds a value, made by a fresh agent given only the idea and the skill, as a test of the skill. It came out in the style on the first try (a mascot feeding a key into a hand-cranked hash grinder on paper, then a blueprint jump straight to bucket 3), and its notes on where the skill was unclear became the fixes listed below.
 

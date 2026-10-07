@@ -40,6 +40,7 @@
     "sound": "tts/bin/python scripts/sound.py",
     "fframes-sync": "tts/bin/python scripts/fframes_sync.py",
     "new-video": "node scripts/new-video.mjs",
+    "root": "node --input-type=module -e \"import { videosRoot } from './scripts/lib/videos-root.mjs'; console.log(videosRoot())\"",
     "render": "node scripts/render.mjs render",
     "still": "node scripts/render.mjs still",
     "refs": "node scripts/refs.mjs",
@@ -47,7 +48,8 @@
     "process": "node scripts/process-page.mjs",
     "setup:voice": "uv venv --allow-existing --python 3.12 tts && VIRTUAL_ENV=\"$PWD/tts\" uv pip install -r tts-requirements.txt",
     "setup:skills": "npx -y skills add remotion-dev/skills --skill \"*\" --agent claude-code -y",
-    "shader-catalogue": "node scripts/shader-catalogue.mjs"
+    "shader-catalogue": "node scripts/shader-catalogue.mjs",
+    "acceptance": "bash scripts/acceptance.sh"
   },
   "sideEffects": [
     "*.css"
