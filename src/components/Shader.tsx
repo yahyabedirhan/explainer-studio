@@ -1,5 +1,5 @@
 // Effects from the `shaders` package (https://github.com/shader-effects-inc/shaders, MIT,
-// Copyright (c) 2026 Shader Effects Inc.), drawn one Remotion frame at a time. See docs/shaders.md.
+// Copyright (c) 2026 Shader Effects Inc.), drawn one Remotion frame at a time. See docs/styles/shaders.md.
 //
 // The package's own <Shader> runs a requestAnimationFrame loop on the wall clock, which flickers
 // in a render. This component drives the package's core WebGPU renderer instead: it never starts
@@ -162,7 +162,7 @@ export const Shader: React.FC<Props> = ({ layers, time, width, height, style }) 
     const r = shaderRendererGPU();
     let cancelled = false;
     r.setOnUnavailable((reason: string) => {
-      cancelRender(new Error(`<Shader>: the WebGPU renderer stopped (${reason}). See docs/shaders.md.`));
+      cancelRender(new Error(`<Shader>: the WebGPU renderer stopped (${reason}). See docs/styles/shaders.md.`));
     });
     r.initialize({ canvas, observeElement: false })
       .then(() => {

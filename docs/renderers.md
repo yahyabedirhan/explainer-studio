@@ -43,7 +43,7 @@ HyperFrames would be worth it if the studio wanted to drop existing HTML, CSS, G
 
 ## FFrames vs Remotion
 
-A second spike, also on 2026-10-07: [FFrames](fframes.md) ([dmtrKovalenko/fframes](https://github.com/dmtrKovalenko/fframes) at `30b48f3da60040e0fd7c811fdcd5b159e70a5b02`, crate `fframes` 1.2.0, Skia on Metal) against Remotion `4.0.532`. Both renderers built the same 16 s, five-scene piece: 1440x1080 at 24 fps, in the pixel and thermal ad style that [fframes.md](fframes.md) describes. Both used the same Kokoro narration, word timings and sound files. Remotion drew it with React, SVG and a WebGL shader layer (`ShaderLayer`). FFrames drew it with `svgr!` SVG and SkSL shaders. Both renders have 387 frames and -22.6 LUFS integrated, and a side-by-side contact sheet shows them frame for frame alike.
+A second spike, also on 2026-10-07: [FFrames](styles/fframes.md) ([dmtrKovalenko/fframes](https://github.com/dmtrKovalenko/fframes) at `30b48f3da60040e0fd7c811fdcd5b159e70a5b02`, crate `fframes` 1.2.0, Skia on Metal) against Remotion `4.0.532`. Both renderers built the same 16 s, five-scene piece: 1440x1080 at 24 fps, in the pixel and thermal ad style that [fframes.md](styles/fframes.md) describes. Both used the same Kokoro narration, word timings and sound files. Remotion drew it with React, SVG and a WebGL shader layer (`ShaderLayer`). FFrames drew it with `svgr!` SVG and SkSL shaders. Both renders have 387 frames and -22.6 LUFS integrated, and a side-by-side contact sheet shows them frame for frame alike.
 
 | | FFrames 1.2.0 | Remotion 4.0.532 |
 |---|---|---|

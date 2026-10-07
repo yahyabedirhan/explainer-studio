@@ -1,6 +1,6 @@
 # FFrames
 
-What FFrames is, how the video that made it popular was built, what that video's look is made of, and how to set FFrames up on this Mac. Spike of 2026-10-07. The comparison with Remotion is in [renderers.md](renderers.md). The steps to make a video with it are in [the `fframes-studio-video` skill](../skills/fframes-studio-video/SKILL.md).
+What FFrames is, how the video that made it popular was built, what that video's look is made of, and how to set FFrames up on this Mac. Spike of 2026-10-07. The comparison with Remotion is in [renderers.md](../renderers.md). The steps to make a video with it are in [the `fframes-studio-video` skill](../../skills/fframes-studio-video/SKILL.md).
 
 Sources: [dmtrKovalenko/fframes](https://github.com/dmtrKovalenko/fframes) at `30b48f3da60040e0fd7c811fdcd5b159e70a5b02` (2026-10-06), the crate `fframes` 1.2.0 that `cargo fframes new` pins, [fframes.studio](https://fframes.studio), and the post [x.com/neogoose_btw/status/2107645063895699515](https://x.com/neogoose_btw/status/2107645063895699515).
 

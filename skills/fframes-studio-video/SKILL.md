@@ -5,7 +5,7 @@ description: Make a narrated video with FFrames (Rust, SVG, GPU shaders) inside 
 
 # FFrames video in the studio
 
-FFrames draws the picture. The studio supplies the rest: Kokoro voice with word timings, synthesized sound, private video folders and the final checks. [docs/fframes.md](../../docs/fframes.md) says why, and holds the install record and the gotchas.
+FFrames draws the picture. The studio supplies the rest: Kokoro voice with word timings, synthesized sound, private video folders and the final checks. [docs/fframes.md](../../docs/styles/fframes.md) says why, and holds the install record and the gotchas.
 
 First load the `fframes-video` skill (installed in `~/.agents/skills/fframes-video/`). It is the reference for the FFrames API, design, sound placement and the project CLI. Read its `references/design.md` before you design and its `references/api.md` while you write code. This file adds only what the studio changes. Where the two disagree, this file wins.
 
@@ -37,7 +37,7 @@ First load the `fframes-video` skill (installed in `~/.agents/skills/fframes-vid
    ```
    - The `multi-scene` template already has `Scene` structs and `define_scenes`. It takes only `landscape` and `uhd`. For other formats, use `single-scene` and add the scenes yourself.
    - Set `WIDTH` and `HEIGHT` in `src/lib.rs` when they differ from the format.
-   - Put static TTF fonts in `media/` (see the font gotcha in `docs/fframes.md`).
+   - Put static TTF fonts in `media/` (see the font gotcha in `docs/styles/fframes.md`).
    - The template's `main.rs` takes a `--title` flag, and `tests/frames.rs` builds the video with `Video::new(&media, "Title")`. Keep both in step with your constructor, or delete the flag and the test.
 3. **Voice.** Put one scene per narration line in `videos/<slug>/voiceover.json` (`id`, `text`, `voice`, `speed`, `audioFile: ""`, `durationSeconds: 0`, `paddingSeconds`). Write the lines for the ear ([PRONUNCIATION.md](../../PRONUNCIATION.md)). Then run `npm run voice -- <slug>`. If the total runs long, shorten the lines or raise `speed` (up to about 1.1), and run it again.
    - Done when: every scene in `voiceover.json` has a `durationSeconds` and `words`.
@@ -86,4 +86,4 @@ Report the MP4 path, its length, the strip path, the LUFS figure and the command
 
 ## Style: pixel and thermal ad
 
-When asked for "the FFrames ad look", or for pixel or thermal style, follow the style section of [docs/fframes.md](../../docs/fframes.md#style-the-pixel-and-thermal-ad). The studio has no image generator. Draw the pixel icons as character grids turned into SVG `rect`s with an extruded darker copy, and the thermal figures as SVG paths filled with a radial heat ramp, softened with `feTurbulence`, `feDisplacementMap` and `feGaussianBlur`. Draw the four-point star and the bokeh as SkSL shaders. A working example of every piece is the spike project in `videos/fframes-spike/fframes/` on the machine that made it, if it is still there.
+When asked for "the FFrames ad look", or for pixel or thermal style, follow the style section of [docs/fframes.md](../../docs/styles/fframes.md#style-the-pixel-and-thermal-ad). The studio has no image generator. Draw the pixel icons as character grids turned into SVG `rect`s with an extruded darker copy, and the thermal figures as SVG paths filled with a radial heat ramp, softened with `feTurbulence`, `feDisplacementMap` and `feGaussianBlur`. Draw the four-point star and the bokeh as SkSL shaders. A working example of every piece is the spike project in `videos/fframes-spike/fframes/` on the machine that made it, if it is still there.
