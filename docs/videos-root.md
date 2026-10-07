@@ -14,6 +14,14 @@ Each video is `<root>/<slug>/`, and its outputs (stills, contact sheet, process 
 
 To test without touching your videos, point the root at a scratch folder: `STUDIO_VIDEOS_DIR=$(mktemp -d) npm run new-video -- fixture`. `npm test` checks the resolution order with scratch folders only.
 
+## The Python scripts
+
+`scripts/videos_root.py` mirrors `scripts/lib/videos-root.mjs` with the standard library only: the same order and edge cases. A config file that is not JSON, or whose `videosDir` is not a string, stops the script with its path. `npm test` runs its tests (`scripts/videos_root_test.py`) after the Node tests.
+
+- `npm run voice` reads `<root>/<slug>/voiceover.json` and writes `<root>/<slug>/audio/`. With no slug, it voices every video in the root.
+- `npm run sound` writes `<root>/<slug>/assets/sound/`.
+- `npm run fframes-sync` writes `<root>/<slug>/fframes/src/timing.rs` and links the WAVs into `<root>/<slug>/fframes/assets/`. The FFrames project stays inside its video's folder.
+
 ## What `npm run new-video` writes
 
 - `<root>/<slug>/`, from `templates/video/`. Its code imports shared studio code as `@studio/...`.
