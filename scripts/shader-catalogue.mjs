@@ -34,6 +34,8 @@ for (const entry of shaderRegistry) {
     .filter(([, c]) => c && "default" in c && JSON.stringify(c.default).length < 40)
     .filter(([k], i) => i < 6 || k === "speed")
     .map(([k, c]) => `${k}=${value(c.default)}`)
+    // A default list of stops overrides colorA and colorB; the column says so.
+    .concat(Array.isArray(entry.definition.props?.stops?.default) ? ["stops=a default palette that wins over colorA/colorB (pass null to use them)"] : [])
     .join(", ");
   const row = `| ${entry.name} | ${cell(entry.description)} | ${cell(props)} | ${status(entry.name, role)} |`;
   groups.set(role, [...(groups.get(role) ?? []), row]);

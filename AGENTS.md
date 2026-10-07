@@ -63,6 +63,7 @@ Read `.claude/skills/remotion-best-practices/SKILL.md` and the references it rou
 | Write scene lengths inline as literal numbers | Lengths come from `voiceover.json` through `src/lib/timing.ts`. |
 | `remotion-markup/voiceover.md`: ElevenLabs, ask the user for an API key, size the composition with `calculateMetadata` | Kokoro through `npm run voice`, which needs no key. Lengths as above. |
 | `remotion-markup/sfx.md`: `remotion.media` URLs, search the internet | Sound effects are local files in the video's `assets/`: made locally (`npm run sound`, or your own script in the `./tts` venv, which has numpy and soundfile), or a freely licensed file with its source and licence noted beside it. |
+| `remotion-markup/REFERENCE.md`: make components editable with `Interactive.withSchema` and `Interactive.Div` | Plain JSX components and `<div>`s, as the studio's components and `skills/shader-video/patterns.md` do. |
 | `remotion-captions/`: transcribe the voiceover with Whisper, then show a copied Basic Captions element fed an inline caption array | Captions are the script: use `<Captions>`, which shows each scene's `caption ?? text` from `voiceover.json`, timed by its word timings. |
 
 ## Setting up again

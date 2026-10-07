@@ -57,6 +57,11 @@ export const Pixels: React.FC = () => {
 - **Layer props**: any effect prop from its `index.d.ts`, plus `opacity`, `blendMode`, `visible`, `transform`, `maskSource` and `maskType`.
 - **Colours** are hex strings. Positions are `{ x, y }` in 0 to 1, y down.
 
+## Effect gotchas
+
+- **`stops` wins over `colorA` and `colorB`.** Gradients with a `stops` prop (`MeshGradient` and others) default to a warm multi-colour palette. To set the colours, pass `stops: null` to fall back to `colorA` and `colorB`, or pass your own `stops`, for example `stops: [{ color: "#0b3d91", position: 0 }, { color: "#4f8ef7", position: 1 }]`; check the stop shape in the effect's `index.d.ts`.
+- **Wipes hide as `progress` rises.** On `IrisWipe` and the other wipes, `progress` 0 shows the child and 1 has wiped it away, from the centre outward. To open a circle that grows from the centre, set `invert: true` and animate `progress` from 1 to 0; to close one onto the centre, `invert: true` from 0 to 1.
+
 ## Sound on cues
 
 ```tsx
