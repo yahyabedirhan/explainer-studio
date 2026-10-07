@@ -19,7 +19,7 @@ Each video is one folder, `<root>/<slug>/`:
 - `brief.md` holds the brief and script, `voiceover.json` its scenes, `config.ts` its fps and size, `Video.tsx` the sequence (its default export), `scenes/` one file per scene, `assets/` its images and sound effects, `audio/` the generated voice.
 - `out/`: every render and check of the video: stills, the MP4, the contact sheet, reference frames and the process page.
 
-The root is Remotion's public folder, so `staticFile("<slug>/assets/logo.png")` reaches a video's own file. Video code imports the studio's shared code as `@studio/...`, for example `@studio/lib/words`. A checkout that still has its own `videos/` and `out/` moves them into the root with `npm run migrate`: `docs/videos-root.md`, "Migration".
+The root is Remotion's public folder, so `staticFile("<slug>/assets/logo.png")` reaches a video's own file. Video code imports the studio's shared code as `@studio/...`, for example `@studio/lib/words`.
 
 ## How a video is made
 
