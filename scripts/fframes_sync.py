@@ -4,8 +4,10 @@
 
 Reads videos/<slug>/voiceover.json (after `npm run voice`) and writes
 videos/<slug>/fframes/src/timing.rs: per scene, its length in frames (the same
-ceil((durationSeconds + paddingSeconds) x fps) as src/lib/timing.ts), its spoken
-words with their start frame (rounded half up, like `wordFrame`), and its caption.
+ceil((durationSeconds + paddingSeconds) x fps) as src/lib/timing.ts), its first
+frame in the whole video, its spoken words with their start frame (rounded half up,
+like `wordFrame`), and its caption split into the words to show, punctuation kept,
+each with the frame it is spoken on.
 It also links every narration WAV (audio/) and sound effect (assets/sound/) into
 videos/<slug>/fframes/assets/, the folder the project loads at runtime with
 `MediaDirectory::read_folder("assets")`.
@@ -50,6 +52,7 @@ def main():
         "",
     ]
     ids = []
+    start = 0
     for scene in voiceover["scenes"]:
         if not scene.get("durationSeconds") or not scene.get("words"):
             raise SystemExit(f'Scene "{scene["id"]}" has no voice yet. Run: npm run voice -- {args.video}')
@@ -60,15 +63,28 @@ def main():
             f'({rust_str(w["text"])}, {math.floor(w["start"] * args.fps + 0.5)})' for w in scene["words"]
         )
         audio = Path(scene["audioFile"]).name
+        shown_text = scene.get("caption") or scene["text"]
+        tokens = shown_text.split()
+        if len(tokens) != len(scene["words"]):
+            print(f'warning: scene "{scene["id"]}" shows {len(tokens)} words but says {len(scene["words"])}; '
+                  f"{name}_SHOWN pairs them by position up to the shorter list")
+        shown = ", ".join(
+            f'({rust_str(t)}, {math.floor(w["start"] * args.fps + 0.5)})' for t, w in zip(tokens, scene["words"])
+        )
         lines += [
             f"/// {scene['id']}",
             f"pub const {name}_FRAMES: usize = {frames};",
+            f"/// First frame of the scene in the whole video, for `frame.global_index` maths.",
+            f"pub const {name}_START: usize = {start};",
             f"pub const {name}_AUDIO: &str = {rust_str(audio)};",
             f"pub const {name}_TEXT: &str = {rust_str(scene.get('caption') or scene['text'])};",
             f"/// Each spoken word and the scene-relative frame it starts on.",
             f"pub const {name}_WORDS: &[(&str, usize)] = &[{words}];",
+            f"/// The caption's words as shown (punctuation kept), each with the frame it is spoken on.",
+            f"pub const {name}_SHOWN: &[(&str, usize)] = &[{shown}];",
             "",
         ]
+        start += frames
     total = " + ".join(f"{n}_FRAMES" for n in ids)
     lines.append(f"pub const TOTAL_FRAMES: usize = {total};")
     (project / "src" / "timing.rs").write_text("\n".join(lines) + "\n")
@@ -85,6 +101,7 @@ def main():
             linked.append(wav.name)
 
     print(f"wrote {project.relative_to(ROOT)}/src/timing.rs ({len(ids)} scenes)")
+    print(f"total: {start} frames = {start / args.fps:.3f} s (use this for npm run sound --seconds)")
     print(f"linked into {assets.relative_to(ROOT)}: {', '.join(linked) or 'nothing'}")
 
 
