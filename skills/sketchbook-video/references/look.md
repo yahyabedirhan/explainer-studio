@@ -36,3 +36,40 @@ Two looks, one per shot, alternating on every cut. The frame is 1920x1080; keep 
 - `dial(ctx, label, k, theme)`: the chapter at top right ("1 · fetch"); `k` fills from the shot's share of the video.
 - `label(ctx, text, x, y, p, col, size)`: a centred Inter label that types on. Use `#DDE1FF` on blueprint.
 - Type: Inter 600 for headings, Inter 500 for labels, IBM Plex Mono for anything typed into a pill or on a card. Pass `FONTS` to `CanvasScene` so the first frame waits for them.
+
+## Asset sheet skeleton
+
+`videos/<slug>/Sheet.tsx`, rendered with `npx remotion still <Id>Sheet out/<slug>/sheet-assets.png`. Paper on the left, blueprint on the right; `videos/sketchbook-demo/Sheet.tsx` is a full example if it exists on this machine.
+
+```tsx
+import { useCallback } from "react";
+import { CanvasScene, type DrawFn } from "../../src/components/CanvasScene";
+import { blueprintBg, FONTS, heading, mascot, paperBg, pill } from "../../src/styles/sketchbook";
+
+const Sheet: React.FC = () => {
+  const draw: DrawFn = useCallback((ctx, { width, height }) => {
+    const half = width * 0.56;
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(0, 0, half, height);
+    ctx.clip();
+    paperBg(ctx, width, height);
+    heading(ctx, "asset sheet", 1, "paper");
+    // palette swatches, the mascot in every pose the video uses, every paper prop
+    mascot(ctx, 200, 560, { boil: 0, frame: 10, mood: "happy", scale: 0.8 });
+    ctx.restore();
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(half, 0, width - half, height);
+    ctx.clip();
+    blueprintBg(ctx, width, height, 0);
+    // every blueprint pill, node and line the video uses
+    pill(ctx, "example", half + 300, 360, { size: 30 });
+    ctx.restore();
+  }, []);
+  return <CanvasScene draw={draw} fonts={FONTS} />;
+};
+
+export default Sheet;
+```

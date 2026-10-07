@@ -16,6 +16,8 @@ Every move is one of these. Time each with `ramp(frame, cue, cue + n)` on a narr
 | **Flash ring** | an ellipse growing and fading from a node | a snapshot, a commit, a "now" |
 | **Hard cut** | consecutive `<Series.Sequence>`s with no transition | between shots, always with a change of look |
 
+Keep any rotation under about a quarter turn per frame (6 turns a second at 24 fps); faster spins strobe and look frozen.
+
 Small life on top: the mascot bobs and blinks by itself, `armUp` raises to throw or cheer, a sleeping thing has Zs.
 
 ## Scene skeleton
@@ -68,6 +70,7 @@ export const Shot: React.FC = () => {
     <>
       <CanvasScene draw={draw} fonts={FONTS} />
       <Audio src={staticFile(scene.audioFile)} />
+      {/* Effects: add in the sound step, once assets/sound/ exists. */}
       <Sequence from={first} durationInFrames={fps} premountFor={fps}>
         <Audio src={sfx("pop")} volume={0.5} />
       </Sequence>

@@ -24,19 +24,23 @@ const inline = (s) =>
     .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
     .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
 
-// Enough Markdown for notes: headings, paragraphs, lists, fenced code and tables as text.
+// Enough Markdown for notes: headings, paragraphs, lists, fenced code and tables.
 const markdown = (text) => {
   const html = [];
   let list = null;
   let code = null;
   let para = [];
+  let table = false;
   const flush = () => {
+    if (table) html.push("</table>");
+    table = false;
     if (para.length) html.push(`<p>${inline(para.join(" "))}</p>`);
     para = [];
     if (list) html.push(`</${list}>`);
     list = null;
   };
   for (const line of text.split("\n")) {
+    if (table && !line.startsWith("|")) flush();
     if (code !== null) {
       if (line.startsWith("```")) {
         html.push(`<pre><code>${esc(code.join("\n"))}</code></pre>`);
@@ -60,9 +64,23 @@ const markdown = (text) => {
       }
       html.push(`<li>${inline(line.replace(/^\s*([-*]|\d+\.) /, ""))}</li>`);
     } else if (line.trim() === "") flush();
-    else if (line.startsWith("|"))
-      html.push(`<pre class="table">${esc(line)}</pre>`);
-    else para.push(line.trim());
+    else if (line.startsWith("|")) {
+      const cells = line
+        .replace(/^\|/, "")
+        .replace(/\|\s*$/, "")
+        .split("|")
+        .map((c) => c.trim());
+      if (cells.every((c) => /^:?-+:?$/.test(c))) continue;
+      const tag = table ? "td" : "th";
+      if (!table) {
+        flush();
+        html.push("<table>");
+        table = true;
+      }
+      html.push(
+        `<tr>${cells.map((c) => `<${tag}>${inline(c)}</${tag}>`).join("")}</tr>`,
+      );
+    } else para.push(line.trim());
   }
   flush();
   return html.join("\n");
@@ -85,7 +103,7 @@ const sections = stages.map((dir) => {
       const src = `${dir}/${encodeURIComponent(f)}`;
       const ext = extname(f).toLowerCase();
       if ([".png", ".jpg", ".jpeg", ".webp", ".gif"].includes(ext))
-        return `<figure><a href="${src}"><img src="${src}" alt="${esc(f)}" loading="lazy"></a><figcaption>${esc(f)}</figcaption></figure>`;
+        return `<figure><a href="${src}"><img src="${src}" alt="${esc(f)}"></a><figcaption>${esc(f)}</figcaption></figure>`;
       if ([".mp4", ".webm"].includes(ext))
         return `<figure class="wide"><video src="${src}" controls preload="metadata"></video><figcaption>${esc(f)}</figcaption></figure>`;
       if ([".wav", ".mp3", ".m4a"].includes(ext))
@@ -128,7 +146,9 @@ h3 { font-size:17px; margin:20px 0 6px; }
 p, li { max-width:72ch; }
 code { font:14px ui-monospace, monospace; background:var(--card); padding:1px 4px; border-radius:4px; }
 pre { background:var(--card); border:1px solid var(--line); border-radius:8px; padding:12px; overflow:auto; font-size:13px; }
-pre.table { margin:0; border-radius:0; border-top:0; padding:2px 12px; }
+table { border-collapse:collapse; margin:12px 0; font-size:14px; }
+th, td { border:1px solid var(--line); padding:6px 10px; text-align:left; vertical-align:top; }
+th { background:var(--card); }
 .media { display:grid; grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)); gap:16px; margin-top:16px; }
 figure { margin:0; background:var(--card); border:1px solid var(--line); border-radius:8px; padding:8px; }
 figure.wide { grid-column:1 / -1; }
