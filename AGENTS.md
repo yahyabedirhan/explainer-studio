@@ -22,6 +22,7 @@ Make and keep videos in the studio's main checkout, on `main`. A worktree's igno
 - `videos/<slug>/`: everything one video needs, ignored by git. `brief.md` holds the brief and script, `voiceover.json` its scenes, `config.ts` its fps and size, `Video.tsx` the sequence (its default export), `scenes/` one file per scene, `assets/` its images and sound effects, and `audio/` the generated voice. `videos/` is Remotion's public folder, so `staticFile("<slug>/assets/logo.png")` reaches a video's own file.
 - `src/lib/timing.ts`: the only place scene lengths are computed, as `ceil((durationSeconds + paddingSeconds) x fps)`.
 - `src/lib/words.ts`: `useWord(voiceover, sceneId, phrase, occurrence?)`, plus `wordFrame` and `wordEndFrame`, give the frame where a narration word starts or ends. A phrase the scene never says throws.
+- `src/lib/sketch.ts`: pure, seeded drawing helpers for canvas scenes: easing, value noise, point-list shapes, `partial` for draw-on strokes, `wobble` and `ink` for a boiling pen line, `hatch` for shading.
 - `src/Root.tsx`: registers each folder in `videos/` that has a `Video.tsx`, `config.ts` and `voiceover.json`, as a composition named after its slug (`shipyard-architecture` is `ShipyardArchitecture`).
 - `src/components/`: building blocks shared by videos.
   - `Captions.tsx`: word-timed captions from a scene's `caption ?? text`.
@@ -29,6 +30,7 @@ Make and keep videos in the studio's main checkout, on `main`. A worktree's igno
   - `Travel.tsx`: moves a child along a Bézier path.
   - `Typewriter.tsx`: types text out over frames.
   - `Grain.tsx`: film-grain overlay.
+  - `CanvasScene.tsx`: a full-frame `<canvas>` that a scene repaints from scratch each frame with `draw(ctx, { frame, ... })`, after its fonts load. Use it for hand-drawn or diagram-heavy shots where the code draws every frame.
 - `scripts/tts.py`: Kokoro voice generation (`npm run voice`). It also writes each scene's `words` (`text`, `start`, `end`, seconds from the scene WAV's start) into `voiceover.json`. The venv is `./tts`, Python 3.12, pinned in `tts-requirements.txt`.
 - `scripts/sound.py`: `npm run sound -- <slug> --seconds <N> [--bpm 96] [--seed 1]` synthesizes a music bed, an end sting and click, tick, whoosh and pop effects into `videos/<slug>/assets/sound/`, with a `SOURCES.md`.
 - `docs/renderers.md`: why the studio keeps Remotion over HyperFrames.
