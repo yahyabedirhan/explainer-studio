@@ -18,18 +18,26 @@ const [slug] = args;
 const file = flag("file", slug && join("out", slug, `${slug}.mp4`));
 const out = flag("out", slug && join("out", slug, "sheet.png"));
 if (!slug || !(every > 0)) {
-  console.error("Usage: npm run sheet -- <slug> [--every <seconds>] [--file <video>] [--out <png>]");
+  console.error(
+    "Usage: npm run sheet -- <slug> [--every <seconds>] [--file <video>] [--out <png>]",
+  );
   process.exit(1);
 }
 if (!existsSync(file)) {
-  console.error(`${file} does not exist. Render first: npx remotion render <Id> ${file}`);
+  console.error(
+    `${file} does not exist. Render first: npx remotion render <Id> ${file}`,
+  );
   process.exit(1);
 }
 
 const duration = Number(
-  execFileSync("ffprobe", ["-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", file], {
-    encoding: "utf8",
-  }),
+  execFileSync(
+    "ffprobe",
+    ["-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", file],
+    {
+      encoding: "utf8",
+    },
+  ),
 );
 const count = Math.ceil(duration / every);
 const cols = 7;
@@ -46,4 +54,6 @@ execFileSync("ffmpeg", [
   "1",
   out,
 ]);
-console.log(`${out}: ${count} frames, one every ${every} s, ${cols} across, read left to right.`);
+console.log(
+  `${out}: ${count} frames, one every ${every} s, ${cols} across, read left to right.`,
+);

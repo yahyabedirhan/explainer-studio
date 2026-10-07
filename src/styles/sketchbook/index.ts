@@ -5,4 +5,5 @@ export * from "./hud";
 export * from "./mascot";
 export * from "./paper";
 export * from "./props";
+export * from "./storyboard";
 export * from "./theme";

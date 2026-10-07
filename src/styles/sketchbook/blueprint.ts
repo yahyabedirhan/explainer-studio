@@ -6,8 +6,9 @@ import {
   ellipse,
   type Pt,
   tracePath,
+  typed,
 } from "../../lib/sketch";
-import { LINE } from "./theme";
+import { LINE, MONO } from "./theme";
 import { speckles } from "./paper";
 
 export const blueprintBg = (ctx: Ctx, w: number, h: number, frame: number) => {
@@ -224,3 +225,48 @@ export const book = (ctx: Ctx, cx: number, cy: number) => {
 };
 
 // The mascot again, as a glowing outline robot.
+
+type PillOpts = {
+  size?: number; // font size in px
+  p?: number; // 0..1 of the text typed so far
+  bar?: string; // colour of a cursor bar at the left, or none
+  highlight?: boolean; // a brighter fill, for the thing being talked about
+};
+
+// A glowing rounded pill with mono text, centred on (cx, cy), sized to the full text
+// so it never grows while typing. Returns its width.
+export const pill = (
+  ctx: Ctx,
+  text: string,
+  cx: number,
+  cy: number,
+  o: PillOpts = {},
+) => {
+  const size = o.size ?? 30;
+  ctx.save();
+  ctx.font = `500 ${size}px ${MONO}`;
+  const pad = size * 0.8 + (o.bar ? size * 0.5 : 0);
+  const w = ctx.measureText(text).width + pad * 2;
+  const h = size * 1.7;
+  const x = cx - w / 2;
+  glow(ctx, "#8C9BFF", 14, () => {
+    ctx.fillStyle = o.highlight
+      ? "rgba(150,165,255,0.22)"
+      : "rgba(20,26,62,0.6)";
+    ctx.strokeStyle = LINE;
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.roundRect(x, cy - h / 2, w, h, h / 2);
+    ctx.fill();
+    ctx.stroke();
+  });
+  if (o.bar) {
+    ctx.fillStyle = o.bar;
+    ctx.fillRect(x + size * 0.6, cy - size * 0.55, 4, size * 1.1);
+  }
+  ctx.fillStyle = "#F2F4FF";
+  ctx.textBaseline = "middle";
+  ctx.fillText(typed(text, o.p ?? 1), x + pad, cy + 2);
+  ctx.restore();
+  return w;
+};
