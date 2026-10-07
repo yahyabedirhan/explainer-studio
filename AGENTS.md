@@ -24,6 +24,7 @@ Make and keep videos in the studio's main checkout, on `main`. A worktree's igno
 - `src/lib/words.ts`: `useWord(voiceover, sceneId, phrase, occurrence?)`, plus `wordFrame` and `wordEndFrame`, give the frame where a narration word starts or ends. A phrase the scene never says throws.
 - `src/lib/sketch.ts`: pure, seeded drawing helpers for canvas scenes: easing, value noise, point-list shapes, `partial` for draw-on strokes, `wobble` and `ink` for a boiling pen line, `hatch` for shading.
 - `src/Root.tsx`: registers each folder in `videos/` that has a `Video.tsx`, `config.ts` and `voiceover.json`, as a composition named after its slug (`shipyard-architecture` is `ShipyardArchitecture`).
+- `src/styles/sketchbook/`: the sketchbook style's palettes, fonts, paper and blueprint backgrounds, heading and stage dial, mascot and props, drawn on a `CanvasScene`. Its recipe is [docs/styles/sketchbook.md](docs/styles/sketchbook.md).
 - `src/components/`: building blocks shared by videos.
   - `Captions.tsx`: word-timed captions from a scene's `caption ?? text`.
   - `Cursor.tsx`: a pointer on an eased path; `cursorAt` gives its position and press state, for drags.
