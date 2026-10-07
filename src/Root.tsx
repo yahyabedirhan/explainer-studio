@@ -2,13 +2,14 @@ import "./index.css";
 import { Composition, Folder, Still } from "remotion";
 import { totalFrames, Voiceover } from "./lib/timing";
 
-// Every video is a folder in videos/, which git ignores: the repository is public, and a
-// video can show private projects. Root finds each folder by itself, so adding a video
-// changes no tracked file. Lengths always come from voiceover.json.
+// Every video is a folder in the videos root, which the @videos alias in remotion.config.ts
+// names. Git never sees it: the repository is public, and a video can show private projects.
+// Root finds each folder by itself, so adding a video changes no tracked file.
+// Lengths always come from voiceover.json.
 // An optional Sheet.tsx (the video's asset sheet: palette, type, characters, props) is
 // registered as a still, <Id>Sheet, before the video has a voice.
 const files = require.context(
-  "../videos",
+  "@videos",
   true,
   /^\.\/[a-z0-9-]+\/(Video\.tsx|Sheet\.tsx|config\.ts|voiceover\.json)$/,
 );
