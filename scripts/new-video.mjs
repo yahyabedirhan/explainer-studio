@@ -4,6 +4,7 @@
 // The root and its tsconfig.json are created when missing.
 import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
+import { writeRootTsconfig } from "./lib/root-tsconfig.mjs";
 import { compositionId, videosRoot } from "./lib/videos-root.mjs";
 
 const studio = resolve(import.meta.dirname, "..");
@@ -26,7 +27,7 @@ if (existsSync(dest)) {
 const component = compositionId(slug);
 const title = slug.replace(/-/g, " ");
 mkdirSync(root, { recursive: true });
-writeRootTsconfig();
+writeRootTsconfig(root, studio);
 cpSync(join(studio, "templates", "video"), dest, { recursive: true });
 
 const fill = (dir) => {
@@ -55,33 +56,3 @@ Studio and renders find it as ${component} once it has a voice:
 
 npm run voice -- ${slug}`);
 
-// Editor types for video code in the root: extend this checkout's tsconfig and resolve
-// @studio/* and every package from it. A file another checkout wrote is kept while that
-// checkout exists, so checkouts sharing one root don't rewrite it back and forth.
-function writeRootTsconfig() {
-  const file = join(root, "tsconfig.json");
-  if (existsSync(file)) {
-    let base;
-    try {
-      base = JSON.parse(readFileSync(file, "utf8")).extends;
-    } catch {
-      return;
-    }
-    if (typeof base !== "string" || existsSync(base)) return;
-  }
-  const modules = join(studio, "node_modules");
-  const tsconfig = {
-    extends: join(studio, "tsconfig.json"),
-    compilerOptions: {
-      paths: {
-        "@studio/*": [join(studio, "src", "*")],
-        // @types first: a package such as react ships its code without types.
-        "*": [join(modules, "@types", "*"), join(modules, "*")],
-      },
-      typeRoots: [join(modules, "@types")],
-    },
-    include: ["*/**/*.ts", "*/**/*.tsx"],
-    exclude: ["*/out", "**/node_modules", "**/target"],
-  };
-  writeFileSync(file, `${JSON.stringify(tsconfig, null, 2)}\n`);
-}
