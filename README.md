@@ -24,6 +24,17 @@ src/lib/timing.ts   frames = ceil((durationSeconds + paddingSeconds) × fps)
 
 No scene length is ever typed by hand, and reveals are cued on spoken words with `useWord` from `src/lib/words.ts`.
 
+## Styles
+
+Pick a style for each video; the agent recommends one when it asks its questions.
+
+- **Studio** (default): Remotion scenes with real interfaces, bold type and diagrams.
+- **Sketchbook**: paper and blueprint shots drawn in code, for a concept in under a minute.
+- **FFrames**: the Rust renderer, for effect-heavy pieces.
+- **Shaders**: an optional, experimental add-on; you pick the effects from a prototype sheet first.
+
+`AGENTS.md` is the entry point for the process, `docs/pipeline.md` describes the twelve layers from idea to MP4, and `docs/styles/` holds a page per style.
+
 ## Layout
 
 ```text
@@ -48,7 +59,9 @@ scripts/
 templates/video/           what new-video copies
 AGENTS.md                  the rules agents follow here
 PRONUNCIATION.md           fixing words Kokoro says wrong
-docs/renderers.md          why Remotion over HyperFrames
+docs/pipeline.md           the twelve layers from idea to MP4
+docs/styles/               one page per style
+docs/renderers.md          renderer benchmarks: Remotion default, FFrames, HyperFrames dropped
 ```
 
 Git ignores `videos/`, `out/`, the `tts/` venv and the agent skills.

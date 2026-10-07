@@ -2,6 +2,8 @@
 
 Is another code renderer better than Remotion for this studio's videos: every frame a pure function of time, word-timed reveals, a cursor that drags a box? Spike of 2026-10-07.
 
+**Outcome.** Remotion is the default renderer and FFrames the alternative for effect-heavy pieces (section "FFrames vs Remotion"). HyperFrames was dropped: it showed no advantage the studio needs, so it has no skill, and this page keeps its benchmark as the record.
+
 ## What was tried
 
 - **HyperFrames** (HTML + GSAP, seeks a paused timeline per frame): [heygen-com/hyperframes](https://github.com/heygen-com/hyperframes) at `5c7f6316d3646477a0f725176c00335cb8575560`, CLI `hyperframes@0.8.140` from npm.
