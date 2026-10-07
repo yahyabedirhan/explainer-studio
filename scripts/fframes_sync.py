@@ -2,14 +2,14 @@
 
     npm run fframes-sync -- <slug> --fps <N>
 
-Reads videos/<slug>/voiceover.json (after `npm run voice`) and writes
-videos/<slug>/fframes/src/timing.rs: per scene, its length in frames (the same
+Reads <root>/<slug>/voiceover.json under the videos root (after `npm run voice`)
+and writes <root>/<slug>/fframes/src/timing.rs: per scene, its length in frames (the same
 ceil((durationSeconds + paddingSeconds) x fps) as src/lib/timing.ts), its first
 frame in the whole video, its spoken words with their start frame (rounded half up,
 like `wordFrame`), and its caption split into the words to show, punctuation kept,
 each with the frame it is spoken on.
 It also links every narration WAV (audio/) and sound effect (assets/sound/) into
-videos/<slug>/fframes/assets/, the folder the project loads at runtime with
+<root>/<slug>/fframes/assets/, the folder the project loads at runtime with
 `MediaDirectory::read_folder("assets")`.
 
 Run it again after every `npm run voice` or `npm run sound`.
@@ -21,7 +21,7 @@ import math
 import re
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
+from videos_root import videos_root
 
 
 def const_name(scene_id: str) -> str:
@@ -38,7 +38,7 @@ def main():
     parser.add_argument("--fps", type=int, required=True, help="the fframes Video::FPS")
     args = parser.parse_args()
 
-    video = ROOT / "videos" / args.video
+    video = videos_root() / args.video
     project = video / "fframes"
     if not (project / "Cargo.toml").exists():
         raise SystemExit(f"{project} has no Cargo.toml. Create it with cargo fframes new first.")
@@ -100,9 +100,9 @@ def main():
             link.symlink_to(Path("..") / ".." / wav.relative_to(video))
             linked.append(wav.name)
 
-    print(f"wrote {project.relative_to(ROOT)}/src/timing.rs ({len(ids)} scenes)")
+    print(f"wrote {project}/src/timing.rs ({len(ids)} scenes)")
     print(f"total: {start} frames = {start / args.fps:.3f} s (use this for npm run sound --seconds)")
-    print(f"linked into {assets.relative_to(ROOT)}: {', '.join(linked) or 'nothing'}")
+    print(f"linked into {assets}: {', '.join(linked) or 'nothing'}")
 
 
 if __name__ == "__main__":

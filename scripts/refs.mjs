@@ -2,8 +2,8 @@
 //
 //   npm run refs -- <slug> <url> [--name <name>]
 //
-// Writes the video to videos/<slug>/refs/<name>.mp4 (git-ignored, like the rest of the
-// video) and, in out/<slug>/refs/<name>/:
+// Writes the video to <root>/<slug>/refs/<name>.mp4, beside the rest of the video under the
+// videos root (scripts/lib/videos-root.mjs), and, in <root>/<slug>/out/refs/<name>/:
 //   probe.txt     size, fps, length and audio of the download
 //   cuts.txt      the time of every hard cut (ffmpeg scene score above 0.3)
 //   cut-NN.png    the first frame of each shot (after each cut, plus the very first frame)
@@ -11,6 +11,7 @@
 //   sec-NN.png    one frame per second
 //   contact.png   all the per-second frames on one sheet, 8 across
 //   shots.png     every shot's key pose (the end-NN frames) on one sheet, 6 across
+// A <name>.mp4 already in refs/ is used as it is, with no download.
 // Needs yt-dlp and ffmpeg on PATH. Any URL yt-dlp reads works (X, LinkedIn, YouTube...).
 import { execFileSync } from "node:child_process";
 import {
@@ -21,6 +22,7 @@ import {
   writeFileSync,
 } from "node:fs";
 import { join } from "node:path";
+import { outputDir, videoDir } from "./lib/videos-root.mjs";
 
 const args = process.argv.slice(2);
 const flag = (name, fallback) => {
@@ -40,8 +42,8 @@ const run = (cmd, argv) =>
     stdio: ["ignore", "pipe", "pipe"],
   });
 
-const refDir = join("videos", slug, "refs");
-const outDir = join("out", slug, "refs", name);
+const refDir = join(videoDir(slug), "refs");
+const outDir = join(outputDir(slug), "refs", name);
 mkdirSync(refDir, { recursive: true });
 rmSync(outDir, { recursive: true, force: true });
 mkdirSync(outDir, { recursive: true });

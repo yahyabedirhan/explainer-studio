@@ -16,7 +16,7 @@ Two looks, one per shot, alternating on every cut. The frame is 1920x1080; keep 
 
 **Cast**: `mascot(ctx, cx, footY, { boil, frame, mood, armUp, squash, scale })` draws the red tomato robot standing on `footY` and returns its right hand's position. Hang anything it holds on that point. Moods: `determined` (frowning brows), `happy`, `calm`. `armUp` 0 to 1 raises the right arm; `squash` 0 to 1 flattens it on landing.
 
-**Props** (`props.ts`): `envelope`, `server` (sleeps with drifting Zs, wakes with `awake` 0 to 1), `certificate`, `key`, `padlock`, `bubble` (a word balloon in mono). A prop the style lacks goes in `videos/<slug>/draw/props.ts`, built from `rrect`, `ellipse`, `quad`, `fill`, `ink` and `hatch` with the pen line. Give each prop its own `seed` range so their wobbles differ.
+**Props** (`props.ts`): `envelope`, `server` (sleeps with drifting Zs, wakes with `awake` 0 to 1), `certificate`, `key`, `padlock`, `bubble` (a word balloon in mono). A prop the style lacks goes in `<root>/<slug>/draw/props.ts`, built from `rrect`, `ellipse`, `quad`, `fill`, `ink` and `hatch` with the pen line. Give each prop its own `seed` range so their wobbles differ.
 
 ## Blueprint: structure and data
 
@@ -39,12 +39,12 @@ Two looks, one per shot, alternating on every cut. The frame is 1920x1080; keep 
 
 ## Asset sheet skeleton
 
-`videos/<slug>/Sheet.tsx`, rendered with `npx remotion still <Id>Sheet out/<slug>/sheet-assets.png`. Paper on the left, blueprint on the right; `videos/sketchbook-demo/Sheet.tsx` is a full example if it exists on this machine.
+`<root>/<slug>/Sheet.tsx`, rendered with `npm run still -- <slug> sheet-assets --sheet` to `<root>/<slug>/out/sheet-assets.png`. Paper on the left, blueprint on the right; `<root>/sketchbook-demo/Sheet.tsx` is a full example if it exists on this machine.
 
 ```tsx
 import { useCallback } from "react";
-import { CanvasScene, type DrawFn } from "../../src/components/CanvasScene";
-import { blueprintBg, FONTS, heading, mascot, paperBg, pill } from "../../src/styles/sketchbook";
+import { CanvasScene, type DrawFn } from "@studio/components/CanvasScene";
+import { blueprintBg, FONTS, heading, mascot, paperBg, pill } from "@studio/styles/sketchbook";
 
 const Sheet: React.FC = () => {
   const draw: DrawFn = useCallback((ctx, { width, height }) => {

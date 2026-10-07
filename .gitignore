@@ -13,8 +13,9 @@ dist
 # Remotion's default public folder, unused: assets live in each video's folder.
 /public/
 
-# Kokoro venv and scratch files
+# Kokoro venv, Python bytecode and scratch files
 /tts
+__pycache__/
 .scratch/
 .claude/worktrees/
 

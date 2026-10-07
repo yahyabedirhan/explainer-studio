@@ -4,7 +4,7 @@ A local studio for narrated explainer videos, made by coding agents. [Remotion](
 
 It is built to be used as an **external tool**: your other projects keep only the idea for a video, and the studio holds every video and all the setup. Point an agent at a project, and it reads that project and makes the video here.
 
-**Your videos stay private.** This repository holds only the studio. Each video lives in its own folder under `videos/`, and its renders under `out/`, and git ignores both, so a video about a private project never reaches a commit.
+**Your videos stay private.** This repository holds only the studio. Every video, renders included, lives in its own folder in one videos root outside the repository (`~/.local/share/explainer-studio/videos` by default), so a video about a private project never reaches a commit. Every checkout and worktree of the studio shares that root. [AGENTS.md](AGENTS.md#the-videos-root) says how to move it, and [docs/videos-root.md](docs/videos-root.md) holds the detail.
 
 ## How it works
 
@@ -14,12 +14,12 @@ Narration is the clock. Each video has a `voiceover.json` that lists its scenes 
 voiceover.json   text, voice, speed per scene
    │  npm run voice   (only changed scenes are regenerated, by hash)
    ▼
-videos/<video>/audio/<scene>.wav  ──measured──▶  durationSeconds written back
+<root>/<video>/audio/<scene>.wav  ──measured──▶  durationSeconds written back
    │
    ▼
 src/lib/timing.ts   frames = ceil((durationSeconds + paddingSeconds) × fps)
    ├─▶ Video.tsx   each <Series.Sequence>
-   └─▶ Root.tsx    the whole <Composition>, found in videos/ by itself
+   └─▶ Root.tsx    the whole <Composition>, found in the videos root by itself
 ```
 
 No scene length is ever typed by hand, and reveals are cued on spoken words with `useWord` from `src/lib/words.ts`.
@@ -39,32 +39,42 @@ Pick a style for each video; the agent recommends one when it asks its questions
 
 ```text
 src/
-├── Root.tsx               finds every video in videos/ and registers it
+├── Root.tsx               finds every video in the videos root and registers it
 ├── lib/timing.ts          the only place scene lengths are computed
 ├── lib/words.ts           frames where narration words start and end
 └── components/            captions, cursor, travel, typewriter, grain
-videos/<video>/            ignored by git: everything one video needs
+<root>/<video>/            outside the repository: everything one video needs
 ├── brief.md               goal, audience, format, voice, scene list
 ├── voiceover.json         the scenes and their narration
 ├── config.ts              fps, size, colours
 ├── Video.tsx              the scenes in order
 ├── scenes/                one file per scene
 ├── assets/                its images and sound effects
-└── audio/                 the generated voice
-out/<video>/               ignored by git: renders and stills
+├── audio/                 the generated voice
+└── out/                   renders, stills and contact sheets
 scripts/
 ├── tts.py                 npm run voice
 ├── sound.py               npm run sound: music bed, sting, effects
-└── new-video.mjs          npm run new-video
+├── new-video.mjs          npm run new-video
+├── render.mjs             npm run render and npm run still
+├── migrate.mjs            npm run migrate: a checkout's videos/ and out/ into the root
+├── acceptance.sh          npm run acceptance: the whole flow in a scratch root
+├── videos_root.py         the root for the Python scripts
+└── lib/
+    ├── videos-root.mjs    resolves the videos root (npm run root)
+    ├── root-tsconfig.mjs  <root>/tsconfig.json, for npx tsc -p <root>
+    ├── migrate.mjs        the migration's plan and moves
+    └── *.test.mjs         npm test, with scripts/*_test.py
 templates/video/           what new-video copies
 AGENTS.md                  the rules agents follow here
 PRONUNCIATION.md           fixing words Kokoro says wrong
 docs/pipeline.md           the twelve layers from idea to MP4
 docs/styles/               one page per style
+docs/videos-root.md        the videos root: resolver, outputs, migration, limits
 docs/renderers.md          renderer benchmarks: Remotion default, FFrames, HyperFrames dropped
 ```
 
-Git ignores `videos/`, `out/`, the `tts/` venv and the agent skills.
+Git ignores the `tts/` venv and the agent skills. The videos root sits outside the repository, so git never sees it.
 
 ## Setup
 
@@ -86,18 +96,18 @@ Check it works with a throwaway video from the template:
 ```sh
 npm run new-video -- smoke-test
 npm run voice -- smoke-test
-npx remotion render SmokeTest out/smoke-test/smoke-test.mp4
+npm run render -- smoke-test     # <root>/smoke-test/out/smoke-test.mp4
 ```
 
 ## Making a video
 
 ```sh
-npm run new-video -- my-project-overview   # scaffold videos/my-project-overview
+npm run new-video -- my-project-overview   # scaffold <root>/my-project-overview
 npm run voice -- my-project-overview       # narration and timing
 npm run sound -- my-project-overview --seconds 90   # music bed and effects, at the final length
 npm run dev                                # Remotion Studio preview
-npx remotion still MyProjectOverview out/my-project-overview/frame.png --frame=60
-npx remotion render MyProjectOverview out/my-project-overview/my-project-overview.mp4
+npm run still -- my-project-overview frame --frame=60   # <root>/my-project-overview/out/frame.png
+npm run render -- my-project-overview      # <root>/my-project-overview/out/my-project-overview.mp4
 ```
 
 ## Using it from another project
@@ -109,12 +119,12 @@ Your project doesn't install anything. In an agent session (Claude Code, Codex, 
 [AGENTS.md](AGENTS.md) takes it from there. The agent:
 
 1. reads your project's code, docs and pull requests, and never writes to it;
-2. scaffolds `videos/<project>-<topic>/` here and fills in `brief.md`;
+2. scaffolds `<root>/<project>-<topic>/` and fills in `brief.md`;
 3. asks you once what you want to learn from the video, then drafts the script and scene plan around that, with no further check-ins;
 4. generates the voice, builds one scene per file, and looks at rendered stills itself;
-5. renders the MP4 to `out/<video>/` and checks its length and audio with ffprobe.
+5. renders the MP4 to `<root>/<video>/out/` and checks its length and audio with ffprobe.
 
-The video and its sources stay in the studio, on your machine only. Copy the MP4 wherever you need it.
+The video and its sources stay in the videos root, on your machine only. Copy the MP4 wherever you need it.
 
 ## Writing narration
 

@@ -1,10 +1,10 @@
 """Generate Kokoro voiceover for one video, or every video.
 
 Usage:
-    npm run voice                 # every video in videos/
+    npm run voice                 # every video in the videos root
     npm run voice -- <video>      # one video, e.g. smoke-test
 
-Reads videos/<video>/voiceover.json, writes videos/<video>/audio/<scene-id>.wav
+Reads <root>/<video>/voiceover.json, writes <root>/<video>/audio/<scene-id>.wav
 at 24 kHz, and writes back into each scene its measured length (durationSeconds)
 and its word timings (words: [{"text", "start", "end"}], in seconds from the start
 of the scene's WAV, punctuation left out).
@@ -17,12 +17,11 @@ import json
 import re
 import sys
 import warnings
-from pathlib import Path
+
+from videos_root import videos_root
 
 warnings.filterwarnings("ignore")
 
-ROOT = Path(__file__).resolve().parent.parent
-VIDEOS = ROOT / "videos"
 SAMPLE_RATE = 24000
 DEFAULTS = {"voice": "af_heart", "speed": 1.0, "paddingSeconds": 0.4}
 
@@ -88,9 +87,9 @@ def process(video_dir):
     for scene in config["scenes"]:
         for field, value in DEFAULTS.items():
             scene.setdefault(field, value)
-        # Relative to videos/, the public folder, so staticFile(scene.audioFile) finds it.
+        # Relative to the videos root, the public folder, so staticFile(scene.audioFile) finds it.
         scene["audioFile"] = f"{video_dir.name}/audio/{scene['id']}.wav"
-        wav = VIDEOS / scene["audioFile"]
+        wav = video_dir / "audio" / f"{scene['id']}.wav"
         digest = scene_hash(scene)
         status = "cached"
         if scene.get("hash") != digest or not wav.exists() or not scene.get("words"):
@@ -126,14 +125,15 @@ def check_espeak_path():
 def main():
     check_espeak_path()
     names = sys.argv[1:]
+    videos = videos_root()
     dirs = (
-        [VIDEOS / n for n in names]
+        [videos / n for n in names]
         if names
-        else sorted(p.parent for p in VIDEOS.glob("*/voiceover.json"))
+        else sorted(p.parent for p in videos.glob("*/voiceover.json"))
     )
     for d in dirs:
         if not (d / "voiceover.json").exists():
-            sys.exit(f"No voiceover.json in {d.relative_to(ROOT)}")
+            sys.exit(f"No voiceover.json in {d}")
         process(d)
 
 

@@ -67,4 +67,4 @@ npx skills add https://fframes.studio       # the fframes-video agent skill, in 
 - A `strip` contact sheet is downscaled. With grain on top, a smooth vignette can look like a hard, noisy ring. Check a full-size `frame` before you change the gradient.
 - `stroke-dasharray` with `pathLength="1"` is a browser convenience. In FFrames, compute the real path length (sample Béziers, Ramanujan for ellipses) and dash with it.
 - A borrow-checker error comes up when a closure that reads `&frame` is still alive while `frame.text_width` needs `&mut frame`. Evaluate the closure into a value before measuring text.
-- The project sits in `videos/<slug>/fframes/`, inside Remotion's public folder. Remotion still rendered normally next to its 1.8 GB `target/`.
+- The project sits in `<root>/<slug>/fframes/`, inside Remotion's public folder, the videos root. Remotion still rendered normally next to its 1.8 GB `target/`.
