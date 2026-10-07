@@ -60,10 +60,12 @@ Didn't:
 - `@remotion/noise`: installing it was blocked in the first spike, and `sketch.ts`'s own seeded value noise covers the need.
 - Copying video code (`.ts`) into `out/` for the process page broke the type check; `out/` is now excluded from it.
 
-## The two videos so far
+## The videos so far
 
 1. **browsers-spike** (18 s): the reference's "dns lookup" (blueprint) and "tcp + tls handshake" (paper) shots, rebuilt from the frames. The style code started here.
 2. **sketchbook-demo** (26 s): how a git commit works, in three shots (git add on paper, the commit snapshot on blueprint, a branch as a moving label on paper), made by following the written recipe from the brief to the MP4, with every stage kept in `out/sketchbook-demo/process/process.html`.
+
+3. **sketchbook-hashtable** (9 s): how a hash table finds a value, made by a fresh agent given only the idea and the skill, as a test of the skill. It came out in the style on the first try (a mascot feeding a key into a hand-cranked hash grinder on paper, then a blueprint jump straight to bucket 3), and its notes on where the skill was unclear became the fixes listed below.
 
 What the second video changed in the recipe:
 
@@ -73,3 +75,12 @@ What the second video changed in the recipe:
 - A cue word said twice needs `useWord`'s occurrence argument; check for repeats when reading the voice timings.
 - Every sentence of the narration needs something on screen; check it on the metaphor list, not in review.
 - Keep every storyboard round's boards; the first round's were overwritten and lost from the process page.
+
+What the skill test changed:
+
+- References come before the brief, matching `npm run refs`'s own advice.
+- The brief budgets the narration against the requested length, and lists cues in the order they are spoken.
+- The storyboard's end poses keep thrown things where they land; a flight that ends off screen or mid-air shows nothing on the board.
+- Fast rotation strobes: keep turns under a quarter turn per frame.
+- A 10 second video gives a thin half-second contact sheet; use `--every 0.125` or stills a few frames apart.
+- The process page renders Markdown tables and loads every image without scrolling.
