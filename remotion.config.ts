@@ -14,3 +14,6 @@ Config.setPublicDir("videos");
 Config.setVideoImageFormat("jpeg");
 Config.setOverwriteOutput(true);
 Config.overrideBundlerConfig(enableTailwind);
+// WebGPU canvases (src/components/Shader.tsx) only reach the rendered frame with ANGLE.
+// Without it the canvas is silently left out and the frame shows what is behind it.
+Config.setChromiumOpenGlRenderer("angle");
