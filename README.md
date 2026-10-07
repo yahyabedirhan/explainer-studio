@@ -4,7 +4,7 @@ A local studio for narrated explainer videos, made by coding agents. [Remotion](
 
 It is built to be used as an **external tool**: your other projects keep only the idea for a video, and the studio holds every video and all the setup. Point an agent at a project, and it reads that project and makes the video here.
 
-**Your videos stay private.** This repository holds only the studio. Every video, renders included, lives in its own folder in one videos root outside the repository (`~/.local/share/explainer-studio/videos` by default), so a video about a private project never reaches a commit. Every checkout and worktree of the studio shares that root. [AGENTS.md](AGENTS.md#the-videos-root) says how to move it.
+**Your videos stay private.** This repository holds only the studio. Every video, renders included, lives in its own folder in one videos root outside the repository (`~/.local/share/explainer-studio/videos` by default), so a video about a private project never reaches a commit. Every checkout and worktree of the studio shares that root. [AGENTS.md](AGENTS.md#the-videos-root) says how to move it, and [docs/videos-root.md](docs/videos-root.md) holds the detail.
 
 ## How it works
 
@@ -56,12 +56,21 @@ scripts/
 ├── tts.py                 npm run voice
 ├── sound.py               npm run sound: music bed, sting, effects
 ├── new-video.mjs          npm run new-video
-└── render.mjs             npm run render and npm run still
+├── render.mjs             npm run render and npm run still
+├── migrate.mjs            npm run migrate: a checkout's videos/ and out/ into the root
+├── acceptance.sh          npm run acceptance: the whole flow in a scratch root
+├── videos_root.py         the root for the Python scripts
+└── lib/
+    ├── videos-root.mjs    resolves the videos root (npm run root)
+    ├── root-tsconfig.mjs  <root>/tsconfig.json, for npx tsc -p <root>
+    ├── migrate.mjs        the migration's plan and moves
+    └── *.test.mjs         npm test, with scripts/*_test.py
 templates/video/           what new-video copies
 AGENTS.md                  the rules agents follow here
 PRONUNCIATION.md           fixing words Kokoro says wrong
 docs/pipeline.md           the twelve layers from idea to MP4
 docs/styles/               one page per style
+docs/videos-root.md        the videos root: resolver, outputs, migration, limits
 docs/renderers.md          renderer benchmarks: Remotion default, FFrames, HyperFrames dropped
 ```
 

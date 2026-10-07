@@ -19,7 +19,7 @@ Each video is one folder, `<root>/<slug>/`:
 - `brief.md` holds the brief and script, `voiceover.json` its scenes, `config.ts` its fps and size, `Video.tsx` the sequence (its default export), `scenes/` one file per scene, `assets/` its images and sound effects, `audio/` the generated voice.
 - `out/`: every render and check of the video: stills, the MP4, the contact sheet, reference frames and the process page.
 
-The root is Remotion's public folder, so `staticFile("<slug>/assets/logo.png")` reaches a video's own file. Video code imports the studio's shared code as `@studio/...`, for example `@studio/lib/words`. The checkout's own `videos/` and `out/` folders are leftovers on their way out.
+The root is Remotion's public folder, so `staticFile("<slug>/assets/logo.png")` reaches a video's own file. Video code imports the studio's shared code as `@studio/...`, for example `@studio/lib/words`. A checkout that still has its own `videos/` and `out/` moves them into the root with `npm run migrate`: `docs/videos-root.md`, "Migration".
 
 ## How a video is made
 
@@ -82,12 +82,16 @@ When the chosen style has a skill, read it first and follow it in place of steps
 - `scripts/sound.py`: `npm run sound -- <slug> --seconds <N> [--bpm 96] [--seed 1]` synthesizes a music bed, an end sting and click, tick, whoosh and pop effects into `<root>/<slug>/assets/sound/`, with a `SOURCES.md`.
 - `scripts/refs.mjs`, `scripts/sheet.mjs`, `scripts/process-page.mjs`: `npm run refs -- <slug> <url>` pulls a reference's cuts and key poses, `npm run sheet -- <slug>` makes a contact sheet of a render, `npm run process -- <slug>` builds a making-of page from `<root>/<slug>/out/process/`. All three write into `<root>/<slug>/out/`.
 - `scripts/render.mjs`: `npm run render -- <slug>` renders `<root>/<slug>/out/<slug>.mp4`, and `npm run still -- <slug> <name> [--sheet] [--frame=<n>]` a still to `<root>/<slug>/out/<name>.png`. Other flags go on to Remotion.
+- `scripts/lib/videos-root.mjs`: resolves the videos root (`npm run root` prints it); `scripts/videos_root.py` mirrors it for the Python scripts.
+- `scripts/lib/root-tsconfig.mjs`: writes `<root>/tsconfig.json`, so `npx tsc -p <root>` and editors type-check video code.
+- `scripts/migrate.mjs`, `scripts/lib/migrate.mjs`: `npm run migrate` moves a checkout's `videos/` and `out/` into the root.
 - `scripts/shader-catalogue.mjs`: `npm run shader-catalogue` regenerates `skills/shader-video/effects.md` after a `shaders` upgrade.
 - `scripts/fframes_sync.py`: `npm run fframes-sync -- <slug> --fps <N>` writes an FFrames project's `src/timing.rs` from `voiceover.json` and links the video's WAVs into its `assets/`.
 - `skills/`: the studio's own skills, tracked (`.claude/skills/` holds installed ones and is ignored).
 - `docs/renderers.md`: the renderer benchmarks, why Remotion is the default, when FFrames fits, and why HyperFrames was dropped.
 - Remotion packages beyond the core: `@remotion/paths` (strokes that draw on), `@remotion/shapes` (diagram shapes), `@remotion/layout-utils` (text that fits its box), `@remotion/motion-blur`, `@remotion/noise`, `@remotion/google-fonts` and `@remotion/media`.
 - `templates/video/`: what `npm run new-video` copies.
+- `npm test`: the Node tests (`scripts/**/*.test.mjs`) and the Python tests (`scripts/*_test.py`), on scratch folders only.
 - `scripts/acceptance.sh`: `npm run acceptance` makes two videos end to end in a scratch root and checks nothing lands in the checkout.
 
 ## Rules
@@ -109,6 +113,7 @@ Read `.claude/skills/remotion-best-practices/SKILL.md` and the references it rou
 | Where the skill says | Do this instead |
 |---|---|
 | `SKILL.md`, "Open the preview" and "Render the video": start Studio before building, and render only when the user explicitly asks | Finish with steps 9 and 10: stills you've looked at, then the MP4, checked with `ffprobe`. Start Studio (`npm run dev`) when the user asks to watch. |
+| Render or take a still with `npx remotion render` or `npx remotion still` | `npm run render -- <slug>` and `npm run still -- <slug> <name>`, which write into `<root>/<slug>/out/`. |
 | Write scene lengths inline as literal numbers | Lengths come from `voiceover.json` through `src/lib/timing.ts`. |
 | `remotion-markup/voiceover.md`: ElevenLabs, ask the user for an API key, size the composition with `calculateMetadata` | Kokoro through `npm run voice`, which needs no key. Lengths as above. |
 | `remotion-markup/sfx.md`: `remotion.media` URLs, search the internet | Sound effects are local files in the video's `assets/`: made locally (`npm run sound`, or your own script in the `./tts` venv, which has numpy and soundfile), or a freely licensed file with its source and licence noted beside it. |

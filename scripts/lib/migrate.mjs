@@ -19,7 +19,7 @@ import {
 import { dirname, join, relative, resolve, sep } from "node:path";
 import { rootTsconfigIsKept, writeRootTsconfig } from "./root-tsconfig.mjs";
 
-const CODE = /\.(ts|tsx|js|jsx|mjs|cjs)$/;
+const CODE = /\.(ts|tsx|js|jsx|mjs|cjs|rs)$/;
 // Folders that hold no video code: outputs, packages and Rust builds.
 const SKIP_DIRS = new Set(["out", "node_modules", "target"]);
 // What an import, export, dynamic import or require names.
@@ -55,10 +55,19 @@ export const rewriteImports = (text, originalFile, srcDir, videosDir) => {
     const rest = toPosix(relative(srcDir, target));
     return `${lead}${quote}${rest ? `@studio/${rest}` : "@studio"}${quote}`;
   });
-  const strays = [...rewritten.matchAll(QUOTED_PATH)]
-    .map((match) => match[2])
-    .filter((spec) => !within(videosDir, resolve(from, spec)));
-  return { text: rewritten, count, strays };
+  return { text: rewritten, count, strays: strayPaths(rewritten, from, videosDir) };
+};
+
+// The quoted relative paths in `text` that resolve, from `base`, outside `videosDir`.
+export const strayPaths = (text, base, videosDir) =>
+  [...text.matchAll(QUOTED_PATH)].map((match) => match[2]).filter((spec) => !within(videosDir, resolve(base, spec)));
+
+// A Rust path is relative to the crate, where cargo runs: the nearest folder from `file` up
+// to `top` with a Cargo.toml, else the file's own folder.
+const crateDir = (file, top) => {
+  for (let dir = dirname(file); within(top, dir); dir = dirname(dir))
+    if (existsSync(join(dir, "Cargo.toml"))) return dir;
+  return dirname(file);
 };
 
 // The code files and symlinks under `dir`, as paths relative to it. Symlinks are not followed.
@@ -85,6 +94,13 @@ const videoImports = (dir, originalDir, checkout) => {
   let count = 0;
   for (const rel of code) {
     const before = readFileSync(join(dir, rel), "utf8");
+    // Rust code is never rewritten, only warned about: FFrames writes its render to a path
+    // such as "../../../out/<slug>/<slug>.mp4".
+    if (rel.endsWith(".rs")) {
+      const crate = join(originalDir, relative(dir, crateDir(join(dir, rel), dir)));
+      warnings.push(...strayPaths(before, crate, videosDir).map((spec) => `${rel}: path leaves the videos, not rewritten: ${spec}`));
+      continue;
+    }
     const after = rewriteImports(before, join(originalDir, rel), srcDir, videosDir);
     count += after.count;
     warnings.push(...after.strays.map((spec) => `${rel}: path leaves the videos, not rewritten: ${spec}`));
@@ -113,7 +129,7 @@ const realPathOfNearest = (path) => {
 const entries = (dir) => (existsSync(dir) ? readdirSync(dir, { withFileTypes: true }) : []);
 
 // What a migration would do, and every reason it can't start. Reads only.
-export const planMigration = ({ checkout, root }) => {
+export const planMigration = ({ checkout, root, studio = checkout }) => {
   const videosDir = join(checkout, "videos");
   const outDir = join(checkout, "out");
   const problems = [];
@@ -159,7 +175,7 @@ export const planMigration = ({ checkout, root }) => {
     const imports = video.sources ? videoImports(video.sources, video.sources, checkout) : null;
     video.imports = imports ? { count: imports.count, warnings: imports.warnings } : { count: 0, warnings: [] };
   }
-  return { checkout, root, videos, problems, leftBehind, writesTsconfig: !rootTsconfigIsKept(root) };
+  return { checkout, root, videos, problems, leftBehind, writesTsconfig: !rootTsconfigIsKept(root, studio) };
 };
 
 const kinds = (video) =>
@@ -170,7 +186,7 @@ const kinds = (video) =>
 // error after the start throws with `done`, the steps that finished. Returns the plan,
 // with `done` when it ran.
 export const migrate = ({ checkout, root, studio, dryRun = false, log = console.log }) => {
-  const plan = planMigration({ checkout, root });
+  const plan = planMigration({ checkout, root, studio });
   log(`${dryRun ? "Plan (dry run, nothing changes)" : "Migrating"}: ${checkout} -> ${root}`);
   for (const video of plan.videos) {
     log(`  ${video.slug}: ${kinds(video)}, ${video.imports.count} imports to @studio`);
