@@ -3,16 +3,6 @@ dist
 .DS_Store
 .env
 
-# Every video: its brief, script, scenes, assets and voice. The repository is public,
-# and a video can show private projects, so videos never leave this machine.
-# Only the empty folder is kept, so Root.tsx can look inside it on a fresh clone.
-/videos/*
-!/videos/.gitkeep
-# Renders: MP4s and stills.
-/out/
-# Remotion's default public folder, unused: assets live in each video's folder.
-/public/
-
 # Kokoro venv, Python bytecode and scratch files
 /tts
 __pycache__/

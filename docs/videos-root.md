@@ -31,7 +31,7 @@ To test without touching your videos, point the root at a scratch folder: `STUDI
 
 ## Outputs and the render command
 
-Every render and check of a video goes in `<root>/<slug>/out/`, never in the checkout's `out/`:
+Every render and check of a video goes in `<root>/<slug>/out/`, never in the checkout:
 
 | Command | Writes |
 |---|---|
