@@ -6,8 +6,12 @@ Usage:
 Writes videos/<video>/assets/sound/ with 48 kHz stereo WAVs:
     bed.wav     N seconds of calm pad, plucked arpeggio and light pulse in D major
                 (I-V-vi-IV: D, A, B minor, G), 1 s fade-in, 2 s fade-out.
-    sting.wav   about 2 s resolving D major hit with a shimmer tail.
+    sting.wav   about 3 s warm D major pad swell: 0.3 s attack, 2.5 s fade, no hit.
     click.wav, whoosh.wav, pop.wav, tick.wav   short UI effects.
+
+The sting and UI effects are soft by design: low, rounded sines with slow-ish
+attacks and low-pass filtering, no bells, plucks or bright partials, so they sit
+under the voice without beeping or clicking.
     SOURCES.md  the exact command and seed, since nothing here is downloaded.
 
 Everything is made from numpy maths, so there is no licence to track.
@@ -250,56 +254,48 @@ def make_bed(seconds, bpm, rng):
 
 
 def make_sting(rng):
-    seconds = 2.2
-    out = np.zeros((int(seconds * SR), 2))
+    """A warm D major pad swell: slow attack, no transient, a gentle fade."""
+    attack, hold, release = 0.3, 0.35, 2.5
+    seconds = attack + hold + release
     t = times(seconds)
 
-    # Body: D major add9 in saws, bright on the hit, then dark as it decays.
-    body = np.zeros(len(t))
-    for note in (50, 57, 62, 66, 69, 76):
-        voice = sum(saw(hz(note) * 2 ** (c / 1200), t, rng.random()) for c in (-7, 0, 7)) / 3
-        body += voice
-    bright = lowpass(body, 5000) * np.exp(-t / 0.18)
-    warm = lowpass(body, 1200) * np.exp(-t / 0.7)
-    attack = np.minimum(1, t / 0.004)
-    body = (0.6 * bright + warm) * attack * 0.12
-    out += pan(body, 0)
+    # Saw pad voicing of D major (D3 A3 D4 F#4 A4), darkened hard so no bright partials survive.
+    body = np.zeros((len(t), 2))
+    for k, note in enumerate((50, 57, 62, 66, 69)):
+        voice = sum(saw(hz(note) * 2 ** (c / 1200), t, rng.random()) for c in (-6, 0, 6)) / 3
+        body += pan(voice, (0.0, -0.4, 0.4, -0.2, 0.2)[k])
+    body = lowpass(body, 900, order=3)
+    sub = pan(np.sin(2 * np.pi * hz(38) * t), 0) * 0.25
 
-    # Sub thump on the root, and bells on top.
-    sub = np.sin(2 * np.pi * hz(38) * t) * np.exp(-t / 0.35) * attack
-    out += pan(sub, 0) * 0.35
-    for k, note in enumerate((74, 78, 81, 86)):
-        place(out, pan(bell(note, seconds), (-0.6, 0.6, -0.3, 0.3)[k]), 0.012 * k, 0.07)
+    # Raised-cosine swell, short hold, then a slow cosine fade to silence.
+    env = np.ones(len(t))
+    rise = t < attack
+    env[rise] = 0.5 - 0.5 * np.cos(np.pi * t[rise] / attack)
+    tail = t > attack + hold
+    env[tail] = np.cos(np.clip((t[tail] - attack - hold) / release, 0, 1) * np.pi / 2) ** 2
+    out = (body + sub) * env[:, None]
 
-    # Shimmer: high octaves with a slow tremolo, swelling in under the decay.
-    shimmer = np.zeros((len(t), 2))
-    for k, note in enumerate((86, 93, 98)):
-        trem = 1 + 0.4 * np.sin(2 * np.pi * (5 + k) * t + k)
-        env = (1 - np.exp(-t / 0.15)) * np.exp(-t / 0.8)
-        shimmer += pan(np.sin(2 * np.pi * hz(note) * t) * trem * env, (-0.7, 0.7, 0)[k])
-    out += 0.04 * shimmer
-
-    out = out + 0.5 * reverb(out, rng, seconds=2.0, damping=6000)
-    out = lowpass(highpass(out, 30), 12000)
-    return normalise(fade(out, 0.0, 0.4), peak_db=-3)
+    out = out + 0.3 * reverb(out, rng, seconds=2.0, damping=2500)
+    out = lowpass(highpass(out, 35), 3000)
+    return normalise(fade(out, 0.0, 0.3), rms_db=-20, peak_db=-6)
 
 
 def make_click(rng):
-    t = times(0.04)
-    body = np.sin(2 * np.pi * 1800 * t) * np.exp(-t / 0.004)
-    low = np.sin(2 * np.pi * 620 * t) * np.exp(-t / 0.009)
-    snap = bandpass(rng.standard_normal(len(t)), 2000, 6000) * np.exp(-t / 0.0015)
-    x = (0.6 * body + 0.5 * low + 0.25 * snap) * np.minimum(1, t / 0.0004)
-    return normalise(fade(pan(x, 0), 0, 0.01), peak_db=-6)
+    """A soft, muted press: two low sines, no noise snap."""
+    t = times(0.05)
+    body = np.sin(2 * np.pi * 700 * t) * np.exp(-t / 0.006)
+    low = np.sin(2 * np.pi * 320 * t) * np.exp(-t / 0.012)
+    x = (0.4 * body + 0.7 * low) * (1 - np.exp(-t / 0.0015))
+    return normalise(fade(pan(lowpass(x, 1800), 0), 0, 0.012), peak_db=-10)
 
 
 def make_tick(rng):
-    t = times(0.025)
-    body = np.sin(2 * np.pi * 3200 * t) * np.exp(-t / 0.0025)
-    wood = np.sin(2 * np.pi * 1100 * t) * np.exp(-t / 0.004)
-    snap = bandpass(rng.standard_normal(len(t)), 3000, 8000) * np.exp(-t / 0.001)
-    x = (0.5 * body + 0.5 * wood + 0.2 * snap) * np.minimum(1, t / 0.0003)
-    return normalise(fade(pan(x, 0), 0, 0.006), peak_db=-10)
+    """A muted soft tap, like a fingertip on a felt key."""
+    t = times(0.04)
+    freq = 520 + 180 * np.exp(-t / 0.006)
+    phase = 2 * np.pi * np.cumsum(freq) / SR
+    x = np.sin(phase) * (1 - np.exp(-t / 0.002)) * np.exp(-t / 0.009)
+    return normalise(fade(pan(lowpass(x, 1500), 0), 0, 0.01), peak_db=-12)
 
 
 def make_whoosh(rng):
@@ -328,13 +324,13 @@ def make_whoosh(rng):
 
 
 def make_pop():
-    """A soft bubble: a sine chirping upward under a quick decay."""
-    t = times(0.15)
-    freq = 380 + 900 * (1 - np.exp(-t / 0.018))
+    """A low, rounded felt-mallet tap: a sine dropping from about 480 Hz to 300 Hz."""
+    t = times(0.14)
+    freq = 300 + 180 * np.exp(-t / 0.015)
     phase = 2 * np.pi * np.cumsum(freq) / SR
-    env = np.minimum(1, t / 0.0015) * np.exp(-t / 0.03)
-    x = np.sin(phase) * env + 0.3 * np.sin(2 * phase) * env * np.exp(-t / 0.01)
-    return normalise(fade(pan(lowpass(x, 5000), 0), 0, 0.03), peak_db=-6)
+    env = (0.5 - 0.5 * np.cos(np.pi * np.minimum(1, t / 0.005))) * np.exp(-t / 0.035)
+    x = np.sin(phase) * env
+    return normalise(fade(pan(lowpass(x, 1200), 0), 0, 0.04), peak_db=-8)
 
 
 def write_sources(folder, command, seed):
