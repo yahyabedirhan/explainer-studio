@@ -16,7 +16,8 @@ if (!slug) {
 }
 const root = join("out", slug, "process");
 
-const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+const esc = (s) =>
+  s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 const inline = (s) =>
   esc(s)
     .replace(/`([^`]+)`/g, "<code>$1</code>")
@@ -59,7 +60,8 @@ const markdown = (text) => {
       }
       html.push(`<li>${inline(line.replace(/^\s*([-*]|\d+\.) /, ""))}</li>`);
     } else if (line.trim() === "") flush();
-    else if (line.startsWith("|")) html.push(`<pre class="table">${esc(line)}</pre>`);
+    else if (line.startsWith("|"))
+      html.push(`<pre class="table">${esc(line)}</pre>`);
     else para.push(line.trim());
   }
   flush();
@@ -72,7 +74,9 @@ const stages = readdirSync(root)
 
 const sections = stages.map((dir) => {
   const files = readdirSync(join(root, dir)).sort();
-  const notesFile = files.includes("NOTES.md") ? readFileSync(join(root, dir, "NOTES.md"), "utf8") : "";
+  const notesFile = files.includes("NOTES.md")
+    ? readFileSync(join(root, dir, "NOTES.md"), "utf8")
+    : "";
   const title = notesFile.match(/^# (.+)$/m)?.[1] ?? dir;
   const notes = markdown(notesFile.replace(/^# .+$/m, ""));
   const media = files
@@ -92,7 +96,12 @@ const sections = stages.map((dir) => {
     })
     .join("\n");
   const id = dir.replace(/^\d+-/, "");
-  return { id, num: dir.match(/^\d+/)[0], title, html: `${notes}\n<div class="media">${media}</div>` };
+  return {
+    id,
+    num: dir.match(/^\d+/)[0],
+    title,
+    html: `${notes}\n<div class="media">${media}</div>`,
+  };
 });
 
 const page = `<!doctype html>
