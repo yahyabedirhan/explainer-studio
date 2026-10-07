@@ -8,23 +8,41 @@ This repository is public, and a video can show the user's private projects. So 
 
 Make and keep videos in the studio's main checkout, on `main`. A worktree's ignored files go when the worktree is returned, so a video made in one moves to the main checkout before it's released.
 
+## How a video is made
+
+A video is four choices, made in this order:
+
+1. **Renderer**: Remotion, the default, or FFrames (Rust). HyperFrames was tried and dropped: `docs/renderers.md` holds the benchmark and why.
+2. **Drawing method**, in Remotion only: React and CSS elements, or a canvas the scene repaints each frame (`CanvasScene`). One video can mix both, scene by scene.
+3. **Look**: the style below, plus effects such as grain and, optionally, shaders.
+4. **Process**: the steps below, the same for every style.
+
+The video passes through twelve layers from idea to MP4, and a style changes only the picture and effects layers: `docs/pipeline.md`.
+
+## Styles
+
+| Style | Fits | Captions | How |
+|---|---|---|---|
+| **Studio** (default) | products, interfaces, screenshots, data, architecture | on | the steps below, `docs/styles/studio.md` |
+| **Sketchbook** | a concept or process explained in under a minute, drawn on paper and blueprint | off unless asked | `skills/sketchbook-video/SKILL.md`, `docs/styles/sketchbook.md` |
+| **FFrames** | effect-heavy pieces, the pixel and thermal ad look | on | `skills/fframes-studio-video/SKILL.md`, `docs/styles/fframes.md` |
+
+**Shaders** are an optional, experimental add-on to Studio or Sketchbook, not a style. Offer them only when one or a few effects clearly carry what the video explains, or when the user asks. The user picks every effect from a prototype sheet before any scene is built: `skills/shader-video/SKILL.md`, `docs/styles/shaders.md`.
+
+When the chosen style has a skill, read it first and follow it in place of steps 4 to 10 below.
+
 ## Making a video about another project
 
 1. Treat the source project as read-only. Read its code, README, docs and PRs for understanding, and never write into it.
 2. Scaffold: `npm run new-video -- <project>-<topic>`, for example `shipyard-architecture`. It creates `videos/<slug>/`, and `src/Root.tsx` finds it by itself.
-3. Ask the user once, in a single round, what they want to learn from the video and anything else the brief can't settle from the project. Fill `videos/<slug>/brief.md` around that question. Keep the rest of the run free of check-ins: the user wants a video, not a discussion.
-4. Draft the script and scene plan in `brief.md`, aimed at what the user wants to learn.
-5. Put the narration in `voiceover.json`, run `npm run voice -- <slug>`, then build the scenes. For music and sound effects, run `npm run sound -- <slug> --seconds <N>` with the final length.
-6. Check stills, then render to `out/<slug>/<slug>.mp4`.
-
-## Video styles
-
-When a video uses a named style, read its skill first and follow it in place of steps 2 to 6 above:
-
-- sketchbook (paper and blueprint shots drawn in code, hard cuts): `skills/sketchbook-video/SKILL.md`
-- FFrames (Rust, SVG, GPU shaders), for shader-heavy pieces and the pixel and thermal ad look: `skills/fframes-studio-video/SKILL.md`
-
-Shaders are an optional, experimental add-on, not a style of their own. Offer them only when one or a few effects clearly suit what the user asks for, or when the user asks. The user picks the effects from a prototype sheet before any scene is built: `skills/shader-video/SKILL.md`.
+3. Ask the user once, in a single round, what they want to learn from the video, which style they want, and anything else the brief can't settle from the project. Offer the styles table with one recommended style for this subject; mention shaders only when an effect clearly fits. Keep the rest of the run free of check-ins: the user wants a video, not a discussion.
+4. Fill `videos/<slug>/brief.md` around the answers: the script, the scene plan and the list of every asset the scenes show. When the user names a video to imitate, study it first with `npm run refs -- <slug> <url>`.
+5. **Asset sheet.** Draw every character, prop, UI mock and diagram element on one still, `videos/<slug>/Sheet.tsx`, registered as `<Id>Sheet`. Render it with `npx remotion still <Id>Sheet out/<slug>/sheet-assets.png` and fix anything that collides, reads badly or overflows. Done when every asset in the brief is on the sheet and reads at a glance.
+6. Put the narration in `voiceover.json` and run `npm run voice -- <slug>`.
+7. **Storyboard.** Build each scene at its end pose, with no motion yet. Render a still of each scene's last frame and fix the composition. Done when every scene's end pose reads as the brief says.
+8. Animate: add the motion, every reveal cued on its narration word. For music and sound effects, run `npm run sound -- <slug> --seconds <N>` with the final length.
+9. Check stills at key frames, then render to `out/<slug>/<slug>.mp4`.
+10. Final checks: a contact sheet of the render (`npm run sheet -- <slug>`) that you look at, and `ffprobe` for the length and the audio track. Build a making-of page with `npm run process -- <slug>` only when the user asks for one.
 
 ## Layout
 
@@ -33,14 +51,16 @@ Shaders are an optional, experimental add-on, not a style of their own. Offer th
 - `src/lib/words.ts`: `useWord(voiceover, sceneId, phrase, occurrence?)`, plus `wordFrame` and `wordEndFrame`, give the frame where a narration word starts or ends. A phrase the scene never says throws.
 - `src/lib/sketch.ts`: pure, seeded drawing helpers for canvas scenes: easing, value noise, point-list shapes, `partial` for draw-on strokes, `wobble` and `ink` for a boiling pen line, `hatch` for shading.
 - `src/Root.tsx`: registers each folder in `videos/` that has a `Video.tsx`, `config.ts` and `voiceover.json`, as a composition named after its slug (`shipyard-architecture` is `ShipyardArchitecture`).
-- `src/styles/<style>/`: drawing code for a named video style (see Video styles).
-- `docs/styles/<style>.md`: where a style comes from and what was learned making it.
+- `src/styles/<style>/`: drawing code for a named video style (see Styles).
+- `docs/styles/<style>.md`: what a style looks like, where it comes from and what was learned making it.
+- `docs/pipeline.md`: the twelve layers from idea to MP4 and the owner of each.
 - `src/components/`: building blocks shared by videos.
   - `Captions.tsx`: word-timed captions from a scene's `caption ?? text`.
   - `Cursor.tsx`: a pointer on an eased path; `cursorAt` gives its position and press state, for drags.
   - `Travel.tsx`: moves a child along a Bézier path.
   - `Typewriter.tsx`: types text out over frames.
-  - `Shader.tsx`: effects from the `shaders` package, drawn at the frame's time. See `docs/shaders.md`.
+  - `KineticTitle.tsx`: a full-frame kinetic headline, a kicker line over big words that build in.
+  - `Shader.tsx`: effects from the `shaders` package, drawn at the frame's time. See `docs/styles/shaders.md`.
   - `Grain.tsx`: film-grain overlay.
   - `CanvasScene.tsx`: a full-frame `<canvas>` that a scene repaints from scratch each frame with `draw(ctx, { frame, ... })`, after its fonts load. Use it for hand-drawn or diagram-heavy shots where the code draws every frame.
   - `ShaderLayer.tsx`: a GLSL fragment shader on a WebGL canvas, drawn each frame with Shadertoy-style uniforms. Render and take stills with `--gl=angle`.
@@ -51,9 +71,8 @@ Shaders are an optional, experimental add-on, not a style of their own. Offer th
 - `scripts/shader-catalogue.mjs`: `npm run shader-catalogue` regenerates `skills/shader-video/effects.md` after a `shaders` upgrade.
 - `scripts/fframes_sync.py`: `npm run fframes-sync -- <slug> --fps <N>` writes an FFrames project's `src/timing.rs` from `voiceover.json` and links the video's WAVs into its `assets/`.
 - `skills/`: the studio's own skills, tracked (`.claude/skills/` holds installed ones and is ignored).
-- `docs/shaders.md`: how the studio draws WebGPU shaders deterministically, and what doesn't work.
-- `docs/fframes.md`: what FFrames is, the pixel and thermal ad style, its install and gotchas.
-- `docs/renderers.md`: why the studio keeps Remotion over HyperFrames.
+- `docs/renderers.md`: the renderer benchmarks, why Remotion is the default, when FFrames fits, and why HyperFrames was dropped.
+- Remotion packages beyond the core: `@remotion/paths` (strokes that draw on), `@remotion/shapes` (diagram shapes), `@remotion/layout-utils` (text that fits its box), `@remotion/motion-blur`, `@remotion/noise`, `@remotion/google-fonts` and `@remotion/media`.
 - `templates/video/`: what `npm run new-video` copies.
 - `out/<slug>/`: renders and stills, ignored by git.
 
@@ -67,6 +86,7 @@ Shaders are an optional, experimental add-on, not a style of their own. Offer th
 - Check final renders with `ffprobe`: length matches the summed scenes and there is an audio track.
 - Avoid the generic AI look of a centred headline fading in over a gradient. Prefer bold typography, hard cuts, real UI captures (Playwright with Chromium is installed) and clear diagrams.
 - Make small, targeted edits for feedback instead of rewriting.
+- Everything stays free and local: no paid APIs or keys. Draw art in code first. When code can't draw it, use a freely licensed file with its source and licence noted beside it, as for sound.
 
 ## The Remotion skill
 
@@ -74,7 +94,7 @@ Read `.claude/skills/remotion-best-practices/SKILL.md` and the references it rou
 
 | Where the skill says | Do this instead |
 |---|---|
-| `SKILL.md`, "Open the preview" and "Render the video": start Studio before building, and render only when the user explicitly asks | Finish with step 6: stills you've looked at, then the MP4, checked with `ffprobe`. Start Studio (`npm run dev`) when the user asks to watch. |
+| `SKILL.md`, "Open the preview" and "Render the video": start Studio before building, and render only when the user explicitly asks | Finish with steps 9 and 10: stills you've looked at, then the MP4, checked with `ffprobe`. Start Studio (`npm run dev`) when the user asks to watch. |
 | Write scene lengths inline as literal numbers | Lengths come from `voiceover.json` through `src/lib/timing.ts`. |
 | `remotion-markup/voiceover.md`: ElevenLabs, ask the user for an API key, size the composition with `calculateMetadata` | Kokoro through `npm run voice`, which needs no key. Lengths as above. |
 | `remotion-markup/sfx.md`: `remotion.media` URLs, search the internet | Sound effects are local files in the video's `assets/`: made locally (`npm run sound`, or your own script in the `./tts` venv, which has numpy and soundfile), or a freely licensed file with its source and licence noted beside it. |
