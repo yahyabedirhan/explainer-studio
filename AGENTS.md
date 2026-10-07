@@ -19,27 +19,39 @@ Make and keep videos in the studio's main checkout, on `main`. A worktree's igno
 
 ## Video styles
 
-Other ways to make a video here, each with its own skill or doc. The steps above stay the default.
+When a video uses a named style, read its skill first and follow it in place of steps 2 to 6 above:
 
-- FFrames (Rust, SVG, GPU shaders), for shader-heavy pieces and the pixel and thermal ad look: [`skills/fframes-studio-video/SKILL.md`](skills/fframes-studio-video/SKILL.md).
+- sketchbook (paper and blueprint shots drawn in code, hard cuts): `skills/sketchbook-video/SKILL.md`
+- FFrames (Rust, SVG, GPU shaders), for shader-heavy pieces and the pixel and thermal ad look: `skills/fframes-studio-video/SKILL.md`
+
+Shaders are an optional, experimental add-on, not a style of their own. Offer them only when one or a few effects clearly suit what the user asks for, or when the user asks. The user picks the effects from a prototype sheet before any scene is built: `skills/shader-video/SKILL.md`.
 
 ## Layout
 
 - `videos/<slug>/`: everything one video needs, ignored by git. `brief.md` holds the brief and script, `voiceover.json` its scenes, `config.ts` its fps and size, `Video.tsx` the sequence (its default export), `scenes/` one file per scene, `assets/` its images and sound effects, and `audio/` the generated voice. `videos/` is Remotion's public folder, so `staticFile("<slug>/assets/logo.png")` reaches a video's own file.
 - `src/lib/timing.ts`: the only place scene lengths are computed, as `ceil((durationSeconds + paddingSeconds) x fps)`.
 - `src/lib/words.ts`: `useWord(voiceover, sceneId, phrase, occurrence?)`, plus `wordFrame` and `wordEndFrame`, give the frame where a narration word starts or ends. A phrase the scene never says throws.
+- `src/lib/sketch.ts`: pure, seeded drawing helpers for canvas scenes: easing, value noise, point-list shapes, `partial` for draw-on strokes, `wobble` and `ink` for a boiling pen line, `hatch` for shading.
 - `src/Root.tsx`: registers each folder in `videos/` that has a `Video.tsx`, `config.ts` and `voiceover.json`, as a composition named after its slug (`shipyard-architecture` is `ShipyardArchitecture`).
+- `src/styles/<style>/`: drawing code for a named video style (see Video styles).
+- `docs/styles/<style>.md`: where a style comes from and what was learned making it.
 - `src/components/`: building blocks shared by videos.
   - `Captions.tsx`: word-timed captions from a scene's `caption ?? text`.
   - `Cursor.tsx`: a pointer on an eased path; `cursorAt` gives its position and press state, for drags.
   - `Travel.tsx`: moves a child along a Bézier path.
   - `Typewriter.tsx`: types text out over frames.
+  - `Shader.tsx`: effects from the `shaders` package, drawn at the frame's time. See `docs/shaders.md`.
   - `Grain.tsx`: film-grain overlay.
+  - `CanvasScene.tsx`: a full-frame `<canvas>` that a scene repaints from scratch each frame with `draw(ctx, { frame, ... })`, after its fonts load. Use it for hand-drawn or diagram-heavy shots where the code draws every frame.
   - `ShaderLayer.tsx`: a GLSL fragment shader on a WebGL canvas, drawn each frame with Shadertoy-style uniforms. Render and take stills with `--gl=angle`.
   - `PixelSprite.tsx`: pixel art from a character grid, as crisp SVG, with an optional extruded depth.
 - `scripts/tts.py`: Kokoro voice generation (`npm run voice`). It also writes each scene's `words` (`text`, `start`, `end`, seconds from the scene WAV's start) into `voiceover.json`. The venv is `./tts`, Python 3.12, pinned in `tts-requirements.txt`.
 - `scripts/sound.py`: `npm run sound -- <slug> --seconds <N> [--bpm 96] [--seed 1]` synthesizes a music bed, an end sting and click, tick, whoosh and pop effects into `videos/<slug>/assets/sound/`, with a `SOURCES.md`.
+- `scripts/refs.mjs`, `scripts/sheet.mjs`, `scripts/process-page.mjs`: `npm run refs -- <slug> <url>` pulls a reference's cuts and key poses, `npm run sheet -- <slug>` makes a contact sheet of a render, `npm run process -- <slug>` builds a making-of page from `out/<slug>/process/`.
+- `scripts/shader-catalogue.mjs`: `npm run shader-catalogue` regenerates `skills/shader-video/effects.md` after a `shaders` upgrade.
 - `scripts/fframes_sync.py`: `npm run fframes-sync -- <slug> --fps <N>` writes an FFrames project's `src/timing.rs` from `voiceover.json` and links the video's WAVs into its `assets/`.
+- `skills/`: the studio's own skills, tracked (`.claude/skills/` holds installed ones and is ignored).
+- `docs/shaders.md`: how the studio draws WebGPU shaders deterministically, and what doesn't work.
 - `docs/fframes.md`: what FFrames is, the pixel and thermal ad style, its install and gotchas.
 - `docs/renderers.md`: why the studio keeps Remotion over HyperFrames.
 - `templates/video/`: what `npm run new-video` copies.
@@ -66,6 +78,7 @@ Read `.claude/skills/remotion-best-practices/SKILL.md` and the references it rou
 | Write scene lengths inline as literal numbers | Lengths come from `voiceover.json` through `src/lib/timing.ts`. |
 | `remotion-markup/voiceover.md`: ElevenLabs, ask the user for an API key, size the composition with `calculateMetadata` | Kokoro through `npm run voice`, which needs no key. Lengths as above. |
 | `remotion-markup/sfx.md`: `remotion.media` URLs, search the internet | Sound effects are local files in the video's `assets/`: made locally (`npm run sound`, or your own script in the `./tts` venv, which has numpy and soundfile), or a freely licensed file with its source and licence noted beside it. |
+| `remotion-markup/REFERENCE.md`: make components editable with `Interactive.withSchema` and `Interactive.Div` | Plain JSX components and `<div>`s, as the studio's components and `skills/shader-video/patterns.md` do. |
 | `remotion-captions/`: transcribe the voiceover with Whisper, then show a copied Basic Captions element fed an inline caption array | Captions are the script: use `<Captions>`, which shows each scene's `caption ?? text` from `voiceover.json`, timed by its word timings. |
 
 ## Setting up again
