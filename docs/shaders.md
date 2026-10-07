@@ -58,6 +58,15 @@ Points 3 to 5 depend on renderer internals, not on a documented API. That is why
 - **Simulations and pointer effects** (`Fog`, `Smoke`, `Particles`, `Boids`, `ReactionDiffusion`, the `Cursor*` effects and every other effect with the `simulation` role) step from their previous frame or read the mouse. They cannot be a function of the frame and are marked `no` in the catalogue. Media effects (`ImageTexture`, `VideoTexture`, `HTMLInCanvas`) are untested.
 - **Changing a `speed` prop inside a scene** makes the picture depend on the frames drawn before. Keep speeds constant per scene.
 
+## Skill test
+
+A fresh agent got only an idea ("why the sky is blue, in ten seconds") and the path to `skills/shader-video/SKILL.md`. It produced a 10.9 s, three-scene video from `Godrays`, `ChromaticAberration`, `SineWave`, `Vignette`, `IrisWipe` and `MeshGradient`, with narration, captions, sound and word cues. The frame count matched the summed scenes, and its two-still checks matched. It went wrong in two places, and the skill was changed for both:
+
+- `MeshGradient` ignored its `colorA` and `colorB`: a default `stops` palette overrides them. The catalogue now flags the effects whose default stops do this.
+- `IrisWipe` hid the picture from the centre when the agent wanted a circle to open: `progress` 1 means wiped away. `patterns.md` now gives the direction for opening and closing.
+
+It also had to guess the words-per-second budget for a target length, the sound length at fps other than 30, and when to take stills after a cue; the skill now states each. The Remotion skill's `Interactive.withSchema` advice, which the studio does not follow, is now a row in the `AGENTS.md` overrides table.
+
 ## Troubleshooting
 
 - **The still shows only the background colour.** The render ran without ANGLE (check `remotion.config.ts`, or pass `--gl=angle`), or the renderer stopped: `<Shader>` fails the render with `the WebGPU renderer stopped (<reason>)` when it reports one.
