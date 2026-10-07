@@ -25,7 +25,9 @@ To test without touching your videos, point the root at a scratch folder: `STUDI
 ## What `npm run new-video` writes
 
 - `<root>/<slug>/`, from `templates/video/`. Its code imports shared studio code as `@studio/...`.
-- `<root>/tsconfig.json`, when it is missing, for editors and `npx tsc -p <root>`. It extends the studio's `tsconfig.json` and resolves `@studio/*` and every package (`remotion`, `@remotion/*`, `react` and its types) from the checkout that wrote it. Another checkout that shares the root keeps the file as it is, while the checkout it names still exists. When that checkout is gone (a returned worktree), the next `new-video` writes the file again for its own checkout.
+- `<root>/tsconfig.json`, for editors and `npx tsc -p <root>`. It extends the studio's `tsconfig.json` and resolves `@studio/*` and every package (`remotion`, `@remotion/*`, `react` and its types) from one checkout: the main worktree when it has `tsconfig.json`, `package.json`, `src/` and `node_modules/`, else the checkout that writes the file. A `"//"` key, which TypeScript ignores, marks the file with its version.
+  - Each studio dependency's `exports` map becomes explicit `paths` entries ahead of the `"*"` fallback (`@remotion/google-fonts/*`, `shaders/core/Vignette`), because tsc skips `exports` behind a `paths` mapping into `node_modules`.
+  - The file is written again when it is missing, when its version is older, when the checkout it names is gone (a returned worktree), or when it names another checkout than a usable main worktree. A file without the marker, or one that is not JSON, is yours and stays as it is: delete the `"//"` line to keep your edits.
 
 ## Outputs and the render command
 
@@ -52,10 +54,12 @@ Tailwind v4 scans only the project folder for class names. `scripts/lib/tailwind
 `npm run migrate -- [--from <checkout>] [--dry-run]` moves the videos of a checkout that still has `videos/` and `out/` into the resolved root, once. `--from` defaults to the checkout the script is in. `--dry-run` prints the plan, with the import count of each video, and changes nothing.
 
 - Each folder in `videos/` or `out/` is a slug, except hidden ones. `videos/<slug>/` becomes `<root>/<slug>/`, and `out/<slug>/` becomes `<root>/<slug>/out/`. A slug with only outputs gets only `<root>/<slug>/out/`.
-- Relative imports that reach the checkout's `src/` become `@studio/...`, resolved from where each file was. Other relative imports stay as they are. The plan warns about each quoted relative path that leaves `videos/` (an import of other checkout code, or a `src/` path in `new URL()` or a reference comment) and each symlink that leaves its video: these break after the move.
+- Relative imports that reach the checkout's `src/` become `@studio/...`, resolved from where each file was. Other relative imports stay as they are. The plan warns about each quoted relative path that leaves `videos/` (an import of other checkout code, or a `src/` path in `new URL()` or a reference comment) and each symlink that leaves its video: these break after the move. Rust files are only checked, never rewritten, with paths taken from the crate folder: an FFrames `main.rs` with `.default_output("../../../out/<slug>/<slug>.mp4")` gets a warning to fix by hand.
 - It checks everything before the first change. It stops, lists the reasons and changes nothing when a `<root>/<slug>` already exists, when `videos/<slug>/out` would clash with `out/<slug>`, when two slugs differ only in case, when a slug is a symlink, or when the root is inside the checkout or on another volume.
 - It moves with `rename`, never a copy, one slug at a time, then rewrites that slug's files one by one. An error stops it and lists the steps done. A run after a stop moves the slugs still in the checkout, unless a half-moved slug's target exists: finish that one by hand.
 - It writes `<root>/tsconfig.json` as `new-video` does. It leaves `videos/` and `out/` themselves, with `.gitkeep` and `.DS_Store`, and `.gitignore` for you to clean up.
+
+Stop Remotion Studio in the checkout before you migrate: it watches the folders that move.
 
 Rehearse on scratch folders: `STUDIO_VIDEOS_DIR=<scratch root> npm run migrate -- --from <scratch checkout>`.
 
@@ -92,6 +96,6 @@ Studio, `npx remotion compositions`, `still` and `render` all read `remotion.con
 
 Keep each video's outputs inside its own folder and the whole root as the public folder. The CLI's symlink does the work, so no per-render public folder is needed.
 
-One exception: `npx remotion bundle` (`npm run build`) passes a fixed output folder, and then Remotion copies the whole public folder, every video's outputs included. Do not use it with a large root, or give it `--public-dir <root>/<slug>`.
+One exception: `npx remotion bundle` (`npm run build`) passes a fixed output folder, and then Remotion copies the whole public folder, every video's outputs included. Do not use it with a large root.
 
 Tailwind and editor types, still open after the spike, are settled above (#27).

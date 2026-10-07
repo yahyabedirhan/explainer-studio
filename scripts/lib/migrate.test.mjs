@@ -18,6 +18,7 @@ import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { test } from "node:test";
 import { migrate, rewriteImports } from "./migrate.mjs";
+import { tsconfigStudio } from "./root-tsconfig.mjs";
 
 const studio = resolve(import.meta.dirname, "..", "..");
 const quiet = () => {};
@@ -145,7 +146,7 @@ import { Hook } from "./scenes/Hook";
   ]);
 
   const tsconfig = JSON.parse(readFileSync(join(root, "tsconfig.json"), "utf8"));
-  assert.equal(tsconfig.extends, join(studio, "tsconfig.json"));
+  assert.equal(tsconfig.extends, join(tsconfigStudio(studio).dir, "tsconfig.json"));
 });
 
 test("an existing target stops the migration with nothing changed", () => {
@@ -269,4 +270,18 @@ test("a symlink or path that leaves the video is warned about", () => {
   assert.match(text, /WARNING: fframes\/assets\/abs\.wav: symlink leaves the video: \/etc\/hosts/);
   assert.doesNotMatch(text, /hook\.wav/);
   assert.match(text, /WARNING: data\.ts: path leaves the videos, not rewritten: \.\.\/\.\.\/templates\/x/);
+});
+
+test("a Rust path that leaves the video is warned about, from the crate, and never rewritten", () => {
+  const { checkout, root } = fixture();
+  const crate = join(checkout, "videos", "ff", "fframes");
+  const main = `fn main() { Project::new().default_output("../../../out/ff/ff.mp4").assets("./assets"); }\n`;
+  put(join(crate, "Cargo.toml"), "[package]\n");
+  put(join(crate, "src", "main.rs"), main);
+  const lines = [];
+  migrate({ checkout, root, studio, log: (line) => lines.push(line) });
+  const text = lines.join("\n");
+  assert.match(text, /WARNING: fframes\/src\/main\.rs: path leaves the videos, not rewritten: \.\.\/\.\.\/\.\.\/out\/ff\/ff\.mp4/);
+  assert.doesNotMatch(text, /\.\/assets/);
+  assert.equal(readFileSync(join(root, "ff", "fframes", "src", "main.rs"), "utf8"), main);
 });
