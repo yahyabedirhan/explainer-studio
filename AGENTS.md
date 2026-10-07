@@ -59,6 +59,8 @@ When the chosen style has a skill, read it first and follow it in place of steps
 
 ## Layout
 
+`docs/low-level-design.md` maps the code: which module owns what, one video traced from `npm run new-video` to the checked MP4, and where a new style, output or building block goes. Read it before changing `src/` or `scripts/`.
+
 - `<root>/<slug>/`: one video, as "The videos root" says. `docs/videos-root.md` holds the technical detail: the resolver, the bundler aliases, Tailwind and the known limits.
 - `src/lib/timing.ts`: the only place scene lengths are computed, as `ceil((durationSeconds + paddingSeconds) x fps)`.
 - `src/lib/words.ts`: `useWord(voiceover, sceneId, phrase, occurrence?)`, plus `wordFrame` and `wordEndFrame`, give the frame where a narration word starts or ends. A phrase the scene never says throws.

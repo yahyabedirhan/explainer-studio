@@ -33,7 +33,7 @@ Pick a style for each video; the agent recommends one when it asks its questions
 - **FFrames**: the Rust renderer, for effect-heavy pieces.
 - **Shaders**: an optional, experimental add-on; you pick the effects from a prototype sheet first.
 
-`AGENTS.md` is the entry point for the process, `docs/pipeline.md` describes the twelve layers from idea to MP4, and `docs/styles/` holds a page per style.
+`AGENTS.md` is the entry point for the process, `docs/pipeline.md` describes the twelve layers from idea to MP4, `docs/styles/` holds a page per style, and [docs/low-level-design.md](docs/low-level-design.md) explains how the code is put together, following one video from scaffold to MP4.
 
 ## Layout
 
@@ -66,6 +66,7 @@ scripts/
 templates/video/           what new-video copies
 AGENTS.md                  the rules agents follow here
 PRONUNCIATION.md           fixing words Kokoro says wrong
+docs/low-level-design.md   how the code fits together, one video traced end to end
 docs/pipeline.md           the twelve layers from idea to MP4
 docs/styles/               one page per style
 docs/videos-root.md        the videos root: resolver, outputs, limits
