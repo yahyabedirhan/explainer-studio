@@ -1,10 +1,39 @@
 # Videos root outside the repository
 
+## Where the root is
+
+`scripts/lib/videos-root.mjs` resolves the videos root, in this order:
+
+1. `STUDIO_VIDEOS_DIR`. A relative path resolves against the working directory.
+2. `videosDir` in `$XDG_CONFIG_HOME/explainer-studio/config.json` (`~/.config/explainer-studio/config.json` by default), for example `{ "videosDir": "~/Movies/explainers" }`. A missing or unreadable file is skipped. A file that is not JSON stops the command with its path.
+3. `~/.local/share/explainer-studio/videos`.
+
+A leading `~` expands in both settings. `remotion.config.ts` and `npm run new-video` use this module, and the Python scripts mirror the same order. `remotion.config.ts` creates the root when it is missing, so Studio opens on a fresh machine.
+
+Each video is `<root>/<slug>/`, and its outputs (stills, contact sheet, process page, renders) go in `<root>/<slug>/out/`.
+
+To test without touching your videos, point the root at a scratch folder: `STUDIO_VIDEOS_DIR=$(mktemp -d) npm run new-video -- fixture`. `npm test` checks the resolution order with scratch folders only.
+
+## What `npm run new-video` writes
+
+- `<root>/<slug>/`, from `templates/video/`. Its code imports shared studio code as `@studio/...`.
+- `<root>/tsconfig.json`, when it is missing, for editors and `npx tsc -p <root>`. It extends the studio's `tsconfig.json` and resolves `@studio/*` and every package (`remotion`, `@remotion/*`, `react` and its types) from the checkout that wrote it. Another checkout that shares the root keeps the file as it is, while the checkout it names still exists. When that checkout is gone (a returned worktree), the next `new-video` writes the file again for its own checkout.
+
+## Tailwind
+
+Tailwind v4 scans only the project folder for class names. `scripts/lib/tailwind-source-loader.cjs` runs before Tailwind's loader and adds `@source "<root>"` after `@import "tailwindcss"`, so a class used only in video code under the root is generated too. Tailwind skips binary files such as renders and audio.
+
+## Known limits
+
+- `npx remotion compositions` on a root with no voiced video fails with `Array of 0 length`. The Remotion CLI (`print-compositions.js`) cannot print an empty list. Studio opens normally on an empty root.
+
+# Spike findings
+
 Findings of the spike in #23 (spec #22), on Remotion 4.0.532 with rspack, 2026-10-07. Every result below came from a scratch root made with `mktemp -d` and pointed to with `STUDIO_VIDEOS_DIR`.
 
 ## What `remotion.config.ts` does
 
-- `STUDIO_VIDEOS_DIR` names the videos root. Without it the root is `videos/` in the checkout, as before. The full resolver (environment, then config, then `~/.local/share/explainer-studio/videos`) comes in #27.
+- The root comes from `scripts/lib/videos-root.mjs` (see "Where the root is").
 - `Config.setPublicDir(<root>)` takes the absolute path, so `staticFile("<slug>/...")` reaches a video's files.
 - One bundler override keeps Tailwind and adds three things:
   - the alias `@studio` to `src/`, for video code outside the repository;
@@ -29,7 +58,4 @@ Keep each video's outputs inside its own folder and the whole root as the public
 
 One exception: `npx remotion bundle` (`npm run build`) passes a fixed output folder, and then Remotion copies the whole public folder, every video's outputs included. Do not use it with a large root, or give it `--public-dir <root>/<slug>`.
 
-## Still open
-
-- Tailwind v4 finds class names by scanning files under the project. A video outside the repository that uses Tailwind classes may need an `@source` line for the root in `src/index.css`. The fixture used inline styles, so this is untested.
-- Editor types for video code outside the repository (`@studio/*`, `remotion`, `@remotion/*`) need the root's own `tsconfig.json`, as the spec says.
+Tailwind and editor types, still open after the spike, are settled above (#27).

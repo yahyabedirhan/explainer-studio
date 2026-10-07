@@ -35,6 +35,7 @@
     "build": "remotion bundle",
     "upgrade": "remotion upgrade",
     "lint": "eslint src && tsc",
+    "test": "node --test 'scripts/**/*.test.mjs'",
     "voice": "tts/bin/python scripts/tts.py",
     "sound": "tts/bin/python scripts/sound.py",
     "fframes-sync": "tts/bin/python scripts/fframes_sync.py",
