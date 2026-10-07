@@ -5,7 +5,7 @@ description: Add GPU shader effects (gradients, noise, halftone, light rays, wip
 
 # Shader video
 
-Shaders are an optional, experimental add-on: effects from the `shaders` package, drawn frame by frame by `src/components/Shader.tsx`, behind or over a video's own scenes. Use one when the effect carries the idea the narration explains, never as decoration added for its own sake. Taste in effects is the user's: they pick every effect from a prototype sheet (step 3) before any scene is built. Why it works this way, and its limits: [`docs/shaders.md`](../../docs/shaders.md).
+Shaders are an optional, experimental add-on: effects from the `shaders` package, drawn frame by frame by `src/components/Shader.tsx`, behind or over a video's own scenes. Use one when the effect carries the idea the narration explains, never as decoration added for its own sake. Taste in effects is the user's: they pick every effect from a prototype sheet (step 3) before any scene is built. Why it works this way, and its limits: [`docs/styles/shaders.md`](../../docs/styles/shaders.md).
 
 Work in the studio's checkout and follow its `AGENTS.md`; where this skill and `AGENTS.md` differ, `AGENTS.md` wins. Before writing scene code, read `.claude/skills/remotion-best-practices/SKILL.md` and the references it routes to, with the overrides table in `AGENTS.md`.
 
@@ -27,7 +27,7 @@ Work in the studio's checkout and follow its `AGENTS.md`; where this skill and `
    - Done when `npx tsc --noEmit` and `npx eslint src videos/<slug>` pass.
 6. **Sound.** Sum `ceil((durationSeconds + paddingSeconds) x fps)` over the scenes, with the fps from `config.ts`, divide by the fps, and run `npm run sound -- <slug> --seconds <N>`. Lay `bed.wav` under the whole video and place the effects on word cues, as in `patterns.md`.
 7. **Stills.** For each scene, render a still at its first frame and about ten frames after each cue, when the reveal has landed: `npx remotion still <Id> out/<slug>/<name>.png --frame=<n>`. `remotion.config.ts` sets the ANGLE renderer that WebGPU needs. Read every still.
-   - A still that shows only the scene's CSS background colour means the shader did not draw: see "Troubleshooting" in `docs/shaders.md`.
+   - A still that shows only the scene's CSS background colour means the shader did not draw: see "Troubleshooting" in `docs/styles/shaders.md`.
    - Render one frame twice and compare with `md5`; the two files match.
    - Done when every still shows its effect, its text and its caption as the brief says.
 8. **Render.** `npx remotion render <Id> out/<slug>/<slug>.mp4`. Check it with `ffprobe -v error -show_entries format=duration:stream=codec_type,nb_frames -of compact out/<slug>/<slug>.mp4`.
