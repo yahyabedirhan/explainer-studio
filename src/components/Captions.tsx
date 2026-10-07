@@ -9,7 +9,9 @@ type Props = {
   readonly style?: React.CSSProperties;
 };
 
-const sentences = (text: string) => text.match(/[^.!?]+[.!?]*/g)?.map((s) => s.trim()) ?? [];
+// A stop followed by a non-space ("timing.ts", "2.5") stays inside its sentence.
+const sentences = (text: string) =>
+  text.match(/(?:[^.!?]|[.!?](?=\S))+[.!?]*/g)?.map((s) => s.trim()) ?? [];
 const wordCount = (sentence: string) => sentence.split(/\s+/).filter(Boolean).length;
 
 // Start time, in seconds, of each shown sentence: the first spoken word of the
