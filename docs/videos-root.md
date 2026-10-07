@@ -27,6 +27,22 @@ To test without touching your videos, point the root at a scratch folder: `STUDI
 - `<root>/<slug>/`, from `templates/video/`. Its code imports shared studio code as `@studio/...`.
 - `<root>/tsconfig.json`, when it is missing, for editors and `npx tsc -p <root>`. It extends the studio's `tsconfig.json` and resolves `@studio/*` and every package (`remotion`, `@remotion/*`, `react` and its types) from the checkout that wrote it. Another checkout that shares the root keeps the file as it is, while the checkout it names still exists. When that checkout is gone (a returned worktree), the next `new-video` writes the file again for its own checkout.
 
+## Outputs and the render command
+
+Every render and check of a video goes in `<root>/<slug>/out/`, never in the checkout's `out/`:
+
+| Command | Writes |
+|---|---|
+| `npm run render -- <slug> [flags]` | `out/<slug>.mp4` |
+| `npm run still -- <slug> <name> --frame=<n> [flags]` | `out/<name>.png`. `--sheet` draws the asset sheet, `<Id>Sheet`. |
+| `npm run sheet -- <slug>` | `out/sheet.png`, from `out/<slug>.mp4` |
+| `npm run refs -- <slug> <url> [--name <name>]` | the download in `<root>/<slug>/refs/<name>.mp4`, the frames in `out/refs/<name>/` |
+| `npm run process -- <slug>` | `out/process/process.html`, from the stages in `out/process/` |
+
+`render` and `still` resolve the root and call `npx remotion render|still <Id> <path>`. Flags after the slug (or the still's name) go on to Remotion. Plain `npx remotion render|still` works too, with the output path typed out.
+
+Every video's outputs stay in the root, which is the public folder. A render does not copy them: see "Render copies: the chosen method" below.
+
 ## Tailwind
 
 Tailwind v4 scans only the project folder for class names. `scripts/lib/tailwind-source-loader.cjs` runs before Tailwind's loader and adds `@source "<root>"` after `@import "tailwindcss"`, so a class used only in video code under the root is generated too. Tailwind skips binary files such as renders and audio.

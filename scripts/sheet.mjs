@@ -2,11 +2,13 @@
 //
 //   npm run sheet -- <slug> [--every <seconds>] [--file <video>] [--out <png>]
 //
-// Takes a frame every 0.5 s (by default) of out/<slug>/<slug>.mp4, 7 across, into
-// out/<slug>/sheet.png. Read the sheet: a still shows a pose, a sheet shows a sequence.
+// Takes a frame every 0.5 s (by default) of <root>/<slug>/out/<slug>.mp4, 7 across, into
+// <root>/<slug>/out/sheet.png, under the videos root (scripts/lib/videos-root.mjs).
+// Read the sheet: a still shows a pose, a sheet shows a sequence.
 import { execFileSync } from "node:child_process";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
+import { outputDir } from "./lib/videos-root.mjs";
 
 const args = process.argv.slice(2);
 const flag = (name, fallback) => {
@@ -15,8 +17,8 @@ const flag = (name, fallback) => {
 };
 const every = Number(flag("every", "0.5"));
 const [slug] = args;
-const file = flag("file", slug && join("out", slug, `${slug}.mp4`));
-const out = flag("out", slug && join("out", slug, "sheet.png"));
+const file = flag("file", slug && join(outputDir(slug), `${slug}.mp4`));
+const out = flag("out", slug && join(outputDir(slug), "sheet.png"));
 if (!slug || !(every > 0)) {
   console.error(
     "Usage: npm run sheet -- <slug> [--every <seconds>] [--file <video>] [--out <png>]",
@@ -25,7 +27,7 @@ if (!slug || !(every > 0)) {
 }
 if (!existsSync(file)) {
   console.error(
-    `${file} does not exist. Render first: npx remotion render <Id> ${file}`,
+    `${file} does not exist. Render first: npm run render -- ${slug}`,
   );
   process.exit(1);
 }

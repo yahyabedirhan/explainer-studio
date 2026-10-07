@@ -44,3 +44,11 @@ export const videosRoot = (env = process.env) => {
   const setting = env.STUDIO_VIDEOS_DIR || configuredRoot(env);
   return setting ? resolve(expandHome(setting)) : DEFAULT_ROOT;
 };
+
+// One video's folder, and the folder its renders and checks go in: stills, the MP4,
+// contact sheets, reference frames and the process page.
+export const videoDir = (slug, env = process.env) => join(videosRoot(env), slug);
+export const outputDir = (slug, env = process.env) => join(videoDir(slug, env), "out");
+
+// The composition id Root.tsx gives a slug: shipyard-architecture is ShipyardArchitecture.
+export const compositionId = (slug) => slug.replace(/(^|-)([a-z0-9])/g, (_, __, c) => c.toUpperCase());

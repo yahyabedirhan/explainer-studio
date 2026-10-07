@@ -4,7 +4,7 @@
 // The root and its tsconfig.json are created when missing.
 import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
-import { videosRoot } from "./lib/videos-root.mjs";
+import { compositionId, videosRoot } from "./lib/videos-root.mjs";
 
 const studio = resolve(import.meta.dirname, "..");
 
@@ -23,7 +23,7 @@ if (existsSync(dest)) {
   process.exit(1);
 }
 
-const component = slug.replace(/(^|-)([a-z0-9])/g, (_, __, c) => c.toUpperCase());
+const component = compositionId(slug);
 const title = slug.replace(/-/g, " ");
 mkdirSync(root, { recursive: true });
 writeRootTsconfig();
