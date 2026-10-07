@@ -1,6 +1,6 @@
 # Shader scene patterns
 
-Code shapes for a scene that uses `src/components/Shader.tsx`. Paths are from `videos/<slug>/scenes/`.
+Code shapes for a scene that uses `src/components/Shader.tsx`, in `<root>/<slug>/scenes/`. Shared studio code imports as `@studio/...`.
 
 ## A scene
 
@@ -9,10 +9,10 @@ import { Audio } from "@remotion/media";
 import { AbsoluteFill, interpolate, Sequence, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
 import { componentDefinition as Pixelate } from "shaders/core/Pixelate";
 import { componentDefinition as Plasma } from "shaders/core/Plasma";
-import { Captions } from "../../../src/components/Captions";
-import { Shader, type ShaderLayer } from "../../../src/components/Shader";
-import { getScene } from "../../../src/lib/timing";
-import { useWord } from "../../../src/lib/words";
+import { Captions } from "@studio/components/Captions";
+import { Shader, type ShaderLayer } from "@studio/components/Shader";
+import { getScene } from "@studio/lib/timing";
+import { useWord } from "@studio/lib/words";
 import voiceover from "../voiceover.json";
 
 const scene = getScene(voiceover, "pixels");

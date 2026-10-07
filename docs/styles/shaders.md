@@ -8,7 +8,7 @@ Can the studio use GPU shader effects in its videos, with every frame a pure fun
 
 - **The `shaders` package**: [shader-effects-inc/shaders](https://github.com/shader-effects-inc/shaders) at `935f71a7789f0e07811dfe6fd0d8f707e9848238`, installed from npm as `shaders@4.0.0`, whose `gitHead` is that same commit. It brings `typegpu@0.12.3`. Together they add 39 MB to `node_modules`.
 - **Remotion** `4.0.532` with its Chrome Headless Shell 149, on an Apple M3 Pro.
-- **A 32 s test video**, "what is a shader", told with ten of the package's effects: `FlowingGradient` under `Vignette`, `Plasma` under an animated `Pixelate`, `Aurora` (full frame and two frozen panels), `MeshGradient` under `Halftone` under `ChromaticAberration`, and `Godrays` under a closing `IrisWipe`. Kokoro narration, `npm run sound`, word-cued reveals and captions. It stays in the ignored `videos/shaders-spike/`.
+- **A 32 s test video**, "what is a shader", told with ten of the package's effects: `FlowingGradient` under `Vignette`, `Plasma` under an animated `Pixelate`, `Aurora` (full frame and two frozen panels), `MeshGradient` under `Halftone` under `ChromaticAberration`, and `Godrays` under a closing `IrisWipe`. Kokoro narration, `npm run sound`, word-cued reveals and captions. It stays in the videos root, at `<root>/shaders-spike/`.
 
 ## The package's model
 

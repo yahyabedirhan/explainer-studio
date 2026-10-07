@@ -12,7 +12,7 @@ A leading `~` expands in both settings. `remotion.config.ts` and `npm run new-vi
 
 Each video is `<root>/<slug>/`, and its outputs (stills, contact sheet, process page, renders) go in `<root>/<slug>/out/`.
 
-To test without touching your videos, point the root at a scratch folder: `STUDIO_VIDEOS_DIR=$(mktemp -d) npm run new-video -- fixture`. `npm test` checks the resolution order with scratch folders only.
+To test without touching your videos, point the root at a scratch folder: `STUDIO_VIDEOS_DIR=$(mktemp -d) npm run new-video -- fixture`. `npm test` checks the resolution order with scratch folders only. `npm run acceptance` runs the whole flow in a scratch root, from `new-video` to a render and a contact sheet, and checks that the checkout gains no files.
 
 ## The Python scripts
 

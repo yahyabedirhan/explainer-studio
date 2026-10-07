@@ -1,13 +1,13 @@
 # Pipeline
 
-Between an idea and an MP4, a studio video passes through twelve layers. Each layer has one owner: a file, a script or a tool. A style changes only the picture and effects layers; every other layer is shared by every style. `AGENTS.md` gives the steps that walk through these layers; this page says what each layer is and where it lives.
+Between an idea and an MP4, a studio video passes through twelve layers. Each layer has one owner: a file, a script or a tool. A style changes only the picture and effects layers; every other layer is shared by every style. `AGENTS.md` gives the steps that walk through these layers; this page says what each layer is and where it lives. `<root>` is the videos root outside the repository: `AGENTS.md`, "The videos root".
 
 | # | Layer | Owner | Produces |
 |---|---|---|---|
 | 1 | Idea | another project, read-only | what the user wants to learn |
-| 2 | Brief | `videos/<slug>/brief.md`, from `templates/video/brief.md` | goal, audience, length, style, look, scene list |
-| 3 | Script | `videos/<slug>/voiceover.json` | one scene per narration line, written for the ear |
-| 4 | Voice | Kokoro, `scripts/tts.py` (`npm run voice`) | a WAV per scene in `videos/<slug>/audio/` |
+| 2 | Brief | `<root>/<slug>/brief.md`, from `templates/video/brief.md` | goal, audience, length, style, look, scene list |
+| 3 | Script | `<root>/<slug>/voiceover.json` | one scene per narration line, written for the ear |
+| 4 | Voice | Kokoro, `scripts/tts.py` (`npm run voice`) | a WAV per scene in `<root>/<slug>/audio/` |
 | 5 | Word timings | `scripts/tts.py`, into each scene's `words` | the start and end of every spoken word |
 | 6 | Scene timing | `src/lib/timing.ts`, `src/lib/words.ts` | scene lengths in frames, and the frame of each cue word |
 | 7 | Picture | the renderer and the style | every frame |
@@ -15,7 +15,7 @@ Between an idea and an MP4, a studio video passes through twelve layers. Each la
 | 9 | Sound | `scripts/sound.py` (`npm run sound`) | music bed, sting and effects in `assets/sound/` |
 | 10 | Captions | `src/components/Captions.tsx` | word-timed captions from the script |
 | 11 | Encode | the renderer's FFmpeg | the MP4 with its audio |
-| 12 | Checks | stills, contact sheet, `ffprobe` | proof the video is right before anyone watches it |
+| 12 | Checks | stills, contact sheet, `ffprobe` | proof the video is right before anyone watches it, in `<root>/<slug>/out/` |
 
 ## The layers
 
