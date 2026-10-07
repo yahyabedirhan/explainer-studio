@@ -29,6 +29,8 @@ Make and keep videos in the studio's main checkout, on `main`. A worktree's igno
   - `Travel.tsx`: moves a child along a Bézier path.
   - `Typewriter.tsx`: types text out over frames.
   - `Grain.tsx`: film-grain overlay.
+  - `ShaderLayer.tsx`: a GLSL fragment shader on a WebGL canvas, drawn each frame with Shadertoy-style uniforms. Render and take stills with `--gl=angle`.
+  - `PixelSprite.tsx`: pixel art from a character grid, as crisp SVG, with an optional extruded depth.
 - `scripts/tts.py`: Kokoro voice generation (`npm run voice`). It also writes each scene's `words` (`text`, `start`, `end`, seconds from the scene WAV's start) into `voiceover.json`. The venv is `./tts`, Python 3.12, pinned in `tts-requirements.txt`.
 - `scripts/sound.py`: `npm run sound -- <slug> --seconds <N> [--bpm 96] [--seed 1]` synthesizes a music bed, an end sting and click, tick, whoosh and pop effects into `videos/<slug>/assets/sound/`, with a `SOURCES.md`.
 - `docs/renderers.md`: why the studio keeps Remotion over HyperFrames.
