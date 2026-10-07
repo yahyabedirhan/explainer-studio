@@ -17,6 +17,12 @@ Make and keep videos in the studio's main checkout, on `main`. A worktree's igno
 5. Put the narration in `voiceover.json`, run `npm run voice -- <slug>`, then build the scenes. For music and sound effects, run `npm run sound -- <slug> --seconds <N>` with the final length.
 6. Check stills, then render to `out/<slug>/<slug>.mp4`.
 
+## Video styles
+
+Other ways to make a video here, each with its own skill or doc. The steps above stay the default.
+
+- FFrames (Rust, SVG, GPU shaders), for shader-heavy pieces and the pixel and thermal ad look: [`skills/fframes-studio-video/SKILL.md`](skills/fframes-studio-video/SKILL.md).
+
 ## Layout
 
 - `videos/<slug>/`: everything one video needs, ignored by git. `brief.md` holds the brief and script, `voiceover.json` its scenes, `config.ts` its fps and size, `Video.tsx` the sequence (its default export), `scenes/` one file per scene, `assets/` its images and sound effects, and `audio/` the generated voice. `videos/` is Remotion's public folder, so `staticFile("<slug>/assets/logo.png")` reaches a video's own file.
@@ -33,6 +39,8 @@ Make and keep videos in the studio's main checkout, on `main`. A worktree's igno
   - `PixelSprite.tsx`: pixel art from a character grid, as crisp SVG, with an optional extruded depth.
 - `scripts/tts.py`: Kokoro voice generation (`npm run voice`). It also writes each scene's `words` (`text`, `start`, `end`, seconds from the scene WAV's start) into `voiceover.json`. The venv is `./tts`, Python 3.12, pinned in `tts-requirements.txt`.
 - `scripts/sound.py`: `npm run sound -- <slug> --seconds <N> [--bpm 96] [--seed 1]` synthesizes a music bed, an end sting and click, tick, whoosh and pop effects into `videos/<slug>/assets/sound/`, with a `SOURCES.md`.
+- `scripts/fframes_sync.py`: `npm run fframes-sync -- <slug> --fps <N>` writes an FFrames project's `src/timing.rs` from `voiceover.json` and links the video's WAVs into its `assets/`.
+- `docs/fframes.md`: what FFrames is, the pixel and thermal ad style, its install and gotchas.
 - `docs/renderers.md`: why the studio keeps Remotion over HyperFrames.
 - `templates/video/`: what `npm run new-video` copies.
 - `out/<slug>/`: renders and stills, ignored by git.
