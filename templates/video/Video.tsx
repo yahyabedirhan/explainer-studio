@@ -1,5 +1,5 @@
 import { Series, useVideoConfig } from "remotion";
-import { sceneFrames } from "../../src/lib/timing";
+import { sceneFrames } from "@studio/lib/timing";
 import { Hook } from "./scenes/Hook";
 import voiceover from "./voiceover.json";
 

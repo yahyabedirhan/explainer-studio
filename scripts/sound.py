@@ -3,7 +3,7 @@
 Usage:
     npm run sound -- <video> --seconds <N> [--bpm 96] [--seed 1]
 
-Writes videos/<video>/assets/sound/ with 48 kHz stereo WAVs:
+Writes <root>/<video>/assets/sound/, under the videos root, with 48 kHz stereo WAVs:
     bed.wav     N seconds of calm pad, plucked arpeggio and light pulse in D major
                 (I-V-vi-IV: D, A, B minor, G), 1 s fade-in, 2 s fade-out.
     sting.wav   about 3 s warm D major pad swell: 0.3 s attack, 2.5 s fade, no hit.
@@ -19,13 +19,12 @@ The same arguments always give the same files.
 """
 
 import argparse
-from pathlib import Path
 
 import numpy as np
 import soundfile as sf
 
-ROOT = Path(__file__).resolve().parent.parent
-VIDEOS = ROOT / "videos"
+from videos_root import videos_root
+
 SR = 48000
 
 # D major, I-V-vi-IV. Pad voicings move by step; bass and arpeggio follow the chord.
@@ -357,7 +356,7 @@ def main():
     parser.add_argument("--seed", type=int, default=1)
     args = parser.parse_args()
 
-    video = VIDEOS / args.video
+    video = videos_root() / args.video
     if not video.is_dir():
         raise SystemExit(f"No video folder: {video}")
     folder = video / "assets" / "sound"
@@ -384,7 +383,7 @@ def main():
     bpm = f"{args.bpm:g}"
     command = f"npm run sound -- {args.video} --seconds {seconds} --bpm {bpm} --seed {args.seed}"
     write_sources(folder, command, args.seed)
-    print(f"Wrote {folder.relative_to(ROOT)}")
+    print(f"Wrote {folder}")
 
 
 if __name__ == "__main__":

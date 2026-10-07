@@ -22,17 +22,17 @@ Small life on top: the mascot bobs and blinks by itself, `armUp` raises to throw
 
 ## Scene skeleton
 
-One file per shot in `videos/<slug>/scenes/`. Copy this and fill in the shot:
+One file per shot in `<root>/<slug>/scenes/`. Copy this and fill in the shot:
 
 ```tsx
 import { Audio } from "@remotion/media";
 import { useCallback } from "react";
 import { Sequence, staticFile, useVideoConfig } from "remotion";
-import { CanvasScene, type DrawFn } from "../../../src/components/CanvasScene";
-import { getScene } from "../../../src/lib/timing";
-import { useWord } from "../../../src/lib/words";
-import { backOut, easeInOut, lerp } from "../../../src/lib/sketch";
-import { boilOf, dial, FONTS, ground, heading, mascot, paperBg } from "../../../src/styles/sketchbook";
+import { CanvasScene, type DrawFn } from "@studio/components/CanvasScene";
+import { getScene } from "@studio/lib/timing";
+import { useWord } from "@studio/lib/words";
+import { backOut, easeInOut, lerp } from "@studio/lib/sketch";
+import { boilOf, dial, FONTS, ground, heading, mascot, paperBg } from "@studio/styles/sketchbook";
 import { ramp } from "../draw/ramp";
 import voiceover from "../voiceover.json";
 

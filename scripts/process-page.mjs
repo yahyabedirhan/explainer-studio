@@ -2,19 +2,20 @@
 //
 //   npm run process -- <slug>
 //
-// Reads out/<slug>/process/, where each stage is a numbered folder such as
-// 01-refs or 06-review-1. A stage holds NOTES.md (its first "# " line is the title)
+// Reads <root>/<slug>/out/process/, under the videos root (scripts/lib/videos-root.mjs),
+// where each stage is a numbered folder such as 01-refs or 06-review-1. A stage holds NOTES.md (its first "# " line is the title)
 // and any images, videos and text files it produced. Writes
-// out/<slug>/process/process.html with relative links, to open locally in a browser.
+// <root>/<slug>/out/process/process.html with relative links, to open locally in a browser.
 import { readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { extname, join } from "node:path";
+import { outputDir } from "./lib/videos-root.mjs";
 
 const [slug] = process.argv.slice(2);
 if (!slug) {
   console.error("Usage: npm run process -- <slug>");
   process.exit(1);
 }
-const root = join("out", slug, "process");
+const root = join(outputDir(slug), "process");
 
 const esc = (s) =>
   s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
