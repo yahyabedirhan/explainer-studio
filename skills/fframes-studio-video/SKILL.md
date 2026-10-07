@@ -79,7 +79,10 @@ First load the `fframes-video` skill (installed in `~/.agents/skills/fframes-vid
    ```
    - Done when: ffprobe shows a video stream of `TOTAL_FRAMES` frames at your size, an audio stream, and a duration equal to `TOTAL_FRAMES / fps`.
 
-Report the MP4 path, its length, the strip path, the LUFS figure and the command to watch it with sound: `cargo run --release -- preview` in `videos/<slug>/fframes/`.
+10. **Clean up.** Once the user has the final render, free the build folder: `cargo clean` in `videos/<slug>/fframes/`. Each project's `target/` holds about 1.8 GB, and the next edit rebuilds it in about 2 minutes.
+   - Done when `videos/<slug>/fframes/target/` is gone.
+
+Report the MP4 path, its length, the strip path, the LUFS figure and the command to watch it with sound: `cargo run --release -- preview` in `videos/<slug>/fframes/`, which rebuilds first after the cleanup.
 
 ## Style: pixel and thermal ad
 
