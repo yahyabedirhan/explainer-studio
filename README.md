@@ -8,7 +8,7 @@ It is built to be used as an **external tool**: your other projects keep only th
 
 ## How it works
 
-Narration is the clock. Each video has a `voiceover.json` that lists its scenes and their narration. `npm run voice` turns each line into a WAV with Kokoro, measures it, and writes the real length back. Every scene then lasts as long as its line plus a short pause, so editing a sentence re-times the video by itself.
+Narration is the clock. Each video has a `voiceover.json` that lists its scenes and their narration. `npm run voice` turns each line into a WAV with Kokoro, measures it, and writes the real length and each word's timing back. Every scene then lasts as long as its line plus a short pause, so editing a sentence re-times the video by itself.
 
 ```text
 voiceover.json   text, voice, speed per scene
@@ -22,7 +22,7 @@ src/lib/timing.ts   frames = ceil((durationSeconds + paddingSeconds) × fps)
    └─▶ Root.tsx    the whole <Composition>, found in videos/ by itself
 ```
 
-No scene length is ever typed by hand.
+No scene length is ever typed by hand, and reveals are cued on spoken words with `useWord` from `src/lib/words.ts`.
 
 ## Layout
 
@@ -30,7 +30,8 @@ No scene length is ever typed by hand.
 src/
 ├── Root.tsx               finds every video in videos/ and registers it
 ├── lib/timing.ts          the only place scene lengths are computed
-└── components/            pieces shared by videos
+├── lib/words.ts           frames where narration words start and end
+└── components/            captions, cursor, travel, typewriter, grain
 videos/<video>/            ignored by git: everything one video needs
 ├── brief.md               goal, audience, format, voice, scene list
 ├── voiceover.json         the scenes and their narration
@@ -42,10 +43,12 @@ videos/<video>/            ignored by git: everything one video needs
 out/<video>/               ignored by git: renders and stills
 scripts/
 ├── tts.py                 npm run voice
+├── sound.py               npm run sound: music bed, sting, effects
 └── new-video.mjs          npm run new-video
 templates/video/           what new-video copies
 AGENTS.md                  the rules agents follow here
 PRONUNCIATION.md           fixing words Kokoro says wrong
+docs/renderers.md          why Remotion over HyperFrames
 ```
 
 Git ignores `videos/`, `out/`, the `tts/` venv and the agent skills.
@@ -78,6 +81,7 @@ npx remotion render SmokeTest out/smoke-test/smoke-test.mp4
 ```sh
 npm run new-video -- my-project-overview   # scaffold videos/my-project-overview
 npm run voice -- my-project-overview       # narration and timing
+npm run sound -- my-project-overview --seconds 90   # music bed and effects, at the final length
 npm run dev                                # Remotion Studio preview
 npx remotion still MyProjectOverview out/my-project-overview/frame.png --frame=60
 npx remotion render MyProjectOverview out/my-project-overview/my-project-overview.mp4
