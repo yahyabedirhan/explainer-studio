@@ -1,4 +1,4 @@
-# Renderers
+# Decisions: renderers
 
 Is another code renderer better than Remotion for this studio's videos: every frame a pure function of time, word-timed reveals, a cursor that drags a box? Spike of 2026-10-07.
 
@@ -45,7 +45,7 @@ HyperFrames would be worth it if the studio wanted to drop existing HTML, CSS, G
 
 ## FFrames vs Remotion
 
-A second spike, also on 2026-10-07: [FFrames](styles/fframes.md) ([dmtrKovalenko/fframes](https://github.com/dmtrKovalenko/fframes) at `30b48f3da60040e0fd7c811fdcd5b159e70a5b02`, crate `fframes` 1.2.0, Skia on Metal) against Remotion `4.0.532`. Both renderers built the same 16 s, five-scene piece: 1440x1080 at 24 fps, in the pixel and thermal ad style that [fframes.md](styles/fframes.md) describes. Both used the same Kokoro narration, word timings and sound files. Remotion drew it with React, SVG and a WebGL shader layer (`ShaderLayer`). FFrames drew it with `svgr!` SVG and SkSL shaders. Both renders have 387 frames and -22.6 LUFS integrated, and a side-by-side contact sheet shows them frame for frame alike.
+A second spike, also on 2026-10-07: [FFrames](fframes-prototype.md) ([dmtrKovalenko/fframes](https://github.com/dmtrKovalenko/fframes) at `30b48f3da60040e0fd7c811fdcd5b159e70a5b02`, crate `fframes` 1.2.0, Skia on Metal) against Remotion `4.0.532`. Both renderers built the same 16 s, five-scene piece: 1440x1080 at 24 fps, in the pixel and thermal ad look that [fframes-prototype.md](fframes-prototype.md) describes. Both used the same Kokoro narration, word timings and sound files. Remotion drew it with React, SVG and a WebGL shader layer (`ShaderLayer`). FFrames drew it with `svgr!` SVG and SkSL shaders. Both renders have 387 frames and -22.6 LUFS integrated, and a side-by-side contact sheet shows them frame for frame alike.
 
 | | FFrames 1.2.0 | Remotion 4.0.532 |
 |---|---|---|
@@ -71,5 +71,5 @@ Notes on the numbers:
 Use both, for different jobs. Remotion stays the default renderer.
 
 1. Remotion stays the default for explainers. They lean on the studio's components (`Captions`, `Cursor`, `Travel`, `Typewriter`), real UI captures and browser text layout. Nothing has to compile, and nothing new is installed.
-2. FFrames is the pick for shader-heavy, effect-driven pieces, and when an agent works alone, because `inspect`, `strip` and `audio analyze` give it checks without watching. The [`fframes-studio-video`](../skills/fframes-studio-video/SKILL.md) skill makes such a video from an idea inside this studio, with the same Kokoro voice and sounds.
+2. FFrames is the pick for shader-heavy, effect-driven pieces, and when an agent works alone, because `inspect`, `strip` and `audio analyze` give it checks without watching. The `fframes` renderer option of `make-explainer-video` makes such a video inside this studio, with the same Kokoro voice and sounds.
 3. Neither renderer made the pixel and thermal look easier to reach. The hard part of that look is the generated raster art, not the renderer.

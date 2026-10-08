@@ -1,8 +1,8 @@
-# Shaders
+# Decisions: the shaders prototype
 
-Can the studio use GPU shader effects in its videos, with every frame a pure function of the Remotion frame? Spike of 2026-10-07. Yes, through `src/components/Shader.tsx`, with the conditions below. The step-by-step workflow is the [`shader-video` skill](../../skills/shader-video/SKILL.md); this page holds the why.
+Can the studio use GPU shader effects in its videos, with every frame a pure function of the Remotion frame? Spike of 2026-10-07. Yes, through `src/components/Shader.tsx`, with the conditions below. Since 2026-10-08 ([layers-and-presets.md](layers-and-presets.md)) shaders are the `shaders` option of the effects layer: the rules an agent follows, the troubleshooting included, are in `skills/make-explainer-video/references/effects/shaders.md`. This page holds the why.
 
-**Status: optional and experimental.** Shaders are an add-on to a studio or sketchbook video, used only when an effect carries the idea the narration explains, or when the user asks. The user picks every effect from a prototype sheet before scenes are built, because which effect looks right is a matter of taste. More trial is needed before shaders join the studio's defaults.
+**Status: optional and experimental.** Shaders are an effect any Remotion video can use, used only when an effect carries the idea the narration explains, or when the user asks. The user picks every effect from a prototype sheet before scenes are built, because which effect looks right is a matter of taste. More trial is needed before shaders join the studio's defaults.
 
 ## What was tried
 
@@ -20,7 +20,7 @@ Can the studio use GPU shader effects in its videos, with every frame a pure fun
 
 ## Licence
 
-The engine, every effect and the bindings in the repository and the npm package are MIT, Copyright (c) 2026 Shader Effects Inc. The design editor, presets, sections and Pro features at shaders.com have their own terms, and Pro presets need a partner API key. The studio uses only the npm package, so effect code can be imported into this public repository. `src/components/Shader.tsx` and `skills/shader-video/effects.md` carry the attribution, and nothing from shaders.com is used.
+The engine, every effect and the bindings in the repository and the npm package are MIT, Copyright (c) 2026 Shader Effects Inc. The design editor, presets, sections and Pro features at shaders.com have their own terms, and Pro presets need a partner API key. The studio uses only the npm package, so effect code can be imported into this public repository. `src/components/Shader.tsx` and the skill's `references/effects/shaders-catalogue.md` carry the attribution, and nothing from shaders.com is used.
 
 ## How the component works
 
@@ -62,18 +62,12 @@ Points 3 to 5 depend on renderer internals, not on a documented API. That is why
 
 ## Skill test
 
-A fresh agent got only an idea ("why the sky is blue, in ten seconds") and the path to `skills/shader-video/SKILL.md`. It produced a 10.9 s, three-scene video from `Godrays`, `ChromaticAberration`, `SineWave`, `Vignette`, `IrisWipe` and `MeshGradient`, with narration, captions, sound and word cues. The frame count matched the summed scenes, and its two-still checks matched. It went wrong in two places, and the skill was changed for both:
+A fresh agent got only an idea ("why the sky is blue, in ten seconds") and the path to the shader skill of the time. It produced a 10.9 s, three-scene video from `Godrays`, `ChromaticAberration`, `SineWave`, `Vignette`, `IrisWipe` and `MeshGradient`, with narration, captions, sound and word cues. The frame count matched the summed scenes, and its two-still checks matched. It went wrong in two places, and the skill was changed for both:
 
 - `MeshGradient` ignored its `colorA` and `colorB`: a default `stops` palette overrides them. The catalogue now flags the effects whose default stops do this.
-- `IrisWipe` hid the picture from the centre when the agent wanted a circle to open: `progress` 1 means wiped away. `patterns.md` now gives the direction for opening and closing.
+- `IrisWipe` hid the picture from the centre when the agent wanted a circle to open: `progress` 1 means wiped away. The shaders reference now gives the direction for opening and closing.
 
-It also had to guess the words-per-second budget for a target length, the sound length at fps other than 30, and when to take stills after a cue; the skill now states each. The Remotion skill's `Interactive.withSchema` advice, which the studio does not follow, is now a row in the `AGENTS.md` overrides table.
-
-## Troubleshooting
-
-- **The still shows only the background colour.** The render ran without ANGLE (check `remotion.config.ts`, or pass `--gl=angle`), or the renderer stopped: `<Shader>` fails the render with `the WebGPU renderer stopped (<reason>)` when it reports one.
-- **`fragment is not a function`** in a browser error: an effect definition came from `shaders/registry`. Import it from `shaders/core/<Effect>`.
-- **Two renders of one frame differ visibly.** An effect in the stack keeps state. Swap it for one marked `tested` or `yes` in `skills/shader-video/effects.md`.
+It also had to guess the words-per-second budget for a target length, the sound length at fps other than 30, and when to take stills after a cue; the skill now states each. The Remotion skill's `Interactive.withSchema` advice, which the studio does not follow, became a row in the skill's "Where the official skills differ" table.
 
 ## Install log
 
@@ -86,10 +80,10 @@ No global tools were installed.
 
 ## Recommendation
 
-Adopt shaders as an optional video style, the way this branch does:
+Adopt shaders as an optional effect:
 
 1. Keep `src/components/Shader.tsx` as the only way videos use the package, ANGLE in `remotion.config.ts`, and `shaders` pinned exactly.
-2. Make shader videos through `skills/shader-video/SKILL.md`, choosing effects from its catalogue, which `npm run shader-catalogue` regenerates.
+2. Choose effects from the skill's catalogue, which `npm run shader-catalogue` regenerates, after the user picks them from a prototype sheet.
 3. On each `shaders` upgrade, regenerate the catalogue, then render this page's checks again: two stills of one frame byte-identical, and a still against the same frame of a full render.
 4. Ask upstream for a public "draw at time t" call that sets both clocks. It would retire the `performance.now()` and `requestAnimationFrame` stubs, the only fragile part.
 

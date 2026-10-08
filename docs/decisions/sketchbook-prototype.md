@@ -1,16 +1,12 @@
-# Sketchbook style
+# Decisions: the sketchbook prototype
 
-A short explainer drawn entirely in code: warm **paper** storybook shots and navy **blueprint** diagram shots, alternating with hard cuts. A red tomato robot carries the story on paper and turns into a glowing outline robot on blueprint. Every frame is painted on a `<canvas>` by a `draw(ctx, { frame })` function: the code is the drawing.
+The second prototype, spike of 2026-09-24 to 2026-10-07: a short explainer drawn entirely in code: warm **paper** storybook shots and navy **blueprint** diagram shots, alternating with hard cuts. A red tomato robot carries the story on paper and turns into a glowing outline robot on blueprint. Every frame is painted on a `<canvas>` by a `draw(ctx, { frame })` function: the code is the drawing.
 
-Use it for a concept explainer of 10 to 60 seconds that shows a system or a process. It is a poor fit for a walkthrough of a real product, which wants real screen captures.
+Since 2026-10-08 ([layers-and-presets.md](layers-and-presets.md)) the prototype is split into layers: the `canvas` drawing method, the `paper-blueprint` look, the `reference-study` and `process-page` optional steps, and the `sketchbook` preset that picks them. The rules an agent follows are in `skills/make-explainer-video/`, and the look's code is `src/looks/paper-blueprint/`.
 
-- **How to make one**: [`skills/sketchbook-video/SKILL.md`](../../skills/sketchbook-video/SKILL.md), the steps from idea to MP4, with the looks in [`references/look.md`](../../skills/sketchbook-video/references/look.md) and the motion vocabulary in [`references/motion.md`](../../skills/sketchbook-video/references/motion.md).
-- **Code**: `src/styles/sketchbook/` (palettes, fonts, backgrounds, heading and dial, mascot, props, pill, storyboard ramp), drawn on `src/components/CanvasScene.tsx` with `src/lib/sketch.ts`.
-- **Tools**: `npm run refs` (reference frames), `npm run sheet` (contact sheet of a render), `npm run process` (the making-of page), `npm run new-video -- <slug> --fps 24`, a video's `Sheet.tsx` as an asset-sheet still.
+This page holds the why: where the look comes from, the choices behind it, and what was learned making the first videos.
 
-This page holds the why: where the style comes from, the choices behind it, and what was learned making the two videos so far.
-
-## Where the style comes from
+## Where the look comes from
 
 Addy Osmani posted a 40 second animation of his article ["How modern browsers work"](https://addyo.substack.com/p/how-modern-browsers-work) on [LinkedIn](https://www.linkedin.com/posts/addyosmani_ai-programming-softwareengineering-activity-7508775688909475840-Vg6e) and [X](https://x.com/addyosmani/status/2103009037164110327) on 2026-09-24.
 
@@ -27,11 +23,11 @@ Addy Osmani posted a 40 second animation of his article ["How modern browsers wo
 - Motion: paths drawing on with a sparkle at the head, objects thrown on arcs, back-out pops, type-on labels, a slow push, the line boiling about 8 times a second.
 - No voice. A synthesized music bed with effects on actions, on a 1 s pulse that the cuts land on, at -16.8 LUFS.
 
-**Guesses, not confirmed**: one canvas page with a pure `draw(t)`, captured frame by frame in headless Chrome and encoded with ffmpeg, with the sound synthesized in code. Write-ups from that week describe this as what Opus 5.5 builds by default when no framework is named ([zhuermu](https://zhuermu.com/en/blog/opus-5-5-five-videos/), [quantslant](https://quantslant.com/claude-opus-5-5-motion-graphics/), [LaoZhang](https://blog.laozhang.ai/en/posts/claude-opus-5-5-video-generation)), and the 24 fps master fits custom capture better than Remotion's default of 30. The two looks also match the "illustration shapes" and "cinematic flat + blueprint" techniques of [iart-ai/javascript-animation-skills](https://github.com/iart-ai/javascript-animation-skills) at `f7d0882a313249cbd43f0e4e9e209b1622870253`, published the same day. That repository was read as a reference while building this style (its pen line, hatching and draw-on ideas); Addy does not mention it.
+**Guesses, not confirmed**: one canvas page with a pure `draw(t)`, captured frame by frame in headless Chrome and encoded with ffmpeg, with the sound synthesized in code. Write-ups from that week describe this as what Opus 5.5 builds by default when no framework is named ([zhuermu](https://zhuermu.com/en/blog/opus-5-5-five-videos/), [quantslant](https://quantslant.com/claude-opus-5-5-motion-graphics/), [LaoZhang](https://blog.laozhang.ai/en/posts/claude-opus-5-5-video-generation)), and the 24 fps master fits custom capture better than Remotion's default of 30. The two looks also match the "illustration shapes" and "cinematic flat + blueprint" techniques of [iart-ai/javascript-animation-skills](https://github.com/iart-ai/javascript-animation-skills) at `f7d0882a313249cbd43f0e4e9e209b1622870253`, published the same day. That repository was read as a reference while building this look (its pen line, hatching and draw-on ideas); Addy does not mention it.
 
 ## Why this studio draws it this way
 
-The studio keeps Remotion ([renderers.md](../renderers.md)). `CanvasScene` gives the reference's method, a canvas the scene repaints from the frame number, inside what the studio already has: Kokoro narration, scene lengths from `voiceover.json`, reveals cued on narration words, stills for checks. The difference from the reference is narration: a shot lasts as long as its sentence, so cuts land where the voice ends rather than every 2 seconds, and the 120 BPM bed keeps the pulse underneath.
+The studio keeps Remotion ([renderers.md](renderers.md)). `CanvasScene` gives the reference's method, a canvas the scene repaints from the frame number, inside what the studio already has: Kokoro narration, scene lengths from `voiceover.json`, reveals cued on narration words, stills for checks. The difference from the reference is narration: a shot lasts as long as its sentence, so cuts land where the voice ends rather than every 2 seconds, and the 120 BPM bed keeps the pulse underneath.
 
 Choices that carry the look:
 
@@ -62,15 +58,15 @@ Didn't:
 
 ## The videos so far
 
-1. **browsers-spike** (18 s): the reference's "dns lookup" (blueprint) and "tcp + tls handshake" (paper) shots, rebuilt from the frames. The style code started here.
+1. **browsers-spike** (18 s): the reference's "dns lookup" (blueprint) and "tcp + tls handshake" (paper) shots, rebuilt from the frames. The look's code started here.
 2. **sketchbook-demo** (26 s): how a git commit works, in three shots (git add on paper, the commit snapshot on blueprint, a branch as a moving label on paper), made by following the written recipe from the brief to the MP4, with every stage kept in its process page, now `<root>/sketchbook-demo/out/process/process.html`.
 
-3. **sketchbook-hashtable** (9 s): how a hash table finds a value, made by a fresh agent given only the idea and the skill, as a test of the skill. It came out in the style on the first try (a mascot feeding a key into a hand-cranked hash grinder on paper, then a blueprint jump straight to bucket 3), and its notes on where the skill was unclear became the fixes listed below.
+3. **sketchbook-hashtable** (9 s): how a hash table finds a value, made by a fresh agent given only the idea and the skill, as a test of the skill. It came out in the look on the first try (a mascot feeding a key into a hand-cranked hash grinder on paper, then a blueprint jump straight to bucket 3), and its notes on where the skill was unclear became the fixes listed below.
 
 What the second video changed in the recipe:
 
 - `npm run refs` gained the key-pose frames and `shots.png` (above).
-- `pill` moved into the style on its second use, and fixed the overflow for good.
+- `pill` moved into the look's code on its second use, and fixed the overflow for good.
 - The storyboard became a switch (`makeRamp(STORYBOARD)`) instead of a separate drawing, so the end pose and the animation share one `draw`.
 - A cue word said twice needs `useWord`'s occurrence argument; check for repeats when reading the voice timings.
 - Every sentence of the narration needs something on screen; check it on the metaphor list, not in review.
