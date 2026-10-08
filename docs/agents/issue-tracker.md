@@ -31,7 +31,7 @@ Write each prefix the way its maker writes it. Use a semantic prefix before a ge
 - `Captions`: the captions of a video and the voice timings that place them.
 - `Stills`: the stills that check a video before its render.
 - `Sound effects`: the sound effects in a video's `assets/`.
-- `make-explainer`: the `make-explainer` skill in `skills/`.
+- `make-explainer-video`: the `make-explainer-video` skill in `skills/`.
 
 Reuse a prefix from this list before you add a new one. Add a new one when no prefix fits and the issue belongs to one tool, product, skill or workflow. Add it to this list in the same change.
 

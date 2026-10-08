@@ -18,26 +18,27 @@
 
 ## Fonts
 
-## Style
-<!-- studio (default), sketchbook or fframes, as the user chose from the styles table in AGENTS.md.
-Add "+ shaders" only when the user picked effects from the shader prototype sheet. -->
+## Choices
+<!-- One option per layer, from the layers list in the make-explainer-video skill.
+Start from a preset, or leave the Preset line out and choose each layer. -->
+- Preset:
+- Renderer:
+- Drawing:
+- Look:
+- Effects:
+- Captions:
+- Voice:
+- Sound:
+- Optional steps:
 
-## Look
-<!-- The style's look for this video: palette, type, per-shot choices.
-For a named style, list per shot which of its looks it uses (sketchbook: paper or blueprint)
-and the one visual metaphor for each concept. -->
+## Look notes
+<!-- This video's use of its look: palette, type, and per scene the one thing it shows. -->
 
 ## Tone
 
 ## Scene list
 
-## Preferred Kokoro voice
-
-## Music or SFX
-
 ## Assets
 <!-- Every character, prop, UI mock and diagram element the scenes show. Each one goes on the asset sheet (Sheet.tsx). -->
-
-## Captions (yes/no)
 
 ## Reference videos

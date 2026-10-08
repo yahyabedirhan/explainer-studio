@@ -1,11 +1,12 @@
 # Low-level design
 
-How the studio's code is put together, written from the code as it stands after the videos root moved out of the repository (spec #22). It follows the low-level design delivery framework: requirements, entities and relationships, class design, implementation, extensibility. `AGENTS.md` says how to make a video; this page says which file does what while you make one.
+How the studio's code is put together, written from the code as it stands with layers and presets (spec #35). It follows the low-level design delivery framework: requirements, entities and relationships, class design, implementation, extensibility. `skills/make-explainer-video/SKILL.md` says how to make a video; this page says which file does what while one is made.
 
 **Start here.**
 
 - **Two kinds of entry point.** Remotion starts at `remotion.config.ts` (the bundler set-up and the videos root) and `src/index.ts` (registers `src/Root.tsx`). Everything else is an `npm run` script in `package.json`, backed by one file in `scripts/`.
-- **Two places.** The repository holds the toolkit: `src/`, `scripts/`, `templates/`, `skills/` and the docs. Every video lives in one folder, `<root>/<slug>/`, in the videos root outside the repository. `npm run --silent root` prints `<root>`.
+- **Two places.** The repository holds the toolkit: `src/`, `scripts/`, `templates/`, the `make-explainer-video` skill and the docs. Every video lives in one folder, `<root>/<slug>/`, in the videos root outside the repository. `npm run --silent root` prints `<root>`.
+- **Layers.** A video picks one option per layer: renderer, drawing, look, effects, captions, voice, sound and optional steps. A preset is a saved set of choices. The skill lists them; [Layers in the code](#layers-in-the-code) says which file each option is.
 - **The clock.** Narration sets every length. `npm run voice` measures each scene's WAV and its words, and `src/lib/timing.ts` and `src/lib/words.ts` turn those seconds into frames.
 - **The main thread** of this page is one video's lifecycle, traced in [Implementation](#4-implementation): from `npm run new-video` to the checked MP4 in `<root>/<slug>/out/`.
 
@@ -20,10 +21,10 @@ How the studio's code is put together, written from the code as it stands after 
 3. Voice a video's script with Kokoro, locally: one WAV per scene, its measured length and the start and end of every word, written back into `voiceover.json` (`scripts/tts.py`).
 4. Turn those seconds into frames: scene lengths, the whole video's length and the frame of any spoken phrase (`src/lib/timing.ts`, `src/lib/words.ts`).
 5. List every video in the root as a Remotion composition, and its optional asset sheet as a still, with no tracked file changed (`src/Root.tsx`).
-6. Draw a video's picture in one of three ways: React and CSS, a canvas repainted each frame (`src/components/CanvasScene.tsx`), or FFrames in Rust (`skills/fframes-studio-video/SKILL.md`). Add GPU shaders on top as an option (`src/components/Shader.tsx`).
+6. Draw a video's picture through the layers: the `remotion` renderer with `dom` or `canvas` drawing (`src/components/CanvasScene.tsx`), or the `fframes` renderer in Rust; a look's code (`src/looks/`); the `grain` and `shaders` effects (`src/components/Grain.tsx`, `src/components/Shader.tsx`).
 7. Synthesize a music bed, an end sting and UI effects locally (`scripts/sound.py`).
 8. Render a still or the MP4 into the video's `out/` folder from a slug alone (`scripts/render.mjs`, `scripts/lib/remotion-args.mjs`).
-9. Check a render: a contact sheet (`scripts/sheet.mjs`), `ffprobe` for length and audio (`AGENTS.md`, step 10).
+9. Check a render: a contact sheet (`scripts/sheet.mjs`), `ffprobe` for length and audio (the skill, step 12).
 10. Study a reference video (`scripts/refs.mjs`) and build a making-of page (`scripts/process-page.mjs`).
 11. Feed the same voice and timing to an FFrames project (`scripts/fframes_sync.py`).
 12. Type-check video code that lives outside the repository (`scripts/lib/root-tsconfig.mjs` writes `<root>/tsconfig.json`).
@@ -31,14 +32,14 @@ How the studio's code is put together, written from the code as it stands after 
 ### Rules and completion
 
 1. No scene length is typed by hand. A scene lasts `ceil((durationSeconds + paddingSeconds) x fps)` frames (`src/lib/timing.ts`; the same formula in `scripts/fframes_sync.py`).
-2. Every reveal waits for the word it shows (`useWord` in `src/lib/words.ts`; `AGENTS.md`, "Rules").
-3. A frame is a pure function of its number, so a render is reproducible (`docs/pipeline.md`, "Where the agent works"; `CanvasScene`'s "`draw` must depend only on `info.frame`"; `Shader.tsx` drives the shader clocks from the frame).
+2. Every reveal waits for the word it shows (`useWord` in `src/lib/words.ts`; the skill, "Rules").
+3. A frame is a pure function of its number, so a render is reproducible (`CanvasScene`'s "`draw` must depend only on `info.frame`"; `Shader.tsx` drives the shader clocks from the frame).
 4. A video's files never enter the repository. The root is outside it, and `npm run acceptance` fails when a command leaves a file in the checkout (`scripts/acceptance.sh`).
 5. A render does not copy other videos into its bundle: the CLI symlinks the public folder, which is the root (`remotion.config.ts`; `docs/videos-root.md`, "Spike findings"). `npm run acceptance` checks the symlink.
 6. A scene is voiced again only when its text, voice or speed changed, its WAV is missing, or it has no word timings (`scripts/tts.py`, `scene_hash`).
-7. A video is done when its stills and contact sheet were looked at, and `ffprobe` shows the summed scene length and an audio track (`AGENTS.md`, steps 9 and 10, and "Rules").
+7. A video is done when its stills and contact sheet were looked at, and `ffprobe` shows the summed scene length and an audio track (the skill, steps 11 and 12, and "Rules").
 8. **Inferred:** an unvoiced or broken video must not hide the others. `Root.tsx` catches the timing error, warns and skips that video; the template's `Hook.tsx` calls `getScene` inside the component for the same reason (its comment).
-9. **Inferred:** a video becomes a composition only with `Video.tsx`, `config.ts` and `voiceover.json` all present and voiced; a `Sheet.tsx` alone gives a still (`src/Root.tsx`). FFrames videos delete `Video.tsx`, so Remotion leaves them out (`skills/fframes-studio-video/SKILL.md`, step 1).
+9. **Inferred:** a video becomes a composition only with `Video.tsx`, `config.ts` and `voiceover.json` all present and voiced; a `Sheet.tsx` alone gives a still (`src/Root.tsx`). FFrames videos delete `Video.tsx`, so Remotion leaves them out (the skill's `references/renderer/fframes.md`, step 1).
 
 ### Error handling
 
@@ -48,12 +49,12 @@ How the studio's code is put together, written from the code as it stands after 
 4. A scene with no duration throws "Run: npm run voice"; a phrase the scene never says throws with the words it does say (`timing.ts`, `words.ts`).
 5. `voice` stops when a video has no `voiceover.json`, and when the espeak-ng data path is 160 characters or longer (`tts.py`).
 6. `sheet` stops when the MP4 is missing and names the render command (`sheet.mjs`). `fframes-sync` stops when the project has no `Cargo.toml` or a scene has no voice (`fframes_sync.py`).
-7. `Shader` fails the render when the WebGPU renderer stops (`docs/styles/shaders.md`, "Troubleshooting").
+7. `Shader` fails the render when the WebGPU renderer stops (the skill's `references/effects/shaders.md`, "Checks").
 
 ### Scope
 
-- **In:** one person's local, private explainer videos, made by coding agents; free, local tools only (`AGENTS.md`, "Rules").
-- **Out:** paid APIs and keys; a server or any shared storage; syncing the root between machines, and the playground app (spec #22, "Out of Scope"); HyperFrames (`docs/renderers.md`).
+- **In:** one person's local, private explainer videos, made by coding agents; free, local tools only (the skill, "Rules").
+- **Out:** paid APIs and keys; a server or any shared storage; syncing the root between machines, and the playground app (spec #22, "Out of Scope"); HyperFrames (`docs/decisions/renderers.md`); a system to record or compare experiments (spec #35).
 
 ## 2. Entities and relationships
 
@@ -64,7 +65,8 @@ How the studio's code is put together, written from the code as it stands after 
 | **Voiceover** | the script and its measured clock | `voiceover.json`: scenes, text, voice, speed, durations, words, hash | written by `scripts/tts.py`, read by `src/lib/` |
 | **Scene** | one narration line and the picture under it | its entry in `voiceover.json` and one file in `scenes/` | the video's folder |
 | **Composition** | a video as Remotion sees it | none: derived on each bundle | `src/Root.tsx` |
-| **Style** | a look: Studio, Sketchbook or FFrames | drawing code and rules | `src/styles/`, `skills/`, `docs/styles/` |
+| **Layer** | a part of the process that differs between videos, with its options | the options' rules and code | the skill's layers table and `references/`, `src/` |
+| **Preset** | a saved set of choices, one option per layer, plus settings such as fps | none: a Markdown file | the skill's `presets/` |
 | **Output** | a still, the MP4, a contact sheet, reference frames, a process page | files in `<root>/<slug>/out/` | `scripts/render.mjs`, `sheet.mjs`, `refs.mjs`, `process-page.mjs` |
 
 Fields, not entities: the slug and composition id (a slug's PascalCase, `compositionId` in `videos-root.mjs` and `Root.tsx`), `config.ts`'s fps and size, the brief's sections, the sound files.
@@ -74,12 +76,12 @@ Videos root ──contains──> Video ──has──> Voiceover ──lists�
                             │                │
                             │                └──read by──> timing.ts / words.ts ──> frames
                             ├──has──> Output (out/)
-                            └──drawn in──> Style
+                            └──uses one option per──> Layer <──picks──── Preset
 Root.tsx ──finds every──> Video ──registers──> Composition (+ <Id>Sheet still)
 render.mjs ──slug──> remotion-args.mjs ──> npx remotion render|still Composition ──> Output
 ```
 
-The **orchestrator** is the agent following `AGENTS.md` or a style skill: no code runs the whole lifecycle except `scripts/acceptance.sh`, a test. **Durable state** lives only in the video's folder; the studio's code keeps no state between commands. **Rules live with their data:** lengths with the voiceover (`timing.ts`), the root's order with its resolver, slug and name validity with the command that takes them.
+The **orchestrator** is the agent following the `make-explainer-video` skill: no code runs the whole lifecycle except `scripts/acceptance.sh`, a test. **Durable state** lives only in the video's folder; the studio's code keeps no state between commands. **Rules live with their data:** lengths with the voiceover (`timing.ts`), the root's order with its resolver, slug and name validity with the command that takes them.
 
 ## 3. Class design
 
@@ -100,36 +102,41 @@ The studio has no classes. Its modules are plain functions and React components,
 - **`src/components/`**: building blocks videos import as `@studio/components/<Name>`: `Captions`, `Cursor` (and `cursorAt`), `Travel` (and `pointOnPath`), `Typewriter`, `KineticTitle`, `Grain`, `CanvasScene`, `Shader`, `ShaderLayer`, `PixelSprite`.
 - **Scripts with no shared module**: `tts.py` (voice), `sound.py` (sound), `fframes_sync.py`, `sheet.mjs`, `refs.mjs`, `process-page.mjs`, `shader-catalogue.mjs`, `new-video.mjs`, `render.mjs`. Each is described where the trace calls it.
 
-### Styles in the code
+### Layers in the code
 
-| | Studio (default) | Sketchbook | FFrames | Shaders (add-on) |
-|---|---|---|---|---|
-| Renderer | Remotion | Remotion | FFrames, Rust | Remotion, over Studio or Sketchbook |
-| Drawing | React and CSS scenes | one `CanvasScene` `draw(ctx, { frame })` per shot | `svgr!` SVG and SkSL shaders in `<root>/<slug>/fframes/` | `<Shader layers={...}>` behind or over a scene |
-| Studio code | `src/components/` | `src/styles/sketchbook/` (theme, paper, blueprint, hud, mascot, props, `makeRamp`) on `src/lib/sketch.ts` | `scripts/fframes_sync.py` writes `src/timing.rs` and links the WAVs | `src/components/Shader.tsx`, `skills/shader-video/effects.md` from `npm run shader-catalogue` |
-| fps | 30 (template) | 24 (`new-video --fps 24`) | the project's own | the host style's |
-| Captions | on (`Captions`) | off unless asked | from `<SCENE>_SHOWN` | the host style's |
-| Steps | `AGENTS.md` | `skills/sketchbook-video/SKILL.md` | `skills/fframes-studio-video/SKILL.md` | `skills/shader-video/SKILL.md` |
-| Why | `docs/styles/studio.md` | `docs/styles/sketchbook.md` | `docs/styles/fframes.md`, `docs/renderers.md` | `docs/styles/shaders.md` |
+| Layer | Option | Code |
+|---|---|---|
+| Renderer | `remotion` | `remotion.config.ts`, `src/Root.tsx`, `scripts/render.mjs`; videos are `Video.tsx` and `scenes/` |
+| | `fframes` | the video's own Rust project in `<root>/<slug>/fframes/`; `scripts/fframes_sync.py` writes its `src/timing.rs` and links the WAVs |
+| Drawing | `dom` | `src/components/` |
+| | `canvas` | `src/components/CanvasScene.tsx` on `src/lib/sketch.ts` |
+| Look | `dark-ui` | the template's scene and `src/components/` |
+| | `paper-blueprint` | `src/looks/paper-blueprint/` (theme, paper, blueprint, hud, mascot, props, `makeRamp`) |
+| | `pixel-thermal` | `src/components/PixelSprite.tsx` and `ShaderLayer.tsx`; in FFrames, the video's own project |
+| Effects | `grain` | `src/components/Grain.tsx` |
+| | `shaders` | `src/components/Shader.tsx`, `ShaderLayer.tsx`; the catalogue from `npm run shader-catalogue` |
+| Captions | `on`, `off` | `src/components/Captions.tsx`; in FFrames, `<SCENE>_SHOWN` |
+| Voice | `kokoro` | `scripts/tts.py` |
+| Sound | `synth`, `none` | `scripts/sound.py` |
+| Optional steps | `reference-study`, `process-page` | `scripts/refs.mjs`, `scripts/process-page.mjs` |
 
-Each style changes only the picture and effects layers; voice, timing, sound, captions and checks are shared (`docs/pipeline.md`). Two things in the code carry a style's rules:
+Each option's rules are in the skill's `references/<layer>/<option>.md`, and its history in `docs/decisions/`. Two things in the code carry an option's rules:
 
-- **Sketchbook's storyboard switch.** `makeRamp(STORYBOARD)` in `src/styles/sketchbook/storyboard.ts` returns 1 for every ramp while the video's `config.ts` has `STORYBOARD = true`, so each frame shows the shot's end pose. One `draw` serves both the storyboard and the animation.
-- **Shader determinism.** `Shader.tsx` never starts the `shaders` package's wall-clock loop. Per frame it pushes props, then draws once at `frame / fps` (twice after a stack change), holding `performance.now()` and stubbing `requestAnimationFrame` around the renderer. `shaders` is pinned exactly in `package.json` because this depends on its internals. `remotion.config.ts` sets ANGLE, without which the WebGPU canvas is missing from the frame. `ShaderLayer.tsx` is a separate, plain WebGL GLSL layer with Shadertoy-style uniforms, built for the FFrames comparison (`docs/renderers.md`).
+- **The canvas storyboard switch.** `makeRamp(STORYBOARD)` in `src/looks/paper-blueprint/storyboard.ts` returns 1 for every ramp while the video's `config.ts` has `STORYBOARD = true`, so each frame shows the shot's end pose. One `draw` serves both the storyboard and the animation.
+- **Shader determinism.** `Shader.tsx` never starts the `shaders` package's wall-clock loop. Per frame it pushes props, then draws once at `frame / fps` (twice after a stack change), holding `performance.now()` and stubbing `requestAnimationFrame` around the renderer. `shaders` is pinned exactly in `package.json` because this depends on its internals. `remotion.config.ts` sets ANGLE, without which the WebGPU canvas is missing from the frame. `ShaderLayer.tsx` is a separate, plain WebGL GLSL layer with Shadertoy-style uniforms, built for the FFrames comparison (`docs/decisions/renderers.md`).
 
 ### The repository
 
 ```text
 explainer-studio/
-├── AGENTS.md                 the process and rules agents follow (CLAUDE.md points here)
+├── AGENTS.md                 the maintainer's entry point (CLAUDE.md points here)
 ├── README.md                 what the studio is, set-up, the short command list
-├── PRONUNCIATION.md          respelling words Kokoro says wrong
 ├── package.json              every npm run command, pinned Remotion 4.0.532 and shaders 4.0.0
 ├── remotion.config.ts        the videos root as public folder, @studio and @videos aliases, Tailwind, ANGLE
 ├── tsconfig.json             strict types for src/ (lint runs tsc)
 ├── eslint.config.mjs         Remotion's flat ESLint config
 ├── tts-requirements.txt      the Kokoro venv's pinned packages
-├── skills-lock.json          the Remotion agent skills that setup:skills restores
+├── skills-lock.json          the official Remotion and FFrames skills that setup:skills restores
 ├── src/
 │   ├── index.ts              registerRoot(RemotionRoot)
 │   ├── index.css             @import "tailwindcss"
@@ -140,7 +147,7 @@ explainer-studio/
 │   │   ├── words.ts          the frame of a spoken phrase; useWord
 │   │   └── sketch.ts         seeded canvas drawing helpers
 │   ├── components/           shared building blocks, imported as @studio/components/...
-│   └── styles/sketchbook/    the Sketchbook style's palettes, cast, props and storyboard ramp
+│   └── looks/paper-blueprint/  the paper-blueprint look's palettes, cast, props and storyboard ramp
 ├── scripts/
 │   ├── new-video.mjs         npm run new-video
 │   ├── render.mjs            npm run render and npm run still
@@ -161,13 +168,14 @@ explainer-studio/
 │       ├── tailwind-source-loader.cjs  lets Tailwind scan the root
 │       └── *.test.mjs             node:test tests for the three modules above
 ├── templates/video/          what new-video copies: brief, voiceover, config, Video.tsx, scenes/Hook.tsx
-├── skills/                   the studio's own skills: make-explainer, installed globally, and the style skills sketchbook-video, shader-video, fframes-studio-video
+├── skills/make-explainer-video/  the one skill for video makers, installed globally
+│   ├── SKILL.md              the process, the layers and presets lists, the official-skill corrections
+│   ├── references/           one file per layer option, and the layers, videos-root and pronunciation guides
+│   └── presets/              studio, sketchbook
 ├── docs/
 │   ├── low-level-design.md   this page
-│   ├── pipeline.md           the twelve layers from idea to MP4
 │   ├── videos-root.md        the root's resolver, outputs, aliases and limits
-│   ├── renderers.md          Remotion against HyperFrames and FFrames
-│   ├── styles/               one page per style, and shaders
+│   ├── decisions/            dated records: renderers, the three prototypes, layers and presets
 │   └── agents/               issue tracker, triage labels, domain docs
 └── .handoff/                 hand-off notes from past sessions
 ```
@@ -180,13 +188,13 @@ Ignored and local: `node_modules/`, the `tts/` venv, `.claude/skills/` and `.age
 <root>/
 ├── tsconfig.json             written by new-video: type-checks every video against a studio checkout
 └── <slug>/                   one video, for example shipyard-architecture
-    ├── brief.md              goal, audience, style, look, scene list, asset list
+    ├── brief.md              goal, audience, one choice per layer, look notes, scene list, asset list
     ├── voiceover.json        the scenes; npm run voice adds audioFile, durationSeconds, words, hash
-    ├── config.ts             FPS, WIDTH, HEIGHT, accent; STORYBOARD in a sketchbook video
+    ├── config.ts             FPS, WIDTH, HEIGHT, accent; STORYBOARD with the canvas storyboard switch
     ├── Video.tsx             default export: a <Series> of the scenes, lengths from sceneFrames
     ├── Sheet.tsx             optional asset sheet, registered as the still <Id>Sheet
     ├── scenes/               one file per scene
-    ├── draw/                 sketchbook only: ramp.ts and the video's own props
+    ├── draw/                 canvas videos: ramp.ts and the video's own props
     ├── assets/               images; sound/ from npm run sound, with SOURCES.md
     ├── audio/                one Kokoro WAV per scene, from npm run voice
     ├── refs/                 reference videos downloaded by npm run refs
@@ -196,7 +204,7 @@ Ignored and local: `node_modules/`, the `tts/` venv, `.claude/skills/` and `.age
         ├── <name>.png        npm run still, including sheet-assets.png and storyboard boards
         ├── sheet.png         npm run sheet
         ├── refs/<name>/      npm run refs: probe, cuts, key poses, shots.png, contact.png
-        └── process/          sketchbook stage snapshots, and process.html from npm run process
+        └── process/          stage snapshots, and process.html, with the process-page step
 ```
 
 Videos also hold their own helper files beside `scenes/` (shared parts, UI mocks, themes); nothing in the studio constrains their names.
@@ -205,7 +213,7 @@ Videos also hold their own helper files beside `scenes/` (shared parts, UI mocks
 
 ### The lifecycle of one video
 
-One Studio-style video, `shipyard-architecture`, traced from the scaffold to the checked MP4. Each line names the owning file; `<root>` is `npm run --silent root`. `npm run acceptance` runs the scaffold, voice, listing, still, render and sheet steps of this trace in a scratch root.
+One video with the `studio` preset, `shipyard-architecture`, traced from the scaffold to the checked MP4. Each line names the owning file; `<root>` is `npm run --silent root`. `npm run acceptance` runs the scaffold, voice, listing, still, render and sheet steps of this trace in a scratch root.
 
 ```text
 npm run new-video -- shipyard-architecture [--fps 24]            scripts/new-video.mjs
@@ -216,12 +224,12 @@ npm run new-video -- shipyard-architecture [--fps 24]            scripts/new-vid
 └── set FPS in config.ts when --fps is given
     state: brief.md, voiceover.json (durationSeconds 0), config.ts, Video.tsx, scenes/Hook.tsx
 
-brief                                                             the agent; AGENTS.md steps 3-4
+brief                                                             the agent; skill steps 3-6
 ├── fill <root>/<slug>/brief.md from templates/video/brief.md's sections
 └── npm run refs -- <slug> <url> [--name n]  (when imitating a video)   scripts/refs.mjs
     └── yt-dlp → <slug>/refs/n.mp4; ffprobe, ffmpeg → out/refs/n/ (cuts, key poses, shots.png)
 
-asset sheet                                                       AGENTS.md step 5
+asset sheet                                                       skill step 7
 ├── write <root>/<slug>/Sheet.tsx
 ├── Root.tsx registers it as ShipyardArchitectureSheet, even unvoiced    src/Root.tsx
 └── npm run still -- <slug> sheet-assets --sheet                 scripts/render.mjs
@@ -230,7 +238,7 @@ asset sheet                                                       AGENTS.md step
     └── npx remotion still …                                      remotion.config.ts: root, aliases
         → out/sheet-assets.png; the agent reads it
 
-voice and word timings                                            AGENTS.md step 6
+voice and word timings                                            skill step 8
 ├── write the scenes into voiceover.json (id, text, voice, speed, paddingSeconds)
 └── npm run voice -- <slug>                                       scripts/tts.py
     ├── videos_root()                                             scripts/videos_root.py
@@ -240,46 +248,47 @@ voice and word timings                                            AGENTS.md step
     └── write durationSeconds (measured), words, hash back into voiceover.json
     state: every scene has durationSeconds > 0 and words
 
-storyboard                                                        AGENTS.md step 7
+storyboard                                                        skill step 9
 ├── scenes/*.tsx at their end pose; Video.tsx <Series.Sequence durationInFrames=sceneFrames(…)>
 │                                                                 src/lib/timing.ts
 ├── Root.tsx: totalFrames(voiceover, FPS) → <Composition id="ShipyardArchitecture">
 └── npm run still -- <slug> board-<n> --frame=<last frame of scene n>   scripts/render.mjs
     → out/board-<n>.png; the agent reads each
 
-scene timing and animation                                        AGENTS.md step 8
+scene timing and animation                                        skill step 10
 ├── sceneFrames = ceil((durationSeconds + paddingSeconds) × fps)  src/lib/timing.ts
 ├── useWord(voiceover, "hook", "pipeline") → frame of that word   src/lib/words.ts
 └── components: Captions, Cursor, Travel, KineticTitle, Grain …   src/components/
 
-sound                                                             AGENTS.md step 8
+sound                                                             skill step 10
 └── npm run sound -- <slug> --seconds <N> [--bpm 96] [--seed 1]  scripts/sound.py
     └── <slug>/assets/sound/: bed, sting, click, tick, whoosh, pop .wav, SOURCES.md
         (placed with <Audio src={staticFile("<slug>/assets/sound/pop.wav")}> on cue frames)
 
-stills                                                            AGENTS.md step 9, "Rules"
+stills                                                            skill step 11, "Rules"
 └── npm run still -- <slug> <name> --frame=<n>  → out/<name>.png  scripts/render.mjs
 
-render                                                            AGENTS.md step 9
+render                                                            skill step 11
 └── npm run render -- <slug>                                      scripts/render.mjs
     ├── remotionArgs("render", …) → render ShipyardArchitecture <root>/<slug>/out/<slug>.mp4
     └── npx remotion render …                                     remotion.config.ts
         ├── bundle src/index.ts; @videos → <root>; public folder symlinked, not copied
         └── Remotion's FFmpeg encodes video and audio → out/shipyard-architecture.mp4
 
-final checks                                                      AGENTS.md step 10
+final checks                                                      skill step 12
 ├── npm run sheet -- <slug> [--every 0.5]                         scripts/sheet.mjs
 │   └── ffprobe duration; ffmpeg fps=1/every, tile 7 across → out/sheet.png; the agent reads it
 ├── ffprobe <root>/<slug>/out/<slug>.mp4: duration = totalFrames / fps, one audio stream
-└── npm run process -- <slug>  (only when asked)                  scripts/process-page.mjs
+└── npm run process -- <slug>  (process-page step)                  scripts/process-page.mjs
     └── out/process/NN-stage/NOTES.md and files → out/process/process.html
 ```
 
-The other styles branch off this trace and rejoin it:
+Other choices branch off this trace and rejoin it:
 
-- **Sketchbook** (`skills/sketchbook-video/SKILL.md`): `new-video --fps 24`, `refs` before the brief, `STORYBOARD = true` in `config.ts` for the boards and `false` to animate, a render and `sheet` loop per review round, and a snapshot of every stage into `out/process/`, which `npm run process` turns into a page.
-- **FFrames** (`skills/fframes-studio-video/SKILL.md`): `new-video`, then delete `Video.tsx` and `scenes/`, `cargo fframes new … --dir fframes`, `npm run voice`, `npm run fframes-sync -- <slug> --fps <N>` (writes `fframes/src/timing.rs`, links `audio/` and `assets/sound/` WAVs into `fframes/assets/`), `npm run sound`, `fframes-sync` again, review with the project's `timeline`, `inspect`, `strip`, `audio analyze`, and `cargo run --release -- render -o ../out/<slug>.mp4`.
-- **Shaders** (`skills/shader-video/SKILL.md`): candidate stacks on `Sheet.tsx`, `npm run still -- <slug> shader-sheet --sheet`, the user picks, scenes use `<Shader>`; one frame rendered twice must give identical files.
+- **`canvas` and `paper-blueprint`** (the `sketchbook` preset): `new-video --fps 24`, `STORYBOARD = true` in `config.ts` for the boards and `false` to animate, scenes drawn on `CanvasScene` with `src/looks/paper-blueprint/`.
+- **`reference-study`:** `npm run refs` before the brief. **`process-page`:** a snapshot of every stage into `out/process/`, which `npm run process` turns into a page.
+- **`fframes`:** `new-video`, then delete `Video.tsx` and `scenes/`, `cargo fframes new … --dir fframes`, `npm run voice`, `npm run fframes-sync -- <slug> --fps <N>` (writes `fframes/src/timing.rs`, links `audio/` and `assets/sound/` WAVs into `fframes/assets/`), `npm run sound`, `fframes-sync` again, review with the project's `timeline`, `inspect`, `strip`, `audio analyze`, and `cargo run --release -- render -o ../out/<slug>.mp4`.
+- **`shaders`:** candidate stacks on `Sheet.tsx`, `npm run still -- <slug> shader-sheet --sheet`, the user picks, scenes use `<Shader>`; one frame rendered twice must give identical files.
 
 ### Traced scenario: a scene's length and a cue
 
@@ -298,13 +307,17 @@ A 30 fps video whose scene `hook` says "Shipyard builds every branch."
 | Change | What you touch |
 |---|---|
 | A new video | nothing tracked: `npm run new-video` and files under `<root>/<slug>/`; `Root.tsx` finds it |
-| A new shared building block | one file in `src/components/`, and a line in `AGENTS.md`, "Layout" |
-| A new Remotion style | `src/styles/<style>/` (drawing code), `docs/styles/<style>.md`, a skill in `skills/`, a row in the styles table in `AGENTS.md`; `templates/video/brief.md`'s Style line |
+| A new shared building block | one file in `src/components/`, a line in `AGENTS.md`, "Layout", and a row in the drawing reference that uses it |
+| A new option | one reference in the skill's `references/<layer>/`, and its name in the layers table of `SKILL.md`; its needs in `references/layers.md` |
+| A new look | one reference in `references/look/` with its intent and "In each renderer"; Remotion code in `src/looks/<look>/` |
+| A look in another renderer | the code, and its location in the look's "In each renderer" section |
+| A new preset | one file in the skill's `presets/`, and a line in `SKILL.md`, "Presets" |
+| A new layer | a row in the layers table, a row in `references/layers.md`, the step of the process it plugs into, and a line in the brief template's Choices |
 | A new output kind | a script that writes under `outputDir(slug)` from `scripts/lib/videos-root.mjs`, an `npm run` line in `package.json`, a row in `docs/videos-root.md`'s outputs table |
 | Moving the root | `STUDIO_VIDEOS_DIR` or `videosDir` in the config file; no code |
-| Another voice engine | `scripts/tts.py` only, as long as it writes the same `voiceover.json` fields (`durationSeconds`, `words`, `audioFile`) |
-| Another renderer | the pattern of `scripts/fframes_sync.py`: read `voiceover.json`, write that renderer's timing file, link the WAVs |
-| A `shaders` upgrade | `package.json` (exact pin), `npm run shader-catalogue`, and the checks in `docs/styles/shaders.md`, "Recommendation" |
+| Another voice engine | a voice option: a script that writes the same `voiceover.json` fields (`durationSeconds`, `words`, `audioFile`), and its reference |
+| Another renderer | a renderer option: the pattern of `scripts/fframes_sync.py` (read `voiceover.json`, write that renderer's timing file, link the WAVs), its reference, and the official skill's corrections in `SKILL.md` |
+| A `shaders` upgrade | `package.json` (exact pin), `npm run shader-catalogue`, and the checks in `docs/decisions/shaders-prototype.md`, "Recommendation" |
 | A change to the timing formula | `src/lib/timing.ts` and `scripts/fframes_sync.py`, which repeats it |
 | A change to the root's resolution order | `scripts/lib/videos-root.mjs` and `scripts/videos_root.py` together, with both test files |
 
@@ -332,6 +345,6 @@ Facts the code cannot show:
 4. Whether files agents write by hand into `out/` (logs, metrics) should follow a convention.
 5. Whether `ShaderLayer.tsx` is meant for new videos or kept only from the FFrames comparison, now that `Shader.tsx` is the documented way to use shaders.
 6. Which license `package.json` should state: `UNLICENSED` or MIT.
-7. Whether shaders will join the studio's defaults, and when: `docs/styles/shaders.md` says more trial is needed.
+7. Whether shaders will join a preset, and when: `docs/decisions/shaders-prototype.md` says more trial is needed.
 8. When and how the playground app for building blocks and pipeline layers (spec #22, "Out of Scope") will arrive, and what it changes here.
 9. Whether `.handoff/` notes are meant to stay tracked in the repository.

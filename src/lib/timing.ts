@@ -7,7 +7,8 @@ export type Word = { text: string; start: number; end: number };
 export type VoiceoverScene = {
   id: string;
   text: string;
-  // On-screen wording when `text` respells words for Kokoro (PRONUNCIATION.md).
+  // What captions show in place of `text`. Kokoro reads `text` literally, so `text` may respell a
+  // word to fix how it sounds ("koo-ber-NET-eez"); `caption` keeps the real spelling ("Kubernetes").
   caption?: string;
   voice: string;
   speed: number;
