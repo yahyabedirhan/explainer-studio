@@ -5,7 +5,7 @@ description: Make a narrated explainer video about a project, feature or idea in
 
 # Make an explainer video
 
-Make a narrated explainer video with the explainer studio, [yahyabedirhan/explainer-studio](https://github.com/yahyabedirhan/explainer-studio). The source project is read-only: read its code, docs and pull requests, and write nothing into it.
+Make a narrated explainer video about a **source project**, the project the user wants explained, with the explainer studio, [yahyabedirhan/explainer-studio](https://github.com/yahyabedirhan/explainer-studio). The source project is read-only: read what explains the subject, such as its code, docs and its own pull requests, and write nothing into it.
 
 A video is a stack of **layers**. Each layer has options, and the video uses one option per layer. A **preset** is a named set of choices. Start from a preset, or choose each layer yourself.
 
