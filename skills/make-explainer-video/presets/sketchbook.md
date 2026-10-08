@@ -1,7 +1,5 @@
 # Preset: sketchbook
 
-For a concept or process explained in 10 to 60 seconds, drawn in code on paper and blueprint.
-
 | Layer | Choice |
 |---|---|
 | Renderer | `remotion` |

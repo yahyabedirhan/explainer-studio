@@ -10,7 +10,8 @@ Warm **paper** storybook shots and navy **blueprint** diagram shots, alternating
 - **Frame furniture.** Every shot has a lowercase heading that types on at top left, and a stage dial at top right. Keep the action between y 250 and 950 of a 1920x1080 frame.
 - **Motion.** Paths drawing on with a sparkle at the head, objects thrown on arcs, back-out pops, type-on labels, a slow push. Hard cuts, no transitions.
 - **Film cadence.** 24 fps gives the boiling line its feel.
-- **Avoid.** Text that grows or overflows while typing, props floating unattached, trails left after a flight, a stretch where the voice talks and nothing moves.
+- **Avoid.** Props floating unattached.
+- **Reference video.** Addy Osmani's "How modern browsers work": `npm run refs -- <slug> https://x.com/addyosmani/status/2103009037164110327 --name addy`.
 
 ### Paper: actors and actions
 
@@ -65,7 +66,7 @@ Small life on top: the mascot bobs and blinks by itself, `armUp` raises to throw
 
 ### Sound
 
-At 120 BPM, `whoosh` on throws and flights, `pop` on things appearing, `click` on things locking into place, `tick` on the first typed pill or label, `sting` (volume 0.5) on the final landing. The bed at volume 0.22.
+At 120 BPM: `click` on things locking into place, `tick` on the first typed pill or label, `sting` (volume 0.5) on the final landing. The bed at volume 0.22. Otherwise as the sound layer says.
 
 ## In each renderer
 
@@ -143,7 +144,7 @@ export const Shot: React.FC = () => {
 
 Draw the heading and dial after `ctx.restore()`, so the push leaves them still.
 
-The asset sheet, `<root>/<slug>/Sheet.tsx`: paper on the left, blueprint on the right. `<root>/sketchbook-demo/Sheet.tsx` is a full example, on the machine that made it.
+The asset sheet, `<root>/<slug>/Sheet.tsx`: paper on the left, blueprint on the right. When `<root>/sketchbook-demo/Sheet.tsx` exists, it is a full example.
 
 ```tsx
 import { useCallback } from "react";

@@ -1,6 +1,6 @@
 # Effect: shaders
 
-GPU shader effects behind or over a video's own scenes: gradients, noise, halftone, light rays, wipes. Use one when the effect carries the idea the narration explains, never as decoration added for its own sake. Shaders are experimental: which effect looks right is a matter of taste, so the user picks every effect from a prototype sheet before any scene is built.
+GPU shader effects behind or over a video's own scenes: gradients, noise, halftone, light rays, wipes. Use one when the effect carries the idea the narration explains, never as decoration added for its own sake.
 
 ## Options in each renderer
 
@@ -21,20 +21,16 @@ Before building any scene with shaders:
 ## A scene with `Shader`
 
 ```tsx
-import { Audio } from "@remotion/media";
-import { AbsoluteFill, interpolate, Sequence, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
+import { AbsoluteFill, interpolate, useCurrentFrame, useVideoConfig } from "remotion";
 import { componentDefinition as Pixelate } from "shaders/core/Pixelate";
 import { componentDefinition as Plasma } from "shaders/core/Plasma";
-import { Captions } from "@studio/components/Captions";
 import { Shader, type ShaderLayer } from "@studio/components/Shader";
-import { getScene } from "@studio/lib/timing";
 import { useWord } from "@studio/lib/words";
 import voiceover from "../voiceover.json";
 
 export const Pixels: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const scene = getScene(voiceover, "pixels");
   const every = useWord(voiceover, "pixels", "every pixel");
 
   // A filter wraps the layers it changes in `children`. Props may change on every frame.
@@ -49,11 +45,7 @@ export const Pixels: React.FC = () => {
   return (
     <AbsoluteFill style={{ backgroundColor: "#14002b" }}>
       <Shader layers={layers} />
-      <Captions scene={scene} />
-      <Audio src={staticFile(scene.audioFile)} />
-      <Sequence from={every} durationInFrames={fps} premountFor={fps}>
-        <Audio src={staticFile("<slug>/assets/sound/click.wav")} volume={0.6} />
-      </Sequence>
+      {/* The narration audio, captions and sound effects go here as in any scene. */}
     </AbsoluteFill>
   );
 };
@@ -66,7 +58,7 @@ export const Pixels: React.FC = () => {
 
 ## A layer with `ShaderLayer`
 
-Your own GLSL ES 1.0 fragment shader: write `void main()` and set `gl_FragColor`, with premultiplied alpha. It gets `iResolution` (pixels), `iTime` and `iFrame` (since the layer's `Sequence` started), and each entry of `uniforms` as a float, vec2, vec3 or vec4 by array length.
+Your own GLSL ES 1.0 fragment shader, with premultiplied alpha. It gets `iResolution` (pixels), `iTime` and `iFrame` (since the layer's `Sequence` started), and each entry of `uniforms` as a float, vec2, vec3 or vec4 by array length.
 
 ```tsx
 import { ShaderLayer } from "@studio/components/ShaderLayer";
@@ -90,7 +82,7 @@ void main() {
 ## Rules the component depends on
 
 - **Keep `speed` props constant within a scene.** A layer's clock adds time × speed, so a changing speed makes the picture depend on the frames drawn before.
-- **Hard cuts between stacks are fine.** Changing which effects are in `layers` rebuilds the stack; the component draws twice so the frame shows the new stack.
+- **Hard cuts between stacks are fine.** Changing which effects are in `layers` takes effect on that frame.
 - **Ids stay stable on their own.** Give `id` yourself only when the same layer moves to a different place, as when a filter starts wrapping it.
 - **Layer props**: any effect prop from its `index.d.ts`, plus `opacity`, `blendMode`, `visible`, `transform`, `maskSource` and `maskType`. Colours are hex strings. Positions are `{ x, y }` in 0 to 1, y down.
 

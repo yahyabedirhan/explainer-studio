@@ -1,7 +1,5 @@
 # Preset: studio
 
-For products, interfaces, screenshots, data and architecture: real UI, bold type and clear diagrams.
-
 | Layer | Choice |
 |---|---|
 | Renderer | `remotion` |

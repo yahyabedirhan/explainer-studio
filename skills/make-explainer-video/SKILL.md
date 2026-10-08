@@ -5,9 +5,9 @@ description: Make a narrated explainer video about a project, feature or idea in
 
 # Make an explainer video
 
-Make a narrated explainer video with the explainer studio, [yahyabedirhan/explainer-studio](https://github.com/yahyabedirhan/explainer-studio). The source project is read-only: read its code, docs and pull requests, and write nothing into it. The video lives in the studio's videos root, outside every repository.
+Make a narrated explainer video with the explainer studio, [yahyabedirhan/explainer-studio](https://github.com/yahyabedirhan/explainer-studio). The source project is read-only: read its code, docs and pull requests, and write nothing into it.
 
-A video is a stack of **layers**. Each layer has options, and the video uses one option per layer. A **preset** is a named set of choices. Start from a preset, or choose each layer yourself; the process below is the same either way.
+A video is a stack of **layers**. Each layer has options, and the video uses one option per layer. A **preset** is a named set of choices. Start from a preset, or choose each layer yourself.
 
 ## Parameters
 
@@ -15,7 +15,7 @@ A video is a stack of **layers**. Each layer has options, and the video uses one
 
 ## Layers
 
-Read the reference of every option the video uses, before you build with it. [references/layers.md](references/layers.md) says how layers combine and what each option needs.
+[references/layers.md](references/layers.md) says how layers combine.
 
 | Layer | Options | Choose |
 |---|---|---|
@@ -43,7 +43,7 @@ Read the reference of every option the video uses, before you build with it. [re
    - **When nobody can answer**, such as when you run as a sub-agent: decide, and write each decision into the brief.
 4. **Scaffold.** `npm run new-video -- <project>-<topic>` creates `<root>/<slug>/` and prints its path. Pass `--fps <n>` when the preset or the brief sets one.
 5. **Choose the layers.** Take the preset's choices, then apply the user's changes. Check each option's needs in its reference. Write the choices into the brief's Choices lines, and read the reference of every chosen option.
-   - **When the look has no code for the chosen renderer or drawing:** build it from the look's intent, and add the new code's location to the look's "In each renderer" section in the same change.
+   - **When the look has no code for the chosen renderer or drawing:** follow "A look in a new renderer" in [references/layers.md](references/layers.md).
    - **With `reference-study`:** do it now, before the brief.
    - **With `process-page`:** from here on, end every step with a snapshot, as [references/steps/process-page.md](references/steps/process-page.md) says.
 6. **Brief and script.** Fill `<root>/<slug>/brief.md`: the goal, the audience, the length, the look notes, one line of narration per scene, and every asset the scenes show. Kokoro speaks about 2.5 words a second, so budget the words against the length. Write for the ear: [references/pronunciation.md](references/pronunciation.md).
@@ -79,7 +79,7 @@ Read the reference of every option the video uses, before you build with it. [re
 
 ## Where the official skills differ
 
-Use the official skill of each tool for the tool itself: Remotion's skills (`.claude/skills/remotion-best-practices/` and the references it routes to) and FFrames' `fframes-video`. Where one of them disagrees with this skill, this skill wins. When you find a disagreement the table doesn't list, follow this skill and add a row in the same change.
+Use the official skill of each tool for the tool itself: Remotion's skills (`.claude/skills/remotion-best-practices/` and the references it routes to) and FFrames' `fframes-video`. Where one of them disagrees with this skill, this skill wins. When you find a disagreement the table doesn't list, follow this skill and add a row to this table.
 
 | Where the official skill says | Do this instead |
 |---|---|
@@ -93,11 +93,3 @@ Use the official skill of each tool for the tool itself: Remotion's skills (`.cl
 | `fframes-video`: make a project folder of its own | The project is `<root>/<slug>/fframes/`, inside the video's folder. |
 | `fframes-video`: time scenes in seconds or frames you choose | Timing comes from `voiceover.json` through `npm run fframes-sync`, which writes `src/timing.rs`. |
 | `fframes-video`: voice and sound from other sources | Kokoro through `npm run voice`, and the sound layer's files. |
-
-## References
-
-- [references/layers.md](references/layers.md): how layers, options and presets combine, and what each option needs.
-- [references/videos-root.md](references/videos-root.md): where a video's files go, and what each command writes.
-- [references/pronunciation.md](references/pronunciation.md): narration written for the ear, and fixes for words Kokoro says wrong.
-- `references/<layer>/<option>.md`: one file per option, linked from the layers table.
-- `presets/<preset>.md`: one file per preset.
