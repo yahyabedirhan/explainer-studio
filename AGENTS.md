@@ -49,6 +49,7 @@ Read `docs/low-level-design.md` before changing `src/` or `scripts/`: it maps wh
 - **Tests on scratch folders only.** Point `STUDIO_VIDEOS_DIR` and `XDG_CONFIG_HOME` at a temporary folder; never read or write the real root in a test.
 - **Free and local.** No paid APIs or keys. A new dependency is free, local and pinned.
 - **Small, targeted edits for feedback.**
+- **Code comments stand alone.** Assume the reader of the code has never seen the skill or the docs. Say what they need in the comment itself, and don't point at the skill. When a comment must point at a doc, give its repository path, for example `docs/videos-root.md`.
 
 ## Setting up again
 
