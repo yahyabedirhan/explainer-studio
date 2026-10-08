@@ -19,7 +19,7 @@ Each video is one folder, `<root>/<slug>/`:
 - `brief.md` holds the brief and script, `voiceover.json` its scenes, `config.ts` its fps and size, `Video.tsx` the sequence (its default export), `scenes/` one file per scene, `assets/` its images and sound effects, `audio/` the generated voice.
 - `out/`: every render and check of the video: stills, the MP4, the contact sheet, reference frames and the process page.
 
-The root is Remotion's public folder, so `staticFile("<slug>/assets/logo.png")` reaches a video's own file. Video code imports the studio's shared code as `@studio/...`, for example `@studio/lib/words`. A checkout that still has its own `videos/` and `out/` moves them into the root with `npm run migrate`: `docs/videos-root.md`, "Migration".
+The root is Remotion's public folder, so `staticFile("<slug>/assets/logo.png")` reaches a video's own file. Video code imports the studio's shared code as `@studio/...`, for example `@studio/lib/words`.
 
 ## How a video is made
 
@@ -59,6 +59,8 @@ When the chosen style has a skill, read it first and follow it in place of steps
 
 ## Layout
 
+`docs/low-level-design.md` maps the code: which module owns what, one video traced from `npm run new-video` to the checked MP4, and where a new style, output or building block goes. Read it before changing `src/` or `scripts/`.
+
 - `<root>/<slug>/`: one video, as "The videos root" says. `docs/videos-root.md` holds the technical detail: the resolver, the bundler aliases, Tailwind and the known limits.
 - `src/lib/timing.ts`: the only place scene lengths are computed, as `ceil((durationSeconds + paddingSeconds) x fps)`.
 - `src/lib/words.ts`: `useWord(voiceover, sceneId, phrase, occurrence?)`, plus `wordFrame` and `wordEndFrame`, give the frame where a narration word starts or ends. A phrase the scene never says throws.
@@ -84,7 +86,6 @@ When the chosen style has a skill, read it first and follow it in place of steps
 - `scripts/render.mjs`: `npm run render -- <slug>` renders `<root>/<slug>/out/<slug>.mp4`, and `npm run still -- <slug> <name> [--sheet] [--frame=<n>]` a still to `<root>/<slug>/out/<name>.png`. Other flags go on to Remotion.
 - `scripts/lib/videos-root.mjs`: resolves the videos root (`npm run root` prints it); `scripts/videos_root.py` mirrors it for the Python scripts.
 - `scripts/lib/root-tsconfig.mjs`: writes `<root>/tsconfig.json`, so `npx tsc -p <root>` and editors type-check video code.
-- `scripts/migrate.mjs`, `scripts/lib/migrate.mjs`: `npm run migrate` moves a checkout's `videos/` and `out/` into the root.
 - `scripts/shader-catalogue.mjs`: `npm run shader-catalogue` regenerates `skills/shader-video/effects.md` after a `shaders` upgrade.
 - `scripts/fframes_sync.py`: `npm run fframes-sync -- <slug> --fps <N>` writes an FFrames project's `src/timing.rs` from `voiceover.json` and links the video's WAVs into its `assets/`.
 - `skills/`: the studio's own skills, tracked (`.claude/skills/` holds installed ones and is ignored).

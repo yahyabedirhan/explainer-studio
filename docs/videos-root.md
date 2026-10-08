@@ -31,7 +31,7 @@ To test without touching your videos, point the root at a scratch folder: `STUDI
 
 ## Outputs and the render command
 
-Every render and check of a video goes in `<root>/<slug>/out/`, never in the checkout's `out/`:
+Every render and check of a video goes in `<root>/<slug>/out/`, never in the checkout:
 
 | Command | Writes |
 |---|---|
@@ -48,20 +48,6 @@ Every video's outputs stay in the root, which is the public folder. A render doe
 ## Tailwind
 
 Tailwind v4 scans only the project folder for class names. `scripts/lib/tailwind-source-loader.cjs` runs before Tailwind's loader and adds `@source "<root>"` after `@import "tailwindcss"`, so a class used only in video code under the root is generated too. Tailwind skips binary files such as renders and audio.
-
-## Migration
-
-`npm run migrate -- [--from <checkout>] [--dry-run]` moves the videos of a checkout that still has `videos/` and `out/` into the resolved root, once. `--from` defaults to the checkout the script is in. `--dry-run` prints the plan, with the import count of each video, and changes nothing.
-
-- Each folder in `videos/` or `out/` is a slug, except hidden ones. `videos/<slug>/` becomes `<root>/<slug>/`, and `out/<slug>/` becomes `<root>/<slug>/out/`. A slug with only outputs gets only `<root>/<slug>/out/`.
-- Relative imports that reach the checkout's `src/` become `@studio/...`, resolved from where each file was. Other relative imports stay as they are. The plan warns about each quoted relative path that leaves `videos/` (an import of other checkout code, or a `src/` path in `new URL()` or a reference comment) and each symlink that leaves its video: these break after the move. Rust files are only checked, never rewritten, with paths taken from the crate folder: an FFrames `main.rs` with `.default_output("../../../out/<slug>/<slug>.mp4")` gets a warning to fix by hand.
-- It checks everything before the first change. It stops, lists the reasons and changes nothing when a `<root>/<slug>` already exists, when `videos/<slug>/out` would clash with `out/<slug>`, when two slugs differ only in case, when a slug is a symlink, or when the root is inside the checkout or on another volume.
-- It moves with `rename`, never a copy, one slug at a time, then rewrites that slug's files one by one. An error stops it and lists the steps done. A run after a stop moves the slugs still in the checkout, unless a half-moved slug's target exists: finish that one by hand.
-- It writes `<root>/tsconfig.json` as `new-video` does. It leaves `videos/` and `out/` themselves, with `.gitkeep` and `.DS_Store`, and `.gitignore` for you to clean up.
-
-Stop Remotion Studio in the checkout before you migrate: it watches the folders that move.
-
-Rehearse on scratch folders: `STUDIO_VIDEOS_DIR=<scratch root> npm run migrate -- --from <scratch checkout>`.
 
 ## Known limits
 
