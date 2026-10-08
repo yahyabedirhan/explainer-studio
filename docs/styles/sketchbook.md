@@ -58,7 +58,7 @@ Didn't:
 - Trails left on screen after a flight. Fade them once the object lands.
 - First frames after each cut as references: the heading is still typing and the shot is empty. The last frame of each shot is its key pose, so `npm run refs` saves both and tiles the key poses into `shots.png`.
 - `@remotion/noise`: installing it was blocked in the first spike, and `sketch.ts`'s own seeded value noise covers the need.
-- Copying video code (`.ts`) into the checkout's old `out/` for the process page broke the type check, so `out/` was excluded from it. Outputs now go in `<root>/<slug>/out/`, outside the repository.
+- Copying video code (`.ts`) into an output folder for the process page broke the type check. Outputs now go in `<root>/<slug>/out/`, outside the repository, and the root's `tsconfig.json` excludes `*/out`.
 
 ## The videos so far
 

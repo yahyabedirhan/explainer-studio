@@ -137,26 +137,6 @@ test("a file whose checkout is gone is written again", () => {
   assert.equal(writeRootTsconfig(root, linked), true);
 });
 
-test("the first version's file, which had no marker, is rewritten", () => {
-  const { main, linked, root } = repo();
-  const modules = join(main, "node_modules");
-  const first = {
-    extends: join(main, "tsconfig.json"),
-    compilerOptions: {
-      paths: {
-        "@studio/*": [join(main, "src", "*")],
-        "*": [join(modules, "@types", "*"), join(modules, "*")],
-      },
-      typeRoots: [join(modules, "@types")],
-    },
-    include: ["*/**/*.ts", "*/**/*.tsx"],
-    exclude: ["*/out", "**/node_modules", "**/target"],
-  };
-  put(join(root, "tsconfig.json"), JSON.stringify(first));
-  assert.equal(writeRootTsconfig(root, linked), true);
-  assert.ok(read(root).compilerOptions.paths["fonts/*"]);
-});
-
 test("the user's file is never touched: no marker, or not JSON", () => {
   const { base, linked, root } = repo();
   for (const content of [

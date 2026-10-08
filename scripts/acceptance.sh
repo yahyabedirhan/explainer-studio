@@ -3,8 +3,9 @@
 #
 # Makes two fixture videos in a scratch root, voices them, lists the compositions, takes a
 # still, renders a short clip and a contact sheet, then checks that every output is under
-# the scratch root, that nothing new appeared in the checkout's videos/, out/ or public/,
-# and that the render bundle's public folder was a symlink to the root, not a copy.
+# the scratch root, that git sees no change in the checkout and it has no videos/, out/ or
+# public/ folder, and that the render bundle's public folder was a symlink to the root,
+# not a copy.
 # The real root and config are never read: STUDIO_VIDEOS_DIR and XDG_CONFIG_HOME both point
 # at the scratch folder, which is left in place and printed at the end.
 set -euo pipefail
@@ -14,7 +15,9 @@ scratch=$(mktemp -d)
 export STUDIO_VIDEOS_DIR="$scratch/root" XDG_CONFIG_HOME="$scratch/config"
 root=$STUDIO_VIDEOS_DIR
 fail() { echo "FAIL: $*" >&2; exit 1; }
-checkout_files() { find videos out public -type f 2>/dev/null | sort || true; }
+# What git sees change in the checkout: edited files and untracked ones. .gitignore hides
+# no video folder, so anything a command writes into the checkout shows up here.
+checkout_files() { git status --porcelain --untracked-files=all | sort; }
 before=$(checkout_files)
 
 npm run --silent new-video -- fixture-one >/dev/null
@@ -53,6 +56,9 @@ for file in fixture-one/audio/hook.wav fixture-two/audio/hook.wav fixture-one/ou
   [ -s "$root/$file" ] || fail "missing $root/$file"
 done
 [ "$(checkout_files)" = "$before" ] || fail "new files in the checkout: $(diff <(echo "$before") <(checkout_files))"
+for dir in videos out public; do
+  [ ! -e "$dir" ] || fail "the checkout has a $dir/ folder"
+done
 [ -f "$scratch/public-link" ] || fail "never saw the render bundle's public folder"
 [ "$(cat "$scratch/public-link")" = "$root" ] || fail "the bundle's public folder was $(cat "$scratch/public-link"), not a symlink to $root"
 

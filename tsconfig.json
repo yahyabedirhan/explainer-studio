@@ -18,7 +18,6 @@
   "exclude": [
     "remotion.config.ts",
     "templates",
-    "out",
     ".scratch"
   ]
 }

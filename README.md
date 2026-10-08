@@ -33,7 +33,7 @@ Pick a style for each video; the agent recommends one when it asks its questions
 - **FFrames**: the Rust renderer, for effect-heavy pieces.
 - **Shaders**: an optional, experimental add-on; you pick the effects from a prototype sheet first.
 
-`AGENTS.md` is the entry point for the process, `docs/pipeline.md` describes the twelve layers from idea to MP4, and `docs/styles/` holds a page per style.
+`AGENTS.md` is the entry point for the process, `docs/pipeline.md` describes the twelve layers from idea to MP4, `docs/styles/` holds a page per style, and [docs/low-level-design.md](docs/low-level-design.md) explains how the code is put together, following one video from scaffold to MP4.
 
 ## Layout
 
@@ -57,20 +57,19 @@ scripts/
 ├── sound.py               npm run sound: music bed, sting, effects
 ├── new-video.mjs          npm run new-video
 ├── render.mjs             npm run render and npm run still
-├── migrate.mjs            npm run migrate: a checkout's videos/ and out/ into the root
 ├── acceptance.sh          npm run acceptance: the whole flow in a scratch root
 ├── videos_root.py         the root for the Python scripts
 └── lib/
     ├── videos-root.mjs    resolves the videos root (npm run root)
     ├── root-tsconfig.mjs  <root>/tsconfig.json, for npx tsc -p <root>
-    ├── migrate.mjs        the migration's plan and moves
     └── *.test.mjs         npm test, with scripts/*_test.py
 templates/video/           what new-video copies
 AGENTS.md                  the rules agents follow here
 PRONUNCIATION.md           fixing words Kokoro says wrong
+docs/low-level-design.md   how the code fits together, one video traced end to end
 docs/pipeline.md           the twelve layers from idea to MP4
 docs/styles/               one page per style
-docs/videos-root.md        the videos root: resolver, outputs, migration, limits
+docs/videos-root.md        the videos root: resolver, outputs, limits
 docs/renderers.md          renderer benchmarks: Remotion default, FFrames, HyperFrames dropped
 ```
 
