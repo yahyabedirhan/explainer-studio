@@ -47,7 +47,7 @@
     "sheet": "node scripts/sheet.mjs",
     "process": "node scripts/process-page.mjs",
     "setup:voice": "uv venv --allow-existing --python 3.12 tts && VIRTUAL_ENV=\"$PWD/tts\" uv pip install -r tts-requirements.txt",
-    "setup:skills": "npx -y skills add remotion-dev/skills --skill \"*\" --agent claude-code -y",
+    "setup:skills": "npx -y skills add remotion-dev/skills --skill \"*\" --agent claude-code -y && npx -y skills add https://fframes.studio --skill fframes-video --agent claude-code -y",
     "shader-catalogue": "node scripts/shader-catalogue.mjs",
     "acceptance": "bash scripts/acceptance.sh"
   },
