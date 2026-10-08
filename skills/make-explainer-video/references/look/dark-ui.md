@@ -1,6 +1,6 @@
 # Look: dark-ui
 
-Real interfaces, bold type and clear diagrams on a dark ground. It fits products, interfaces, screenshots, data and architecture. The Havooch launch video is its reference.
+Real interfaces, bold type and clear diagrams on a dark ground. It fits products, interfaces, screenshots, data and architecture. Its reference is `<root>/havooch-launch/`, on the machine that made it.
 
 ## Intent
 
@@ -10,7 +10,7 @@ Real interfaces, bold type and clear diagrams on a dark ground. It fits products
 - **Cuts.** Hard cuts between ideas. Within a run of related scenes, one evolving picture: each scene starts exactly where the one before ends.
 - **Material.** Real UI captures, flat redraws of the real layout, and diagrams drawn in code.
 - **Motion.** Every reveal cues on the narration word it shows. UI moves on springs with high damping and no bounce; a cursor glides on eased paths.
-- **Avoid.** The generic AI look: a centred headline fading in over a gradient. Prefer bold type, hard cuts and real material.
+- **Avoid.** The generic AI look: a centred headline fading in over a gradient. And a one-sided border, such as a coloured stripe down a card's left edge, an overused pattern. Prefer bold type, hard cuts, real material and full outlines.
 
 ## Asset sheet
 
