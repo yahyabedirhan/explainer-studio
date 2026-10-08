@@ -88,7 +88,7 @@ When the chosen style has a skill, read it first and follow it in place of steps
 - `scripts/lib/root-tsconfig.mjs`: writes `<root>/tsconfig.json`, so `npx tsc -p <root>` and editors type-check video code.
 - `scripts/shader-catalogue.mjs`: `npm run shader-catalogue` regenerates `skills/shader-video/effects.md` after a `shaders` upgrade.
 - `scripts/fframes_sync.py`: `npm run fframes-sync -- <slug> --fps <N>` writes an FFrames project's `src/timing.rs` from `voiceover.json` and links the video's WAVs into its `assets/`.
-- `skills/`: the studio's own skills, tracked (`.claude/skills/` holds installed ones and is ignored).
+- `skills/`: the studio's own skills, tracked (`.claude/skills/` holds installed ones and is ignored). `make-explainer` is the entry point other projects install globally, with `npx skills add yahyabedirhan/explainer-studio -g --skill make-explainer`; the others are the style skills.
 - `docs/renderers.md`: the renderer benchmarks, why Remotion is the default, when FFrames fits, and why HyperFrames was dropped.
 - Remotion packages beyond the core: `@remotion/paths` (strokes that draw on), `@remotion/shapes` (diagram shapes), `@remotion/layout-utils` (text that fits its box), `@remotion/motion-blur`, `@remotion/noise`, `@remotion/google-fonts` and `@remotion/media`.
 - `templates/video/`: what `npm run new-video` copies.

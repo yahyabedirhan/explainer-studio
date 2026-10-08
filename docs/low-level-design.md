@@ -161,7 +161,7 @@ explainer-studio/
 │       ├── tailwind-source-loader.cjs  lets Tailwind scan the root
 │       └── *.test.mjs             node:test tests for the three modules above
 ├── templates/video/          what new-video copies: brief, voiceover, config, Video.tsx, scenes/Hook.tsx
-├── skills/                   the studio's own style skills: sketchbook-video, shader-video, fframes-studio-video
+├── skills/                   the studio's own skills: make-explainer, installed globally, and the style skills sketchbook-video, shader-video, fframes-studio-video
 ├── docs/
 │   ├── low-level-design.md   this page
 │   ├── pipeline.md           the twelve layers from idea to MP4
