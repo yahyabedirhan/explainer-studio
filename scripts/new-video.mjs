@@ -1,5 +1,5 @@
 // Scaffold a video: npm run new-video -- <slug> [--fps <n>]   e.g. shipyard-architecture
-// --fps sets config.ts's frame rate (default 30); the sketchbook style uses 24.
+// --fps sets config.ts's frame rate (default 30); the sketchbook preset uses 24.
 // The video goes to <videos root>/<slug>/ (scripts/lib/videos-root.mjs), outside the repository.
 // The root and its tsconfig.json are created when missing.
 import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";

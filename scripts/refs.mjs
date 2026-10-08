@@ -1,4 +1,4 @@
-// Download a reference video and pull frames from it, to study a style shot by shot.
+// Download a reference video and pull frames from it, to study its look shot by shot.
 //
 //   npm run refs -- <slug> <url> [--name <name>]
 //

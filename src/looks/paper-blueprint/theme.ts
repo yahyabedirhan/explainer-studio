@@ -1,4 +1,4 @@
-// The sketchbook style's type, colours and line boil. See docs/styles/sketchbook.md.
+// The paper-blueprint look's type, colours and line boil. See skills/make-explainer-video/references/look/paper-blueprint.md.
 import { loadFont as loadInter } from "@remotion/google-fonts/Inter";
 import { loadFont as loadMono } from "@remotion/google-fonts/IBMPlexMono";
 
