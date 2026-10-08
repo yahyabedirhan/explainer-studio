@@ -1,8 +1,8 @@
 # Renderer: fframes
 
-FFrames is a Rust library that renders video from code: each frame is an SVG tree from `render_frame`, drawn by Skia on the GPU, with SkSL or Shadertoy shaders as first-class layers, and encoded through FFmpeg's libraries. Its project command line checks a video without watching it: `timeline`, `inspect`, `strip` and `audio analyze`. It fits shader-heavy, effect-driven pieces. The studio's React components don't exist here: captions, cursor and look code are built in the video's own project.
+FFrames fits shader-heavy, effect-driven pieces. The studio's React components don't exist here: captions, cursor and look code are built in the video's own project.
 
-Load the official `fframes-video` skill first. It is the reference for the FFrames API, design, sound placement and the project command line: read its `references/design.md` before you design and its `references/api.md` while you write code. This file adds only what the studio changes, with the "Where the official skills differ" table in `SKILL.md`.
+Load the official `fframes-video` skill first. It is the reference for the FFrames API, design, sound placement and the project command line: read its `references/design.md` before you design and its `references/api.md` while you write code.
 
 ## Before you start
 
@@ -53,7 +53,7 @@ Load the official `fframes-video` skill first. It is the reference for the FFram
    Done when the video stream has `TOTAL_FRAMES` frames at your size, there is an audio stream, and the duration equals `TOTAL_FRAMES / fps`.
 9. **Clean up.** Once the user has the final render, run `cargo clean` in `<root>/<slug>/fframes/`. The next edit rebuilds `target/` in about 2 minutes.
 
-Hand over the MP4 path, its length, the strip path, the LUFS figure, and `cargo run --release -- preview` in `<root>/<slug>/fframes/` to watch it with sound.
+At hand-over, also give the strip path, the LUFS figure, and `cargo run --release -- preview` in `<root>/<slug>/fframes/` to watch it with sound.
 
 ## Gotchas
 

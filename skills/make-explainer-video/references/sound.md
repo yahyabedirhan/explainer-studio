@@ -14,4 +14,4 @@
   - In FFrames: the renderer reference's "Wire media and timing" step.
 - **none:** the voice only.
 
-A sound the synthesizer can't make comes from your own script in the `./tts` venv (it has numpy and soundfile), or from a freely licensed file with its source and licence noted in `SOURCES.md`.
+A sound the synthesizer can't make comes from your own script in the `./tts` venv (it has numpy and soundfile), or from a freely licensed file, noted in `SOURCES.md`.

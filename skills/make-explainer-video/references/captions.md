@@ -7,4 +7,4 @@ Captions are the script: each scene's `caption ?? text` from `voiceover.json`, t
   - **fframes:** show `<SCENE>_SHOWN` from `src/timing.rs` word by word.
 - **off:** leave the captions out. The picture and the voice carry the video.
 
-A scene's `caption` overrides its `text` on screen when the two should differ, for example when `text` respells a word for Kokoro.
+A scene's `caption` overrides its `text` on screen.

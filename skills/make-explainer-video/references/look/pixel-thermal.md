@@ -13,10 +13,10 @@ The look of the FFrames launch ad: chunky pixel icons, thermal-camera silhouette
 - **Type.** Small bold grotesk lines typed word by word, centred. Big title cards in a bold grotesk with a blinking red bar cursor and a small lime monospace subtitle. Widely spaced words such as `M O V E`. Serif-italic letters that drift and converge into the closing wordmark.
 - **Accent colour.** One red (about `#e8432e`) for cursors, sparks and hairlines. Cyan and blue only in the star, lime only in monospace subtitles.
 - **Cut rhythm.** A few soft transitions to open, then hard cuts every 0.5 to 0.9 seconds on the beat, a burst of cuts, then the outro.
-- **Drawn, not generated.** The studio has no image generator. Draw the pixel icons as character grids, the thermal figures as SVG paths filled with a radial heat ramp, softened with `feTurbulence`, `feDisplacementMap` and `feGaussianBlur`.
+- **Drawn, not generated.** Draw the pixel icons as character grids, the thermal figures as SVG paths filled with a radial heat ramp, softened with `feTurbulence`, `feDisplacementMap` and `feGaussianBlur`.
 
 ## In each renderer
 
-- **fframes:** built once, in a video's own project. Pixel icons as grids turned into SVG `rect`s with an extruded darker copy; thermal figures as SVG paths with a radial gradient and filters; the star and the bokeh as SkSL shaders. A working example of every piece is `<root>/fframes-spike/fframes/` on the machine that made it, if it is still there.
-- **remotion, dom:** built once. `PixelSprite` draws the icons; `ShaderLayer` draws the star and the bokeh as GLSL. The same 16 second piece in both renderers is `<root>/fframes-spike/` on the machine that made it.
+- **fframes:** no shared code. Build from the intent above: pixel icons as grids turned into SVG `rect`s with an extruded darker copy; thermal figures as SVG paths with a radial gradient and filters; the star and the bokeh as SkSL shaders. When `<root>/fframes-spike/fframes/` exists, copy from it.
+- **remotion, dom:** no look module. `PixelSprite` draws the icons; `ShaderLayer` draws the star and the bokeh as GLSL. When `<root>/fframes-spike/` exists, it holds the same 16 second piece.
 - **remotion, canvas:** not built yet.

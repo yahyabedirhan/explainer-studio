@@ -10,5 +10,3 @@ Study a reference video before writing the brief, so the video borrows its frami
 2. Look at `shots.png`. Pick two or three `end-NN.png` frames close to the idea.
 3. Write into the brief what to take from them: framing, a prop idea, a palette choice, a cut rhythm. Never the subject.
    - Done when the brief's Reference videos section names each reference, its picked frames and what to take.
-
-The paper-blueprint look's own reference is Addy Osmani's "How modern browsers work" animation: `npm run refs -- <slug> https://x.com/addyosmani/status/2103009037164110327 --name addy`.

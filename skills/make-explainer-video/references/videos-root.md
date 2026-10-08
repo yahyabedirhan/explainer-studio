@@ -1,12 +1,8 @@
 # The videos root
 
-Every video lives in one **videos root** outside the repository, shared by every checkout and worktree of the studio. The studio is public, and a video can show a private project, so a video's files never reach a commit, a branch or a pull request.
+Every video lives in one **videos root** outside the repository, shared by every checkout and worktree of the studio.
 
-`npm run --silent root` prints the root. In these references `<root>` stands for that path. The root resolves in this order:
-
-1. `STUDIO_VIDEOS_DIR`, when set.
-2. `videosDir` in `$XDG_CONFIG_HOME/explainer-studio/config.json` (`~/.config/explainer-studio/config.json` by default), for example `{ "videosDir": "~/Movies/explainers" }`.
-3. `~/.local/share/explainer-studio/videos`.
+`npm run --silent root` prints the root. In these references `<root>` stands for that path. Set `STUDIO_VIDEOS_DIR`, or `videosDir` in `$XDG_CONFIG_HOME/explainer-studio/config.json`, to move it.
 
 ## One video's folder
 
