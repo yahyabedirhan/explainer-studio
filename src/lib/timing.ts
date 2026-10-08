@@ -7,7 +7,7 @@ export type Word = { text: string; start: number; end: number };
 export type VoiceoverScene = {
   id: string;
   text: string;
-  // On-screen wording when `text` respells words for Kokoro (PRONUNCIATION.md).
+  // On-screen wording when `text` respells words for Kokoro (the skill's references/pronunciation.md).
   caption?: string;
   voice: string;
   speed: number;
