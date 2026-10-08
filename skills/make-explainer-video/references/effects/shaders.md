@@ -64,6 +64,29 @@ export const Pixels: React.FC = () => {
 - `time={2.5}` freezes the shader's clock; by default it is the scene's frame / fps, so each scene starts at time 0.
 - Import effects only from `shaders/core/<Effect>`. One from `shaders/registry` fails with `fragment is not a function`.
 
+## A layer with `ShaderLayer`
+
+Your own GLSL ES 1.0 fragment shader: write `void main()` and set `gl_FragColor`, with premultiplied alpha. It gets `iResolution` (pixels), `iTime` and `iFrame` (since the layer's `Sequence` started), and each entry of `uniforms` as a float, vec2, vec3 or vec4 by array length.
+
+```tsx
+import { ShaderLayer } from "@studio/components/ShaderLayer";
+
+const GLOW = `
+precision mediump float;
+uniform vec2 iResolution;
+uniform float iTime;
+uniform vec3 tint;
+void main() {
+  vec2 uv = gl_FragCoord.xy / iResolution;
+  float a = 0.5 + 0.5 * sin(iTime + uv.x * 6.0);
+  gl_FragColor = vec4(tint * a, a);
+}`;
+
+<ShaderLayer fragment={GLOW} width={1920} height={1080} uniforms={{ tint: [1, 0.4, 0.1] }} />
+```
+
+`@studio/components/Shader` also exports a type named `ShaderLayer`. In a scene that uses both, alias one: `import { Shader, type ShaderLayer as ShaderStack } from "@studio/components/Shader"`.
+
 ## Rules the component depends on
 
 - **Keep `speed` props constant within a scene.** A layer's clock adds time × speed, so a changing speed makes the picture depend on the frames drawn before.

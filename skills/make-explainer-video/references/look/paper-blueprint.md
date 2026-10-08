@@ -132,6 +132,7 @@ export const Shot: React.FC = () => {
     <>
       <CanvasScene draw={draw} fonts={FONTS} />
       <Audio src={staticFile(scene.audioFile)} />
+      {/* Effects: add them in step 10, once assets/sound/ exists. */}
       <Sequence from={Math.max(0, first)} durationInFrames={fps} premountFor={fps}>
         <Audio src={sfx("pop")} volume={0.5} />
       </Sequence>
@@ -140,7 +141,42 @@ export const Shot: React.FC = () => {
 };
 ```
 
-Draw the heading and dial after `ctx.restore()`, so the push leaves them still. The asset sheet draws paper on the left and blueprint on the right of one canvas, each clipped to its half.
+Draw the heading and dial after `ctx.restore()`, so the push leaves them still.
+
+The asset sheet, `<root>/<slug>/Sheet.tsx`: paper on the left, blueprint on the right. `<root>/sketchbook-demo/Sheet.tsx` is a full example, on the machine that made it.
+
+```tsx
+import { useCallback } from "react";
+import { CanvasScene, type DrawFn } from "@studio/components/CanvasScene";
+import { blueprintBg, FONTS, heading, mascot, paperBg, pill } from "@studio/looks/paper-blueprint";
+
+const Sheet: React.FC = () => {
+  const draw: DrawFn = useCallback((ctx, { width, height }) => {
+    const half = width * 0.56;
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(0, 0, half, height);
+    ctx.clip();
+    paperBg(ctx, width, height);
+    heading(ctx, "asset sheet", 1, "paper");
+    // palette swatches, the mascot in every pose the video uses, every paper prop
+    mascot(ctx, 200, 560, { boil: 0, frame: 10, mood: "happy", scale: 0.8 });
+    ctx.restore();
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(half, 0, width - half, height);
+    ctx.clip();
+    blueprintBg(ctx, width, height, 0);
+    // every blueprint pill, node and line the video uses
+    pill(ctx, "example", half + 300, 360, { size: 30 });
+    ctx.restore();
+  }, []);
+  return <CanvasScene draw={draw} fonts={FONTS} />;
+};
+
+export default Sheet;
+```
 
 ### remotion, dom: not built yet
 

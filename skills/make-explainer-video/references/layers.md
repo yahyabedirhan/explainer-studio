@@ -13,9 +13,9 @@ A video passes from an idea to an MP4 through a fixed process: the steps in `SKI
 | Captions | the narration's text on screen | step 10 |
 | Voice | the narration WAVs and each word's timing, the clock of the video | step 8 |
 | Sound | the music bed and the effects on cues | step 10 |
-| Optional steps | extra steps: a reference study before the brief, a making-of page after the render | steps 5 and 12 |
+| Optional steps | extra steps: a reference study before the brief, a making-of page from snapshots of every step | step 5, then every step after it |
 
-The voice's word timings are the clock: `@studio/lib/timing` turns them into scene lengths as `ceil((durationSeconds + paddingSeconds) × fps)`, and `useWord` (or `src/timing.rs` in FFrames) turns a word into a frame.
+The voice is the clock: `@studio/lib/timing` turns each scene's measured length into frames as `ceil((durationSeconds + paddingSeconds) × fps)`, and `useWord` (or `src/timing.rs` in FFrames) turns a word's timing into a frame.
 
 ## What each option needs
 
