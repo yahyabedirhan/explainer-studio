@@ -1,8 +1,8 @@
 # AGENTS.md
 
-**Making a video?** Load the `make-explainer-video` skill (`skills/make-explainer-video/SKILL.md`) and follow it; the rest of this file is for changing the studio.
+To make a video with Explainer Studio, use the `make-explainer-video` skill (`skills/make-explainer-video/SKILL.md`). This file is for maintainers who change the studio.
 
-A local explainer-video studio: Remotion or FFrames for picture, Kokoro for voice. No paid APIs or keys. Other projects use it as an external tool: they hold only ideas, and every video lives in the videos root outside the repository.
+Explainer Studio renders narrated explainer videos on the local machine. Remotion or FFrames renders the frames, and Kokoro generates the voice. It uses no paid APIs or keys. Other projects call it as an external tool and keep no video files: every video lives in the videos root, outside this repository.
 
 ## Two readers
 
@@ -15,7 +15,7 @@ Write each fact once, on the side of the reader who acts on it. What a video mak
 
 ## Layers, options and presets
 
-A video picks one option per layer: renderer, drawing, look, effects, captions, voice, sound and optional steps. A preset is a saved set of choices. The skill's `SKILL.md` lists every layer, option and preset, and is the only place they are listed. `docs/low-level-design.md`, "Layers in the code", maps each option to its code, and "Extensibility" says what a new option, look, preset or layer touches. Keep the skill and the code in step in the same change: new code for an option updates its reference.
+A video picks one option per layer: renderer, drawing, look, effects, captions, voice, sound and optional steps. A preset is a saved set of choices. The skill's `SKILL.md` lists every layer, option and preset, and is the only place they are listed. `docs/low-level-design.md`, "Layers in the code", maps each option to its code, and "Extensibility" says what a new option, look, preset or layer touches. Change the skill and the code in the same commit: new code for an option updates that option's reference file.
 
 ## The videos root
 
@@ -33,22 +33,22 @@ Read `docs/low-level-design.md` before changing `src/` or `scripts/`: it maps wh
 - `src/lib/timing.ts`: the only place scene lengths are computed, as `ceil((durationSeconds + paddingSeconds) x fps)`. `scripts/fframes_sync.py` repeats the formula for FFrames.
 - `src/lib/words.ts`: `useWord`, `wordFrame` and `wordEndFrame`, the frame where a narration word starts or ends.
 - `src/lib/sketch.ts`: pure, seeded drawing helpers for canvas scenes.
-- `src/components/`: building blocks shared by videos, imported as `@studio/components/<Name>`.
+- `src/components/`: React components shared by videos, imported as `@studio/components/<Name>`.
 - `src/looks/<look>/`: a look's Remotion code, for example `paper-blueprint`.
 - `scripts/`: one file per `npm run` command; `scripts/lib/` holds the shared modules and their tests. `scripts/tts.py` voices with Kokoro, in the `./tts` venv (Python 3.12, pinned in `tts-requirements.txt`).
 - `scripts/shader-catalogue.mjs`: `npm run shader-catalogue` regenerates the skill's shader catalogue after a `shaders` upgrade.
 - `templates/video/`: what `npm run new-video` copies.
-- `skills/make-explainer-video/`: the one studio skill. Machines install it globally with `npx skills add yahyabedirhan/explainer-studio -g --skill make-explainer-video`. `.claude/skills/` holds the installed official skills and is ignored.
+- `skills/make-explainer-video/`: the studio's only skill. Machines install it globally with `npx skills add yahyabedirhan/explainer-studio -g --skill make-explainer-video`. `.claude/skills/` holds the installed official skills and is ignored.
 - `skills-lock.json`: the official Remotion skills and FFrames' `fframes-video`, which `npm run setup:skills` restores.
 - `docs/low-level-design.md`, `docs/videos-root.md`, `docs/decisions/`: the maintainer's docs.
 
 ## Rules
 
-- **Check at the highest seam.** `npm run lint`, `npm test`, and `npm run acceptance`, which makes two videos with different layer choices end to end in a scratch root and checks nothing lands in the checkout.
+- **Run the three checks.** `npm run lint`, `npm test`, and `npm run acceptance`, which makes two videos with different layer choices end to end in a scratch root and checks nothing lands in the checkout.
 - **Look at what you changed.** After a change to drawing code, render stills of a video that uses it and look at them. A successful command alone does not finish a task.
 - **Tests on scratch folders only.** Point `STUDIO_VIDEOS_DIR` and `XDG_CONFIG_HOME` at a temporary folder; never read or write the real root in a test.
 - **Free and local.** No paid APIs or keys. A new dependency is free, local and pinned.
-- **Small, targeted edits for feedback.**
+- **Keep feedback edits small.** Change only the part the user named.
 - **Code comments stand alone.** Assume the reader of the code has never seen the skill or the docs. Say what they need in the comment itself, and don't point at the skill. When a comment must point at a doc, give its repository path, for example `docs/videos-root.md`.
 
 ## Setting up again
