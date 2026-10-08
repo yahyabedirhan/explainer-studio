@@ -1,4 +1,6 @@
-# Fixing pronunciation
+# Pronunciation
+
+Write narration for the ear: short sentences, no symbols or unexplained abbreviations, numbers written as spoken.
 
 Kokoro reads the `text` field of a scene in `voiceover.json` literally. When a word comes out wrong, change how it is spelled in `text`, run `npm run voice -- <video>`, and listen again. Only the edited scene is regenerated.
 

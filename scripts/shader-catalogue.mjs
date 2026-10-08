@@ -1,4 +1,4 @@
-// Write skills/shader-video/effects.md, the catalogue of effects in the installed `shaders`
+// Write skills/make-explainer-video/references/effects/shaders-catalogue.md, the catalogue of effects in the installed `shaders`
 // package: npm run shader-catalogue. Run it again after upgrading the package.
 import { readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -56,5 +56,5 @@ for (const role of ORDER) {
   if (!rows) continue;
   out += `\n## ${role} (${rows.length})\n\n| Effect | What it draws | Props (default) | Frame-safe |\n|---|---|---|---|\n${rows.join("\n")}\n`;
 }
-writeFileSync(join("skills", "shader-video", "effects.md"), out);
-console.log(`Wrote skills/shader-video/effects.md: ${shaderRegistry.length} effects from shaders@${version}`);
+writeFileSync(join("skills", "make-explainer-video", "references", "effects", "shaders-catalogue.md"), out);
+console.log(`Wrote skills/make-explainer-video/references/effects/shaders-catalogue.md: ${shaderRegistry.length} effects from shaders@${version}`);
