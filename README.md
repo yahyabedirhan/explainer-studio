@@ -32,14 +32,14 @@ A video is a stack of layers, and it picks one option at each:
 |---|---|
 | Renderer | `remotion`, `fframes` |
 | Drawing | `dom`, `canvas` |
-| Look | `dark-ui`, `paper-blueprint`, `pixel-thermal` |
+| Look | `dark-ui`, `paper-blueprint`, `paper-havooch`, `pixel-thermal` |
 | Effects | `grain`, `shaders` |
 | Captions | `on`, `off` |
 | Voice | `kokoro` |
 | Sound | `synth`, `none` |
 | Optional steps | `reference-study`, `process-page` |
 
-A preset is a saved set of choices: `studio` (real UI, bold type, captions) and `sketchbook` (paper and blueprint drawn on a canvas). Start from a preset, change any layer, or choose every layer yourself, and try one script with different looks and renderers.
+A preset is a saved set of choices: `studio` (real UI, bold type, captions) `sketchbook` (paper and blueprint drawn on a canvas) and `havooch` (the sketchbook in Havooch's colours, for videos about Havooch). Start from a preset, change any layer, or choose every layer yourself, and try one script with different looks and renderers.
 
 Two readers, two entry points. An agent making a video follows the [`make-explainer-video`](skills/make-explainer-video/SKILL.md) skill, which holds the process, the layers and one reference per option. An agent changing the studio starts at [AGENTS.md](AGENTS.md), with [docs/low-level-design.md](docs/low-level-design.md) for the code and [docs/decisions/](docs/decisions/) for the reasons.
 
