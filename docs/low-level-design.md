@@ -112,6 +112,7 @@ The studio has no classes. Its modules are plain functions and React components,
 | | `canvas` | `src/components/CanvasScene.tsx` on `src/lib/sketch.ts` |
 | Look | `dark-ui` | the template's scene and `src/components/` |
 | | `paper-blueprint` | `src/looks/paper-blueprint/` (theme, paper, blueprint, hud, mascot, props, `makeRamp`) |
+| | `paper-havooch` | `src/looks/paper-havooch/`, a copy of paper-blueprint in Havooch's colours (theme, paper, cocoa, hud, havuc, props, `makeRamp`) |
 | | `pixel-thermal` | `src/components/PixelSprite.tsx` and `ShaderLayer.tsx`; in FFrames, the video's own project |
 | Effects | `grain` | `src/components/Grain.tsx` |
 | | `shaders` | `src/components/Shader.tsx`, `ShaderLayer.tsx`; the catalogue from `npm run shader-catalogue` |
@@ -147,7 +148,8 @@ explainer-studio/
 │   │   ├── words.ts          the frame of a spoken phrase; useWord
 │   │   └── sketch.ts         seeded canvas drawing helpers
 │   ├── components/           shared building blocks, imported as @studio/components/...
-│   └── looks/paper-blueprint/  the paper-blueprint look's palettes, cast, props and storyboard ramp
+│   ├── looks/paper-blueprint/  the paper-blueprint look's palettes, cast, props and storyboard ramp
+│   └── looks/paper-havooch/    the same look in Havooch's colours, with Havuç as the cast
 ├── scripts/
 │   ├── new-video.mjs         npm run new-video
 │   ├── render.mjs            npm run render and npm run still
@@ -171,7 +173,7 @@ explainer-studio/
 ├── skills/make-explainer-video/  the one skill for video makers, installed globally
 │   ├── SKILL.md              the process, the layers and presets lists, the official-skill corrections
 │   ├── references/           one file per layer option, and the layers, videos-root and pronunciation guides
-│   └── presets/              studio, sketchbook
+│   └── presets/              studio, sketchbook, havooch
 ├── docs/
 │   ├── low-level-design.md   this page
 │   ├── videos-root.md        the root's resolver, outputs, aliases and limits
@@ -285,7 +287,7 @@ final checks                                                      skill step 12
 
 Other choices branch off this trace and rejoin it:
 
-- **`canvas` and `paper-blueprint`** (the `sketchbook` preset): `new-video --fps 24`, `STORYBOARD = true` in `config.ts` for the boards and `false` to animate, scenes drawn on `CanvasScene` with `src/looks/paper-blueprint/`.
+- **`canvas` and `paper-blueprint`** (the `sketchbook` preset): `new-video --fps 24`, `STORYBOARD = true` in `config.ts` for the boards and `false` to animate, scenes drawn on `CanvasScene` with `src/looks/paper-blueprint/`. The `havooch` preset is the same path with `src/looks/paper-havooch/`.
 - **`reference-study`:** `npm run refs` before the brief. **`process-page`:** a snapshot of every stage into `out/process/`, which `npm run process` turns into a page.
 - **`fframes`:** `new-video`, then delete `Video.tsx` and `scenes/`, `cargo fframes new … --dir fframes`, `npm run voice`, `npm run fframes-sync -- <slug> --fps <N>` (writes `fframes/src/timing.rs`, links `audio/` and `assets/sound/` WAVs into `fframes/assets/`), `npm run sound`, `fframes-sync` again, review with the project's `timeline`, `inspect`, `strip`, `audio analyze`, and `cargo run --release -- render -o ../out/<slug>.mp4`.
 - **`shaders`:** candidate stacks on `Sheet.tsx`, `npm run still -- <slug> shader-sheet --sheet`, the user picks, scenes use `<Shader>`; one frame rendered twice must give identical files.

@@ -21,7 +21,7 @@ A video is a stack of **layers**. Each layer has options, and the video uses one
 |---|---|---|
 | Renderer | [`remotion`](references/renderer/remotion.md), [`fframes`](references/renderer/fframes.md) | one |
 | Drawing | [`dom`](references/drawing/dom.md), [`canvas`](references/drawing/canvas.md) | one or both, scene by scene; `remotion` only |
-| Look | [`dark-ui`](references/look/dark-ui.md), [`paper-blueprint`](references/look/paper-blueprint.md), [`pixel-thermal`](references/look/pixel-thermal.md) | one |
+| Look | [`dark-ui`](references/look/dark-ui.md), [`paper-blueprint`](references/look/paper-blueprint.md), [`paper-havooch`](references/look/paper-havooch.md), [`pixel-thermal`](references/look/pixel-thermal.md) | one |
 | Effects | [`grain`](references/effects/grain.md), [`shaders`](references/effects/shaders.md) | none, one or both |
 | Captions | [`on`, `off`](references/captions.md) | one |
 | Voice | [`kokoro`](references/voice/kokoro.md) | one |
@@ -32,6 +32,7 @@ A video is a stack of **layers**. Each layer has options, and the video uses one
 
 - [`studio`](presets/studio.md): products, interfaces, data and architecture, with real UI and bold type.
 - [`sketchbook`](presets/sketchbook.md): a concept or process in under a minute, drawn on paper and blueprint.
+- [`havooch`](presets/havooch.md): a video about Havooch, the sketchbook in Havooch's colours with Havuç the cat.
 
 ## Steps
 
